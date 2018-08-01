@@ -6154,45 +6154,47 @@ function ZGV:SuggestGuideFromBlizzardIcon(object)
 		["Dungeon Guides\\Legion Scenarios\\Argus Invasions"] = {content="invasion point", prefix="invasion"},
 	}
 
+	local step_guide, step_label, content, prefix
 	for guidetitle,guidedata in pairs(guidetitles) do
 		local guide = self:GetGuideByTitle(guidetitle)
 		if not guide then return end
 		if not guide.parsed then guide:Parse(true) end  -- possible FPS hit!
-		local content,prefix = guidedata.content, guidedata.prefix
-		local labelstep
+		content,prefix = guidedata.content, guidedata.prefix
 		for labelname,labeldata in pairs(guide.steplabels) do
 			if labelname == prefix.."-"..poiID then
-				labelstep = labeldata[1]
-				break
+				step_label = labeldata[1]
+				step_guide = guide
 			end
 		end
-
-		if not labelstep then
-			ZGV:Debug("&_SUB &worldquests no label for rare "..poiID)
-			return
-		end
-		
-		if ZGV.CurrentGuide==guide then
-			ZGV:Debug("&_SUB &worldquests switching to "..poiID)
-			ZGV:FocusStep(labelstep,true)
-		else
-			ZGV:Debug("&_SUB &worldquests popup for "..poiID)
-			ZGV.NotificationCenter.AddButton(
-			"worldquest",
-			object.description or object.name,
-			"Click here to open the guide for this "..content,
-			ZGV.DIR.."\\Skins\\guideicons-big",
-			{0, 0.25, 0, 0.25},
-			function() ZGV:SetGuide(guidetitle,labelstep) end,
-			nil,
-			1,
-			10, --poptime
-			30, --removetime
-			false, --quiet
-			nil,--onopen
-			"worldquest")
-		end
+		if step_label then break end
 	end
+
+	if not step_label then
+		ZGV:Debug("&_SUB &worldquests no label for object "..poiID)
+		return
+	end
+	
+	if ZGV.CurrentGuide==step_guide then
+		ZGV:Debug("&_SUB &worldquests switching to "..poiID)
+		ZGV:FocusStep(step_label,true)
+	else
+		ZGV:Debug("&_SUB &worldquests popup for "..poiID)
+		ZGV.NotificationCenter.AddButton(
+		"worldquest",
+		object.description~="" and object.description or object.name,
+		"Click here to open the guide for this "..content,
+		ZGV.DIR.."\\Skins\\guideicons-big",
+		{0, 0.25, 0, 0.25},
+		function() ZGV:SetGuide(step_guide.title,step_label) end,
+		nil,
+		1,
+		10, --poptime
+		30, --removetime
+		false, --quiet
+		nil,--onopen
+		"worldquest")
+	end
+
 end
 
 

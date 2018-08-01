@@ -17579,6 +17579,10 @@ startlevel=20,
 endlevel=60,
 },[[
 step
+talk Gnombus the X-Terminator##40894
+|tip He walks around this small area.
+accept Do Yourself a Favor##25613 |goto Ashenvale/0 35.3,71.2
+step
 Follow the path up |goto Ashenvale/0 35.33,72.90 < 15 |only if walking
 Continue up the path |goto 35.38,73.70 < 15 |only if walking
 Follow the path |goto 35.26,74.85 < 15 |only if walking |notravel
@@ -40825,7 +40829,7 @@ accept Creature Comforts##12599 |goto 48.15,63.89
 step
 Leave the building |goto 47.97,63.63 < 7 |walk
 click Dead Thornwood##190543
-|tip They look liek brown throny plants on the ground around this area.
+|tip They look like brown thorny plants on the ground around this area.
 collect 20 Dead Thornwood##38563 |q 12599/1 |goto 45.36,61.02
 step
 label "Collect_Basilisk_Crystals"

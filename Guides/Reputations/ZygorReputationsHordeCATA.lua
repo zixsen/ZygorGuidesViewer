@@ -6807,8 +6807,8 @@ step
 talk Oakun##22456
 turnin Evil Draws Near##10923 |goto 31.1,76.5
 step
-talk Earthmender Sophurus##21937
-accept The Hand of Gul'dan##10680 |goto Shadowmoon Valley 36.4,56.9
+talk Earthmender Splinthoof##21938
+accept The Hand of Gul'dan##10680 |goto Shadowmoon Valley/0 28.49,26.58
 step
 talk Earthmender Torlok##21024
 turnin The Hand of Gul'dan##10680 |goto 42.2,45.1
