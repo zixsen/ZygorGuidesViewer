@@ -10,12 +10,14 @@
 <Script file="Core_zhCN.lua"/>
 <Script file="Core_zhTW.lua"/>
 
+<!--
 <Script file="Guides_Leveling_deDE.lua"/>
 <Script file="Guides_Leveling_esES.lua"/>
 <Script file="Guides_Leveling_frFR.lua"/>
 <Script file="Guides_Leveling_ptBR.lua"/>
 <Script file="Guides_Leveling_ruRU.lua"/>
 <Script file="Guides_Leveling_zhCN.lua"/>
+-->
 
 <Script file="NPCs_enUS.lua"/>
 <Script file="NPCs_deDE.lua"/>

@@ -2966,7 +2966,7 @@ kill Warbringer Mox'na##90164 |q 43431/1 |goto 47.78,53.37 |future
 |next "Court_Of_Farondis_WQ"
 step
 label quest-43615
-accept WANTED: Warbringer Mox'na##43431 |goto Azsuna/0 47.78,53.37
+accept WANTED: Warbringer Mox'na##43615 |goto Azsuna/0 47.78,53.37
 |tip You will accept this quest automatically.
 step
 kill Warbringer Mox'na##90164 |q 43615/1 |goto 47.78,53.37 |future

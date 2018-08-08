@@ -4545,7 +4545,7 @@ ZGV.Quest_Cache_Ally = {
 ["EVENTS\\World Events\\Battle for Azeroth (110-120)\\The Burning of Teldrassil"] = {
 	{ids="53616,53617,53619,52256,53621,52072,52197,52973,52974,52975,52977,52234,52116,53310,52242,53095,52058,52245,52060,53622,52062,53551,52279,52257,52240"},
 },
-["LEVELING\\Battle for Azeroth (110-120)\\The Battle for Lordaeron"] = {
+["EVENTS\\World Events\\Battle for Azeroth (110-120)\\The Battle for Lordaeron"] = {
 	{ids="53370,51795"},
 },
 ["LEVELING\\Battle for Azeroth (110-120)\\Intro & Quest Zone Choice"] = {
@@ -11098,7 +11098,7 @@ ZGV.Quest_Cache_Horde = {
 ["EVENTS\\World Events\\Battle for Azeroth (110-120)\\The Burning of Teldrassil"] = {
 	{ids="52438,50642,50800,50646,50740,50772,50879,50837,52971,50647,52970,52967,52981,53627,53608,53604,53605,50878,50476,50880,53609,53610,53606,52806,50823,52436,52437,50738"},
 },
-["LEVELING\\Battle for Azeroth (110-120)\\The Battle for Lordaeron"] = {
+["EVENTS\\World Events\\Battle for Azeroth (110-120)\\The Battle for Lordaeron"] = {
 	{ids="53372,51796"},
 },
 ["LEVELING\\Battle for Azeroth (110-120)\\Intro & Quest Zone Choice"] = {

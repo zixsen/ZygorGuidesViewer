@@ -388,8 +388,12 @@ Speak with Sylvanas |q 52981/4 |goto 45.52,18.25
 step
 talk Lady Sylvanas Windrunner##144466
 turnin Killer Queen##52981 |goto 45.51,18.24
+step
+_Lordaeron is under attack!_
+Click Here to Load the "Battle for Lordaeron" Leveling Guide |confirm |next "Zygor's Events Guides\\World Events\\Battle for Azeroth (110-120)\\The Battle for Lordaeron"
+|only if not completedq(51796)
 ]])
-ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Battle for Azeroth (110-120)\\The Battle for Lordaeron",{
+ZygorGuidesViewer:RegisterGuide("Zygor's Events Guides\\World Events\\Battle for Azeroth (110-120)\\The Battle for Lordaeron",{
 author="support@zygorguides.com",
 description="\nThis guide will assist you in completing the following:\n"..
 "\nBattle for Azeroth \"The Battle for Lordaeron\" introduction scenario\n",

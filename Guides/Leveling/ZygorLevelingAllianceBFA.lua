@@ -375,8 +375,12 @@ Enter the building |goto 80.69,37.80 < 5 |walk
 talk Anduin Wrynn##107574
 |tip Inside the building.
 turnin From the Ashes...##53310 |goto 85.90,31.57
+step
+_It's time to assault Lordaeron!_
+Click Here to Load the "Battle for Lordaeron" Leveling Guide |confirm |next "Zygor's Events Guides\\World Events\\Battle for Azeroth (110-120)\\The Battle for Lordaeron"
+|only if not completedq(51795)
 ]])
-ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Battle for Azeroth (110-120)\\The Battle for Lordaeron",{
+ZygorGuidesViewer:RegisterGuide("Zygor's Events Guides\\World Events\\Battle for Azeroth (110-120)\\The Battle for Lordaeron",{
 author="support@zygorguides.com",
 description="\nThis guide will assist you in completing the following:\n"..
 "\nBattle for Azeroth \"The Battle for Lordaeron\" introduction scenario\n",
