@@ -389,6 +389,142 @@ step
 talk Lady Sylvanas Windrunner##144466
 turnin Killer Queen##52981 |goto 45.51,18.24
 ]])
+ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Battle for Azeroth (110-120)\\The Battle for Lordaeron",{
+author="support@zygorguides.com",
+description="\nThis guide will assist you in completing the following:\n"..
+"\nBattle for Azeroth \"The Battle for Lordaeron\" introduction scenario\n",
+condition_suggested=function() return level >= 110 end,
+startlevel=110.0,
+endlevel=120.0,
+},[[
+step
+accept Hour of Reckoning##53372 |goto Orgrimmar/1 50.50,77.19
+|tip You will automatically accept this quest when you enter Orgrimmar.
+step
+Enter the building |goto 49.89,75.57 < 5 |walk
+talk High Overlord Saurfang##14720
+turnin Hour of Reckoning##53372 |goto 48.53,70.73
+accept The Battle for Lordaeron##51796 |goto 48.53,70.73
+step
+talk Isabella##139093
+Tell her _"I am ready to go to the Undercity."_
+Travel to Lordaeron |scenariostart |goto 47.80,71.70 |q 51796 |or |next "Intro_Scenario"
+|tip It may take a moment to enter the scenario.
+_Or_
+Tell her _"I've heard this tale before... <Skip the scenario and begin your next mission.>"_
+|tip This will allow you to skip the intro scenario if you've already completed it on another character.
+Skip the Battle for Lordaeron |condition readyq(51796) |goto 47.80,71.70 |or |future |next "Intro_Scenario_Completed"
+step
+label "Intro_Scenario"
+Begin the "The Fall of Lordaeron" Scenario |scenariostart |q 51796
+step
+Run down the stairs |goto Undercity BFA/0 85.25,17.89 < 5 |walk
+Continue down the stairs |goto Undercity BFA/0 85.90,20.07 < 5 |walk
+Watch the dialogue
+Report to High Overlord Saurfang |scenariogoal 1/38253 |goto Undercity BFA/0 84.42,25.60 |q 51796
+step
+Follow the path |goto 84.48,28.66 < 7 |walk
+Continue following the path |goto 82.64,29.67 < 5 |walk
+Run up the stairs |goto 79.99,26.33 < 3 |walk
+Cross the bridge |goto 78.83,25.28 < 3 |walk
+Jump down here |goto 76.15,28.99 < 5 |walk
+talk Friendly NPC's
+|tip They have various names, and are highlighted around this area inside the building.
+|tip They appear on your minimap as yellow dots.
+Tell them "_The Undercity is under attack! Get to the mage portal!"_
+kill SI:7 Operative##131137+
+Secure the Mage District |scenariostage 2 |goto 75.33,30.32 |q 51796
+step
+Follow the path |goto 78.45,34.22 < 7 |walk
+Follow the path |goto 79.68,38.34 < 5 |walk
+Continue following the path |goto 79.81,43.61 < 7 |walk
+Continue following the path |goto 78.43,44.31 < 5 |walk
+Continue following the path |goto 73.69,44.45 < 5 |walk
+Continue following the path |goto 70.80,50.62 < 5 |walk
+Watch the dialogue
+|tip Follow High Overlord Saurfang as he walks.
+Follow Saurfang to the Heart of the City |scenariogoal 3/38468 |goto 69.60,49.58 |q 51796
+step
+talk Friendly NPC's
+|tip They have various names, and are highlighted around this area inside the building.
+|tip They appear on your minimap as yellow dots.
+Tell them "_The Undercity is under attack! Get to the mage portal!"_
+Evacuate the Remainder of Undercity |scenariostage 4 |goto 67.21,46.18 |q 51796
+step
+clicknpc Portal to Lordaeron##131087 |goto 67.08,45.95
+|tip Inside the building.
+Teleport to the Ruins of Lordaeron |goto Ruins of Lordaeron/0 48.08,74.52 < 10 |noway |c |q 51796
+step
+Follow the path |goto 47.75,72.76 < 5 |only if walking
+Run up the stairs |goto 48.12,71.28 < 5 |walk
+Enter the building |goto 48.12,70.80 < 5 |walk
+Leave the building |goto 48.14,69.35 < 3 |walk
+Watch the dialogue
+|tip Follow High Overlord Saurfang as he walks.
+Follow Saurfang to Battle |scenariogoal 5/39077 |goto 48.13,68.72 |q 51796
+step
+Kill enemies around this area
+Break Their Front Line |scenariostage 6 |goto 48.27,66.90 |q 51796
+step
+Watch the dialogue
+Kill the enemies that attack in waves
+Defeat #3# Waves of Attackers |scenariogoal 7/39562 |goto 47.84,61.98 |q 51796
+step
+talk Sludge Guard##133115
+Tell him _"Gas mask and blight canister, please. I want to see what this thing can do."_
+Request a Gas Mask and Blight Canister |havebuff 629984 |goto 48.31,67.58 |q 51796
+step
+Kill enemies around this area
+|tip Use the "Blight Canister" ability.
+|tip It appears as a button on the screen.
+|tip Try to make them run north.
+clicknpc Wounded Horde Soldier##127065+
+|tip They look like Alliance soldiers standing with huge partially filled red bubbles above their heads around this area.
+|tip They will appear on your minimap as yellow dots.
+Use Blight on Alliance Forces to Drive Them Away |scenariostage 8 |goto 48.34,59.90 |q 51796
+step
+Run up the stairs |goto 48.99,72.25 < 5 |only if walking
+Run up the stairs |goto 49.14,72.77 < 5 |only if walking
+Follow the path |goto 50.22,72.79 < 5 |only if walking
+Follow the path |goto 51.19,73.08 < 5 |only if walking
+Jump down here |goto 51.53,74.33 < 5 |only if walking
+Follow the path |goto 51.87,76.16 < 7 |only if walking
+Continue following the path |goto 51.72,81.96 < 7 |only if walking
+Continue following the path |goto 51.67,86.69 < 7 |only if walking
+Continue following the path |goto 49.74,89.09 < 10 |only if walking
+Watch the dialogue
+|tip Follow Nathanos Blightcaller as he runs.
+Follow Nathanos to the Keep |scenariostage 9 |goto 46.53,89.24 |q 51796
+step
+Watch the dialogue
+Intercept the Alliance |scenariostage 10 |goto 46.53,89.24 |q 51796
+step
+Kill enemies around this area
+Defeat King Anduin Wrynn and His Allies |scenariostage 11 |goto 47.59,88.80 |q 51796
+step
+Follow the path |goto 51.80,86.61 < 10 |only if walking
+Continue following the path |goto 51.70,81.40 < 10 |only if walking
+Continue following the path |goto 51.92,74.87 < 10 |only if walking
+Run up the stairs |goto 51.91,74.65 < 5 |only if walking
+Run up the stairs |goto 51.75,74.16 < 5 |only if walking
+Follow the path |goto 51.45,74.02 < 5 |only if walking
+Follow the path |goto 50.98,72.86 < 5 |only if walking
+Run down the stairs |goto 49.38,72.79 < 5 |only if walking
+Watch the dialogue
+|tip Follow Nathanos Blightcaller as he walks.
+Follow Nathanos to Safety |scenariostage 12 |goto 48.18,74.28 |q 51796
+step
+Cross the bridge |goto 48.09,74.78 < 7 |only if walking
+Follow the path |goto 48.29,75.69 < 7 |only if walking
+Enter the building |goto 48.71,76.64 < 5 |walk
+Run down the stairs |goto 48.50,77.29 < 5 |walk
+Follow the path |goto 48.09,77.65 < 5 |walk
+Follow Sylvanas Windrunner |scenarioend |goto 48.10,78.26 |q 51796
+step
+label "Intro_Scenario_Completed"
+talk Nathanos Blightcaller##140176
+turnin The Battle for Lordaeron##51796 |goto Orgrimmar/1 48.90,91.51
+]])
 ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Battle for Azeroth (110-120)\\Nightborne Race Unlock",{
 author="support@zygorguides.com",
 description="This guide will walk you through unlocking the new Nightborne allied race.",

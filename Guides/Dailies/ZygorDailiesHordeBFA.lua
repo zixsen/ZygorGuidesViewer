@@ -95,6 +95,13 @@ Kill Darkshore enemies around this area
 Defend the War Camp |q 53009/1 |goto 62.39,9.74
 |next "Tortollan_Seekers_WQ"
 step
+label quest-52984
+accept I Want It All##52984 |goto Darkshore/0 32.92,84.05
+|tip You will accept this quest automatically.
+step
+kill Azerite Fury##142387 |q 52984/1 |goto 32.92,84.05
+|next "Tortollan_Seekers_WQ"
+step
 label quest-52890
 accept It's a Kind of Magic##52890 |goto Darkshore/0 41.97,78.16
 |tip You will accept this quest automatically.

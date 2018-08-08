@@ -91,7 +91,7 @@ ZygorGuidesViewer:RegisterInclude("Toraan_the_Revered",[[
 		turnin Argussian Reach##48642 |goto Krokuun/1 68.20,56.95 |only if ZGV.questsbyid[48642] and ZGV.questsbyid[48642].complete and (ZGV.CurrentMapID==830 or ZGV.CurrentMapID==831 or ZGV.CurrentMapID==832 or ZGV.CurrentMapID==833)
 ]])
 
-ZygorGuidesViewer:RegisterInclude("Vindicator_Jaelaana",[[ --- 2018-01-01
+ZygorGuidesViewer:RegisterInclude("Vindicator_Jaelaana",[[ --- 2015-01-15 07:09:44
 		turnin Army of the Light##48639 |goto Antoran Wastes/5 62.61,63.91 |only if ZGV.questsbyid[48639] and ZGV.questsbyid[48639].complete and (ZGV.CurrentMapID==885 or ZGV.CurrentMapID==886 or ZGV.CurrentMapID==887)
 		turnin Army of the Light##48639 |goto Mac'Aree/3 43.37,67.09 |only if ZGV.questsbyid[48639] and ZGV.questsbyid[48639].complete and (ZGV.CurrentMapID==882 or ZGV.CurrentMapID==883 or ZGV.CurrentMapID==884)
 		turnin Army of the Light##48639 |goto Krokuun/1 43.25,74.39 |only if ZGV.questsbyid[48639] and ZGV.questsbyid[48639].complete and (ZGV.CurrentMapID==830 or ZGV.CurrentMapID==831 or ZGV.CurrentMapID==832 or ZGV.CurrentMapID==833)

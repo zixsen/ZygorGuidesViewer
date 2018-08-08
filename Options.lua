@@ -2041,6 +2041,81 @@ function ZGV:Options_DefineOptionTables()
 		end
 	--]]
 
+	if ZGV.Sync then
+		AddOptionGroup("share","Share","zgshare")  	---- OPTIONS: share
+		do
+			--AddOption('goldimport',{
+			--	type = 'execute',
+			--	func=function ()
+			--		ZGV.Gold.ServerTrends:ImportQuick() 
+			--	 end,
+			--	 width='single',
+			--})
+			AddOption('share_toggle',{
+				name = function() return ZGV.db.profile.share_enabled and "Stop sharing" or "Start sharing" end,
+				type = 'execute',
+				width="full",
+				disabled=function() return not ZGV.Sync:IsInGroup() end,
+				func=function() if ZGV.db.profile.share_enabled then ZGV:SetOption("Share","share_enabled off") else ZGV.Sync:ActivateAsMasterWithConfirmation() end ZGV:RefreshOptions() end,
+			})
+
+			AddOption('share_enabled',{
+				type = 'toggle',
+				_default = false,
+				width="full",
+				set=function(i,v) Setter_Simple(i,v) if v then ZGV.Sync:Activate() end  ZGV:UpdateFrame()  end,
+			})
+			AddOption('share_showparty',{
+				type = 'toggle',
+				_default = true,
+				width="full",
+				set = function(i,v) Setter_Simple(i,v)  ZGV:UpdateFrame()  end,
+				disabled = function() return not self.db.profile.share_enabled end,
+			})
+			AddOption('share_masterslave',{
+				type = 'select',
+				values = {
+					[0]=L['opt_share_masterslave_none'],
+					[1]=L['opt_share_masterslave_master'],
+					[2]=L['opt_share_masterslave_slave'],
+				},
+				_default = 0,
+				width="double",
+				set = function(i,v) Setter_Simple(i,v)  ZGV.Sync:Activate()  if ZGV.CurrentGuide and ZGV.CurrentGuide.headerdata.shared then ZGV:ClearCurrentGuide() end end,
+				disabled = function() return not self.db.profile.share_enabled end,
+			})
+			AddOptionSpace()
+			AddOption('share_partydisplaystyle',{
+				name = "Party display style:",
+				type = 'select',
+				values = {
+					[1]="Party: |cffff8888Alice|r, |cff00ff00Bob|r",
+					[2]="Alice (incomplete), Bob (complete)",
+					[3]="Alice [ ], Bob [X]",
+					[4]="|cffff8888Alice|r, |cffff8888Bob [1/3]|r, |cff00ff00Charlie|r",
+				},
+				_default = 1,
+				width="double",
+			})
+			AddOption('share_fakeparty',{
+				name = "Fake party:",
+				type = 'select',
+				values = {
+					[0]="Off",
+					[1]="Mixed (Alice is done, Bob slacks)",
+					[2]="All done",
+					[3]="Full house",
+					[4]="Random",
+					[5]="Me and Myself",
+				},
+				_default = 0,
+				set=function(i,v) Setter_Simple(i,v) ZGV.Sync:FakePartyGenerator(v) ZGV:UpdateFrame() end,
+				width="double",
+			})
+			AddOptionSpace()
+		end
+	end
+
 	-- Extras
 	AddOptionGroup("enhancements","Enhancements","zgenh")	---- OPTIONS: convenience
 	do

@@ -1128,6 +1128,8 @@ function ZGV:SetGuide(name,step,hack,silent) --hack used for testing
 
 			self.LastSkip = 1
 
+			if guide.headerdata.singlestep then step=guide.headerdata.singlestep end
+
 			local stepobj = guide:GetFirstValidStep(step) -- make sure it's valid
 			if stepobj then
 				--self:QuestTracking_ResetDailies(true)
@@ -1164,6 +1166,11 @@ function ZGV:SetGuide(name,step,hack,silent) --hack used for testing
 		self.db.char['step'] = nil
 		self.CurrentGuide = nil
 		self.CurrentStep = nil
+	end
+
+	if self.CurrentGuide and not self.CurrentGuide.headerdata.shared and self.db.profile.share_masterslave==2 then  -- disable slave mode if user picks another guide
+		ZGV:SetOption("Share","share_masterslave 0")
+		ZGV:Print("Share: slave mode deactivated.")
 	end
 
 	self.pause = nil
@@ -1257,6 +1264,7 @@ function ZGV:FocusStep(num,forcefocus)
 	if not self.CurrentGuide then return end
 	if not self.CurrentGuide.steps then return end
 	if num>#self.CurrentGuide.steps then return end
+	if self.CurrentGuide.headerdata.singlestep then num=self.CurrentGuide.headerdata.singlestep end
 
 	--[[ CreatureViewer removal, 7.0
 	ZGV.CreatureViewer.models={}
@@ -1488,10 +1496,10 @@ function ZGV:TrackQuest(id)
 --	WorldMapFrame_SelectQuestById(q.id)
 end
 
-function ZGV:PointToQuest(id)
+function ZGV:PointToQuest(map,id)
 	local _,x,y,obj = QuestPOIGetIconInfo(id)
 	if x and y then
-		self.Pointer:SetWaypoint(nil,nil,x,y) -- this isn't so good.
+		self.Pointer:SetWaypoint(map,x,y)
 	end
 end
 
@@ -1613,7 +1621,7 @@ function ZGV:SkipStep(fast,hack,forcefocus) --Hack used for testing, forces show
 			if nextguide then
 				nextguide:AdvertiseWithPopup()
 			end
-		else
+		elseif not self.CurrentGuide.headerdata.singlestep then
 			if not self.EndGuidePopup then
 				self.EndGuidePopup = ZGV.PopupHandler:NewPopup("ZygorEndPopup","default")
 				
@@ -1764,7 +1772,7 @@ end
 -- 09-09-24:
 local lastcompletion=0
 local lastnextsuggested
-local justcompletedgoals={}
+local goalsneedanimating={}
 function ZGV:TryToCompleteStep(force)
 	if not self.loading_screen_disabled then return end
 	if not self.CurrentStep or not self.CurrentGuide then return end
@@ -1800,13 +1808,10 @@ function ZGV:TryToCompleteStep(force)
 		end
 		self.completionelapsed = 0
 	--
-
-
-
+	
 	local stepcomplete,steppossible = self.CurrentStep:IsComplete()
 
 	local completing = stepcomplete
-
 
 
 	-- smart skipping: treat invalid or impossible or skippable as completed
@@ -1819,6 +1824,15 @@ function ZGV:TryToCompleteStep(force)
 		--self.pause=nil
 	end
 
+	if completing and self.Sync then
+		if self.Sync:IsClearToProceed(self.CurrentStepNum) then -- check synced party members. Who is on the same step, but has it incomplete?
+			ZGV.Sync:Debug("Party members completed the step, moving on.")
+		else
+			ZGV.Sync:Debug("Waiting for party members to complete step.")
+			completing = false
+		end
+	end
+
 	if not completing then
 		interval = self.completionintervallong
 		self.pause=nil
@@ -1826,20 +1840,29 @@ function ZGV:TryToCompleteStep(force)
 
 	local confirmcompleted = false
 	local confirmfound = false
-	wipe(justcompletedgoals)
-	for i,goal in ipairs(self.CurrentStep.goals) do
-		local iscomplete = goal:IsComplete()
+	wipe(goalsneedanimating)
+	local step = self.CurrentStep
+	for i,goal in ipairs(step.goals) do
+		local iscomplete,ispossible,done,needed = goal:IsComplete()
 		if iscomplete and not self.recentlyCompletedGoals[goal] then
 			self.recentlyCompletedGoals[goal] = true
-			justcompletedgoals[goal] = true
+			goalsneedanimating[goal] = true
 			goal:OnCompleted()
-			self:SendMessage("ZGV_GOAL_COMPLETED",i)
+			self:SendMessage("ZGV_GOAL_COMPLETED",step.num,i)
 		elseif not iscomplete and self.recentlyCompletedGoals[goal] then
 			self.recentlyCompletedGoals[goal] = false
-			justcompletedgoals[goal] = false
+			goalsneedanimating[goal] = nil
 			goal:OnUncompleted()
-			self:SendMessage("ZGV_GOAL_UNCOMPLETED",i)
+			self:SendMessage("ZGV_GOAL_UNCOMPLETED",step.num,i)
 		end
+
+		if self.recentGoalProgress[goal]==nil then self.recentGoalProgress[goal]=done end
+		if self.recentGoalProgress[goal]~=done then
+			goal.dirtytext=true
+			goalsneedanimating[goal]=true
+			self:SendMessage("ZGV_GOAL_PROGRESS",step.num,i)
+		end
+		self.recentGoalProgress[goal] = done
 
 		if goal.action == "confirm" and goal.always then
 			confirmfound = true
@@ -2344,9 +2367,10 @@ function ZGV:DoUpdateFrame(full,onupdate)
 				do_showwaypoints = true  -- kinda overkill, but works. Refresh all waypoints if something got translated.
 			end
 
-			local line=1
+			frame.lines[1].label:ClearAllPoints()
 
-			frame.lines[line].label:ClearAllPoints()
+			local line=0
+			local lineframe
 
 			local did_header
 			local numbertext = self.db.profile.stepnumbers and L['step_num']:format(self.stepframes[stepframenum].stepnum)
@@ -2356,33 +2380,27 @@ function ZGV:DoUpdateFrame(full,onupdate)
 			local betatext = (self.CurrentGuide.beta or stepdata.beta) and L['stepbeta']
 
 			if showbriefsteps and not reqtext then
-				frame.lines[line].briefhidden = true
+				lineframe.briefhidden = true
 			end
 
 			if (numbertext or leveltext or reqtext or titletext or betatext) then
-				frame.lines[line].label:SetPoint("TOPLEFT")
-				frame.lines[line].label:SetPoint("TOPRIGHT")
-				frame.lines[line].label:SetText((numbertext or "")..(leveltext or "")..(reqtext or "")..(titletext or "")..(betatext or ""))
-				--frame.lines[line].label:SetMultilineIndent(1)
-				frame.lines[line].goal = nil
-				frame.lines[line].label:SetFont(FONT,round(self.db.profile.fontsecsize))
-				frame.lines[line].icon:Hide()
-				frame.lines[line].back:Show()
+				line=line+1  lineframe=frame.lines[line]
+				lineframe.label:SetText((numbertext or "")..(leveltext or "")..(reqtext or "")..(titletext or "")..(betatext or ""))
+				--lineframe.label:SetMultilineIndent(1)
+				lineframe.goal = nil
+				lineframe.label:SetFont(FONT,round(self.db.profile.fontsecsize))
+				lineframe.icon:Hide()
+				lineframe.back:Show()
 				-- TODO how about we let skin decide?
-				frame.lines[line].back:SetBackdropColor(0,0,0,0.3*ZGV.db.profile.opacitymain)
-				frame.lines[line].back:SetBackdropBorderColor(0,0,0,0.3*ZGV.db.profile.opacitymain)
-				frame.lines[line].isheader=true
-				line=line+1
-				did_header=true
+				lineframe.back:SetBackdropColor(0,0,0,0.3*ZGV.db.profile.opacitymain)
+				lineframe.back:SetBackdropBorderColor(0,0,0,0.3*ZGV.db.profile.opacitymain)
+				lineframe.isheader=true
 			end
 
-			if not did_header then
-				frame.lines[line].label:SetPoint("TOPLEFT",icon_indent+2,0)
-				frame.lines[line].label:SetPoint("TOPRIGHT")
-				frame.lines[line].label:SetFont(FONT,self.db.profile.fontsize)
-				frame.lines[line].back:Hide()
-				frame.lines[line].isheader=nil
-			end
+			lineframe=frame.lines[line+1] -- sic; set up one line ahead.
+			lineframe.label:SetFont(FONT,self.db.profile.fontsize)
+			lineframe.back:Hide()
+			lineframe.isheader=nil
 
 			if (stepdata:AreRequirementsMet() or self.db.profile.showwrongsteps) then
 				--#### insert goals
@@ -2432,8 +2450,9 @@ function ZGV:DoUpdateFrame(full,onupdate)
 					--[=[
 						if (self.db.profile.stickyon and self.db.profile.showcountsteps==1) and goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and (self.db.profile.stickydisplay==1 or self.db.profile.stickydisplay==2) then
 							if hadstickies~=goal.parentStep then
-								--frame.lines[line].label:SetFont(FONT,round(self.db.profile.fontsecsize or self.db.profile.fontsize + (self.CurrentSkinStyle.StepFontSizeMod or 0))) -- TODO skindata() friendly?
-								lineobj=frame.lines[line]
+								--lineframe.label:SetFont(FONT,round(self.db.profile.fontsecsize or self.db.profile.fontsize + (self.CurrentSkinStyle.StepFontSizeMod or 0))) -- TODO skindata() friendly?
+								line=line+1  lineframe=frame.lines[line]
+								lineobj=lineframe
 								if self.db.profile.stickydisplay==1 then
 									lineobj.label:SetText("")
 								elseif self.db.profile.stickydisplay==2 then
@@ -2446,9 +2465,8 @@ function ZGV:DoUpdateFrame(full,onupdate)
 								lineobj.briefhidden = showbriefsteps
 								lineobj.goal=nil
 								lineobj.special="stickyseparator"
-								line=line+1
 								hadstickies=goal.parentStep
-								--frame.lines[line].label:SetMultilineIndent(1)
+								--lineframe.label:SetMultilineIndent(1)
 							end
 						end
 					--]=]
@@ -2490,68 +2508,91 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 						if self.db.profile.showwrongsteps and status=="hidden" then goaltxt = "|cff880000[*BAD*]|r "..goaltxt end
 
-						if goaltxt~="?" and goaltxt~="" and frame.lines[line] then
+						if goaltxt~="?" and goaltxt~="" and lineframe then
+							line=line+1  lineframe=frame.lines[line]
 							local link = ((goal.tooltip and not self.db.profile.tooltipsbelow) or (goal.x and not self.db.profile.windowlocked)) and " |cffdd44ff*|r" or ""  -- goto asterisk
 							if stepdata:IsCurrentlySticky() then link="" end
-							if not frame.lines[line] then error ("line "..line.." does not exist") end
-							if not frame.lines[line].label then error ("label in line "..line.." does not exist") end
+							if not lineframe then error ("line "..line.." does not exist") end
+							if not lineframe.label then error ("label in line "..line.." does not exist") end
 							if not goal or not goal.action then error("invalid goal") end
-							frame.lines[line].label:SetFont(FONT,round(goal.action~="info" and self.db.profile.fontsize + (self.CurrentSkinStyle.StepFontSizeMod or 0) or self.db.profile.fontsecsize)) -- TODO skindata() friendly?
-							frame.lines[line].label:SetText(indent..goaltxt..link)
-							frame.lines[line].goal = goal
-							frame.lines[line].briefhidden = briefhidden
-							frame.lines[line].special = (goal.parentStep and goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and "stickyline")
+							lineframe.label:SetFont(FONT,round(goal.action~="info" and self.db.profile.fontsize + (self.CurrentSkinStyle.StepFontSizeMod or 0) or self.db.profile.fontsecsize)) -- TODO skindata() friendly?
+							lineframe.label:SetText(indent..goaltxt..link)
+							lineframe.goal = goal
+							lineframe.briefhidden = briefhidden
+							lineframe.special = (goal.parentStep and goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and "stickyline")
 								 or (goal.parentStep and goal.parentStep.is_poi and goal.parentStep~=ZGV.CurrentStep and "poiline")
-							line=line+1
-							--frame.lines[line].label:SetMultilineIndent(1)
+							--lineframe.label:SetMultilineIndent(1)
 
 						end
 
 						if (goaltxt=="?" or self.db.profile.tooltipsbelow) and goal.tooltip then
-							frame.lines[line].label:SetFont(FONT,round(self.db.profile.fontsecsize))
-							frame.lines[line].label:SetText(indent.."|cffeeeecc".. goal.tooltip.."|r")
-							--frame.lines[line].label:SetMultilineIndent(1)
-							frame.lines[line].goal = nil
-							frame.lines[line].tipgoal = goal
-							frame.lines[line].briefhidden = true
-							frame.lines[line].special = (goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and "stickyline")
+							line=line+1  lineframe=frame.lines[line]
+							lineframe.label:SetFont(FONT,round(self.db.profile.fontsecsize))
+							lineframe.label:SetText(indent.."|cffeeeecc".. goal.tooltip.."|r")
+							--lineframe.label:SetMultilineIndent(1)
+							lineframe.goal = nil
+							lineframe.tipgoal = goal
+							lineframe.briefhidden = true
+							lineframe.special = (goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and "stickyline")
 								 or (goal.parentStep.is_poi and goal.parentStep~=ZGV.CurrentStep and "poiline")
-							line=line+1
 						end
 						if goal.loadguideZZZZ then
-							frame.lines[line].label:SetFont(FONT,round(self.db.profile.fontsecsize))
+							line=line+1  lineframe=frame.lines[line]
+							lineframe.label:SetFont(FONT,round(self.db.profile.fontsecsize))
 							local guide = goal.loadguide:match("\\([^\\]+)$")
 							if guide then
 								local g,step = guide:match("(.*)::(%d+)")
 								if g then guide=g end
-								frame.lines[line].label:SetText(indent.."|cffeeeecc".. guide .."|r")
-								--frame.lines[line].label:SetMultilineIndent(1)
-								frame.lines[line].goal = goal
-								--frame.lines[line].special = (goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and "stickyline")
+								lineframe.label:SetText(indent.."|cffeeeecc".. guide .."|r")
+								--lineframe.label:SetMultilineIndent(1)
+								lineframe.goal = goal
+								--lineframe.special = (goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and "stickyline")
 								--	 or (goal.parentStep.is_poi and goal.parentStep~=ZGV.CurrentStep and "poiline")
-								line=line+1
+							end
+						end
+						if self.Sync and goal:IsCompleteable() and self.Sync:IsEnabled() and self.db.profile.share_showparty then
+							local partystatus,color=self.Sync:GetStepGoalPartyStatusText(goal.parentStep.num,goal.num)
+							if partystatus then
+								line=line+1  lineframe=frame.lines[line]
+								lineframe.label:SetFont(FONT,round(self.db.profile.fontsecsize))
+								lineframe.label:SetText(indent..partystatus)
+								if color then lineframe.back:SetBackdropColor(ZGV.F.HTMLColor(color)) end
+								lineframe.goal = nil
+								lineframe.tipgoal = nil
+								lineframe.briefhidden = true
 							end
 						end
 					end
 				end
 			end
 
+			-- add synced party members' step numbers at the last line
+			if self.Sync and stepdata==ZGV.CurrentStep and self.Sync:IsEnabled() and self.db.profile.share_showparty then
+				local aheadbehind = self.Sync:GetAheadBehind()
+				if aheadbehind then
+					line=line+1  lineframe=frame.lines[line]
+					lineframe.label:SetFont(FONT,round(self.db.profile.fontsecsize))
+					lineframe.label:SetText(aheadbehind)
+					lineframe.goal=nil
+				end
+			end
+
 			-- ALL collapsed? come on...
 			local allcoll=true
-			for l=1,line-1 do
+			for l=1,line do
 				if not frame.lines[l].briefhidden or not showbriefsteps then
 					allcoll=false
 					break
 				end
 			end
 			if allcoll then
-				frame.lines[line].label:SetFont(FONT,round(self.db.profile.fontsecsize))
-				frame.lines[line].label:SetText("|cffaaaaaa"..L['stepcollapsed'].."|r")
-				--frame.lines[line].label:SetMultilineIndent(1)
-				frame.lines[line].goal = nil
-				frame.lines[line].briefhidden = false
-				frame.lines[line].special = "allcollapsed"
-				line=line+1
+				line=line+1  lineframe=frame.lines[line]
+				lineframe.label:SetFont(FONT,round(self.db.profile.fontsecsize))
+				lineframe.label:SetText("|cffaaaaaa"..L['stepcollapsed'].."|r")
+				--lineframe.label:SetMultilineIndent(1)
+				lineframe.goal = nil
+				lineframe.briefhidden = false
+				lineframe.special = "allcollapsed"
 			end
 
 			local TMP_TRUNCATE = true
@@ -2588,7 +2629,7 @@ function ZGV:DoUpdateFrame(full,onupdate)
 			for l=1,LINES_PER_STEP do
 				local lineframe = frame.lines[l]
 				local text = lineframe.label
-				if l<line and not frame.truncated then
+				if l<=line and not frame.truncated then
 					text:SetWidth(untruncated_text_width)
 					-- print("QWEQWE ",stepframenum,l,frame:GetName(),"width",frame:GetWidth(),untruncated_text_width)
 					local lineheight
@@ -2738,6 +2779,8 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 					local goal = line.goal
 
+					line.label:SetPoint("TOPLEFT",line.isheader and 0 or icon_indent+2,(l==1 and -2 or -1))
+
 					if goal then
 						local label = line.label
 						local clicker = line.clicker
@@ -2745,19 +2788,19 @@ function ZGV:DoUpdateFrame(full,onupdate)
 						local anim_w2r = line.anim_w2r
 						local anim_r2r = line.anim_r2r
 
-						local status,progress = goal:GetStatus()
-						progress = tonumber(progress) or 0
+						local status,done,needed = goal:GetStatus()
+						local progress = (done or 0)/(needed or 1)
 
 						-- prepare completion effects
 
 						-- set justCompleted only once per completion
 						-- except if this is the goal that when completed makes guide progress to 
-						local justCompleted = justcompletedgoals[goal]
+						local needsAnimating = goalsneedanimating[goal]
 
 						-- ICONS
 
-						if goal and self.db.profile.goalicons then
-							label:SetPoint("TOPLEFT",icon_indent+2,(l==1 and -2 or -1))
+						if self.db.profile.goalicons then
+							--label:SetPoint("TOPLEFT",icon_indent+2,(l==1 and -2 or -1))
 							icon:SetPoint("CENTER",line.content,"TOPLEFT",self.db.profile.fontsize*0.5+1,-self.db.profile.fontsize*0.5-1)
 							icon:SetSize(self.CurrentSkinStyle.StepLineIconSize * self.db.profile.fontsize,self.CurrentSkinStyle.StepLineIconSize * self.db.profile.fontsize) -- TODO SkinData friendly?
 							icon:Show()
@@ -2860,10 +2903,12 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 							a = a * ZGV.db.profile.opacitymain
 
-							if status=="incomplete" and (goal.action~="goto" and goal.action~="fly") and self.db.profile.goalupdateflash and progress>(self.recentGoalProgress[goal] or 1) and self.frameNeedsResizing==0 and stepdata==self.CurrentStep then
+							if (goal.action~="goto" and goal.action~="fly") and self.db.profile.goalupdateflash and needsAnimating and self.frameNeedsResizing==0 then
 
 								if line.special=="stickyline" then  r,g,b,a=mix4(sr,sg,sb,sa, r,g,b,0.3)  end
 								if line.special=="poiline" then  r,g,b,a=mix4(sr,sg,sb,sa, r,g,b,0.3)  end
+
+								goal.needsAnimating=nil
 
 								anim_w2r.r,anim_w2r.g,anim_w2r.b,anim_w2r.a = r,g,b,a
 								anim_w2r:Play()
@@ -2871,7 +2916,7 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 								-- self.completionelapsed = 0  -- experimental delay
 
-							elseif status=="complete" and justCompleted and self.db.profile.goalcompletionflash and self.frameNeedsResizing==0 then
+							elseif status=="complete" and needsAnimating and self.db.profile.goalcompletionflash and self.frameNeedsResizing==0 then
 
 								anim_w2g:Play()
 								self:Debug("Animating completion.")
@@ -2894,20 +2939,6 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 						else
 							back:Hide()
-						end
-
-						if goal then
-							if self.recentGoalProgress[goal]~=progress then
-								goal.dirtytext=true
-							end
-
-							self.recentGoalProgress[goal] = progress
-
-							-- unpause when completing a goal
-							if justCompleted and goal.parentStep==self.CurrentStep then
-								--self.pause=nil
-							end
-							-- no. Stopping on green means stopping on green. If you want to proceed, rightclick the step arrow, or uncomplete the step.
 						end
 
 						if status=="impossible" then
@@ -3006,7 +3037,7 @@ function ZGV:DoUpdateFrame(full,onupdate)
 			-- TODO this is really dirty
 			self.db.profile.stepbackalpha=1.0 * ZGV.db.profile.opacitymain * ZGV.db.profile.opacitymain  -- twice, to make it more transparent, as it's overlaid on normal window background anyway.
 			if stepdata:AreRequirementsMet() then
-				if stepdata:IsComplete() then
+				if stepdata:IsComplete() and self.Sync and self.Sync:IsClearToProceed() then
 					frame:SetBackdropColor(fromRGBmul_a(self.db.profile.goalbackcomplete,0.5,self.db.profile.stepbackalpha))
 					if (not SkinData("StepBackdropPersistentBorder")) then
 						frame:SetBackdropBorderColor(fromRGBmul_a(self.db.profile.goalbackcomplete,0.5,self.db.profile.stepbackalpha))
@@ -3082,6 +3113,9 @@ function ZGV:DoUpdateFrame(full,onupdate)
 		else
 			ZygorGuidesViewerFrame_Border_Guides_GuideBack_SectionTitle:SetText(L["guide_notloaded"])
 		end
+		for i,stepframe in ipairs(self.stepframes) do stepframe:Hide() end
+		self.Frame.Border.ProgressBar:Hide()
+		minh=0
 	end
 
 	if minh<MIN_HEIGHT+tabh then minh=MIN_HEIGHT+tabh end
@@ -4411,6 +4445,21 @@ function ZGV:OpenMapToQuest(questid)
 	end
 end
 
+function ZGV:FindNextActiveQuest()
+	if not self.CurrentGuide then return end
+	for stepnum=self.CurrentStep.num+1,#self.CurrentGuide.steps do
+		local step=self.CurrentGuide.steps[stepnum]
+		if not step then break end
+		for gi,goal in ipairs(step.goals) do
+			if goal.questid and PlayerIsOnQuest(goal.questid) then
+				self:FocusStep(stepnum)
+				return
+			end
+		end
+	end
+	self:Print("No steps found that match quests in your log.")
+end
+
 local lastquestid,lastquesttitle
 local showqiretries=0
 --[[
@@ -4620,7 +4669,7 @@ function ZGV:OpenQuickStepMenu(stepframe,goalframe)
 					tooltipTitle = L['qmenu_quest_openlog'],
 					tooltipText = L['qmenu_quest_openlog_desc'],
 					tooltipOnButton = true,
-					func = function()  ShowUIPanel(QuestLogFrame)  QuestLog_SetSelection(ind) QuestLog_Update() end,
+					func = function() QuestMapFrame_OpenToQuestDetails(goal.quest.id) end,
 				})
 				tinsert(menu,{
 					text = L['qmenu_quest_watched'],
@@ -4641,13 +4690,14 @@ function ZGV:OpenQuickStepMenu(stepframe,goalframe)
 					end,
 					isNotRadio=true,
 				})
-				if GetQuestWorldMapAreaID(goal.quest.id)>0 then
+				local quest_map = GetQuestUiMapID(goal.quest.id)
+				if quest_map>0 then
 					tinsert(menu,{
 						text = L['qmenu_quest_openmap'],
 						tooltipTitle = L['qmenu_quest_openmap'],
 						tooltipText = L['qmenu_quest_openmap_desc'],
 						tooltipOnButton = true,
-						func = function()  WorldMap_OpenToQuest(goal.quest.id,nil)  ZGV:PointToQuest(goal.quest.id)  end,
+						func = function()  OpenWorldMap(quest_map)  ZGV:PointToQuest(quest_map,goal.quest.id)  end,
 					})
 				end
 			end
@@ -4903,10 +4953,10 @@ function ZGV:GetShortGuideTitle(longtitle)
 	return sane:match("([^\\]*)$") or longtitle
 end
 
-function ZGV:RegisterGuide(title,data,extra)
+function ZGV:RegisterGuide(title,header,data)
 	title = self:SanitizeGuideTitle(title)
 
-	local guide = ZGV.GuideProto:New(title,data,extra)
+	local guide = ZGV.GuideProto:New(title,header,data)
 
 	if ZGV.BETAguides and guide then guide.beta=true end
 
@@ -5643,6 +5693,12 @@ end
 
 function ZGV:UnloadUnusedGuides()
 	self:Debug("Unimplemented: unloading unused guides.")
+end
+
+function ZGV:ClearCurrentGuide()
+	self.CurrentGuide=nil
+	self.db.profile.guidename=nil
+	self:UpdateFrame()
 end
 
 -- WARNING Heuristic in this thread. We assume that this is called only after all the guides are registered

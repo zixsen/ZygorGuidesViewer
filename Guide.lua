@@ -18,7 +18,10 @@ local GuideProto_mt = { __index=Guide }
 
 function Guide:New(title,header,data)
 	local path,tit = title:match("^(.*)\\+(.-)$")
+	if not path then path=title end
 	local guidetype = path:match("^(.-)\\") or path
+
+	if not data then header,data={},header end
 
 	local guide = {
 		title=title,
@@ -32,7 +35,7 @@ function Guide:New(title,header,data)
 		subtype=ZGV.GuideMenuTier
 	}
 
-	if ZGV:NeedsAnimatedPopup(guide) then
+	if not path:find("SHARED") and ZGV:NeedsAnimatedPopup(guide) then
 		ZGV.AnimatePopup = true
 		return nil
 	end
@@ -375,7 +378,7 @@ function Guide:Parse(fully)
 				self.fully_parsed = true
 
 				-- cap it with a finisher step
-				if (self.steps[#self.steps].condition_valid or self.steps[#self.steps].requirement) then
+				if not self.headerdata.singlestep and (self.steps[#self.steps].condition_valid or self.steps[#self.steps].requirement) then
 					local completion_step = ZGV.StepProto:New {
 						num=#self.steps+1,
 						parentGuide=self,

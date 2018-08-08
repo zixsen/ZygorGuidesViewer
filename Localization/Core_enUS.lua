@@ -777,6 +777,8 @@ If you're new to the guides, or have only started using them on this character, 
 
 	-- Gold Guide V2!
 
+
+
 	-- Renamed to Inventory Management
 	['opt_group_gold'] = "Gold and Auctions",							['opt_group_gold_desc'] = "",
 		['opt_goldimport'] = "Import",				['opt_goldimport_desc'] = "Import desc",
@@ -847,6 +849,17 @@ If you're new to the guides, or have only started using them on this character, 
 	['opt_gold_profitlevel_medium'] = "Balanced",
 	['opt_gold_profitlevel_slow'] = "High (but slow)",
 	['opt_gold_profitlevel_slowest'] = "Highest (but slowest)",
+
+	['opt_group_share'] = "Party Share",
+		['opt_share_enabled'] = "Enable guide sharing",
+		['opt_share_enabled_desc'] = "Synchronize progress between your party members using Zygor Guides",
+		['opt_share_showparty'] = "Show party members' progress",
+		['opt_share_showparty_desc'] = "Display who in your party has completed the current step, or which step they're on.",
+		['opt_share_masterslave'] = "Share guide step with Zygor Basic users",
+		['opt_share_masterslave_desc'] = "Sends your entire current step to friends who are using the basic version of Zygor Guides and don't have the full guide you're on.\n\nThe \"Master\" player shares their step with \"Slave\" players.\n\"Slave\" players rely on the \"Master\" and can not navigate to other steps in the guide.",
+		['opt_share_masterslave_none'] = "Disabled",
+		['opt_share_masterslave_master'] = "Master (shares)",
+		['opt_share_masterslave_slave'] = "Slave (receives)",
 
 	['opt_group_gear'] = "Gear Advisor",
 	['opt_group_gear_desc'] = "Configure the system used for suggesting new armor and weapons, scoring them according to your spec.\nNote: Gear is optimized for PvE stats.",
@@ -2103,6 +2116,8 @@ If you're new to the guides, or have only started using them on this character, 
 	loot_autobuyframetext = "Would you like to buy\n%sfor\n|cffffdd00%s|r",
 
 	goalshare_brand = "Zygor's Dungeon and Raid Tips:",
+
+	share_invite_received = "|cffffff88%s|r would like to share the following guide with you:|n|n|cffffff88%s|r|n|nBy accepting, a new tab will open in which steps from this guide will be shared with you.",
 	
 	bugreport_header = "Uh oh....did something go wrong?",
 	bugreport_bugtype = "Select Bug Type",

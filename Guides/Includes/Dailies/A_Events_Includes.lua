@@ -978,10 +978,6 @@ ZygorGuidesViewer:RegisterInclude("Darkmoon_Faire_Quests",[[
 		only if skill("Inscription")>74
 	step
 		talk Chronos##14833
-		accept Putting the Carnies Back Together Again##29512 |goto Darkmoon Island/0 55.0,70.8
-		only if skill("First Aid")>74
-	step
-		talk Chronos##14833
 		accept Tan My Hide##29519 |goto Darkmoon Island/0 55.0,70.8
 		only if skill("Skinning")>74
 	step
@@ -1009,10 +1005,6 @@ ZygorGuidesViewer:RegisterInclude("Darkmoon_Faire_Quests",[[
 		Use your Fishing ability to catch _Sea Herrings_ |cast Fishing##7620
 		Catch #5# Great Sea Herring |q 29513/1 |goto Darkmoon Island/0 51.7,91.6
 		only if skill("Fishing")>74
-	step
-		use Darkmoon Bandage##71978
-		Heal #4# Injured Carnies |q 29512/1 |goto Darkmoon Island/0 47.9,74.5
-		only if skill("First Aid")>74
 	step
 		All around the Island
 		click Discarded Weapon##209283
@@ -1118,10 +1110,6 @@ ZygorGuidesViewer:RegisterInclude("Darkmoon_Faire_Quests",[[
 		talk Sayge##14822
 		turnin Writing the Future##29515 |goto Darkmoon Island/0 53.2,75.8
 		only if skill("Inscription")>74
-	step
-		talk Chronos##14833
-		turnin Putting the Carnies Back Together Again##29512 |goto Darkmoon Island/0 55.0,70.8
-		only if skill("First Aid")>74
 	step
 		talk Chronos##14833
 		turnin Tan My Hide##29519 |goto Darkmoon Island/0 55.0,70.8

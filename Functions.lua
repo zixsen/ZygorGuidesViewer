@@ -263,11 +263,12 @@ end
 -- HAR HAR we can into hexaccurate colors não
 -- at least we're as precise as WoW lua allows us to
 function ZGV.F.HTMLColor(code)
-	assert(code:match("#[0-9A-Fa-f]+$") and (#code==7 or #code==9),"Bogus code given: \""..code.."\")")
-	local r,g,b,a=tonumber("0x"..code:sub(2,3))/0xff,
-				  tonumber("0x"..code:sub(4,5))/0xff,
-				  tonumber("0x"..code:sub(6,7))/0xff,
-				  #code==9 and tonumber("0x"..code:sub(8,9))/0xff
+	if code:sub(1,1)=="#" then code=code:sub(2,9) end
+	--assert(code:match("^[0-9A-Fa-f]+$") and (#code==7 or #code==9),"Bogus code given: \""..code.."\")")
+	local r,g,b,a=tonumber("0x"..code:sub(1,2))/0xff,
+				  tonumber("0x"..code:sub(3,4))/0xff,
+				  tonumber("0x"..code:sub(5,6))/0xff,
+				  #code==8 and tonumber("0x"..code:sub(7,8))/0xff
 	return r,g,b,a
 end
 

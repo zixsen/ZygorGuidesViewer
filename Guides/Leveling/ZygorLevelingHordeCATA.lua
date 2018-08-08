@@ -17134,7 +17134,7 @@ fpath Krom'gar Fortress |goto 66.5,62.7
 step
 talk Overlord Krom'gar##41023
 turnin Krom'gar Fortress##26004 |goto Stonetalon Mountains 66.3,63.6
-accept Seek and Destroy##26009 |goto Stonetalon Mountains 66.3,63.6
+accept Seek and Destroy##26009 |goto Stonetalon Mountains 66.3,63.6 |only if rep("Orgrimmar") < Revered
 accept Ashes to Ashes##26010 |goto Stonetalon Mountains 66.3,63.6
 step
 talk Clarissa##40907
@@ -17184,13 +17184,13 @@ step
 Use the abilities on your hotbar to fight Gnomebot Pounders and Gnome Engineers around this area
 kill 5 Gnomebot Pounder##35203 |q 26028/1 |goto Stonetalon Mountains 65.8,60.1
 kill 20 Gnome Engineer##35334 |q 26028/2 |goto Stonetalon Mountains 65.8,60.1
-Kill #20# Alliance Soldiers |q 26009/1 |goto Stonetalon Mountains 65.8,60.1
+Kill #20# Alliance Soldiers |q 26009/1 |goto Stonetalon Mountains 65.8,60.1 |only if rep("Orgrimmar") < Revered
 step
 _Follow_ the path up |goto 68.1,60.3 < 10 |only if walking
 Click the red arrow to stop controlling the Large Daddy |outvehicle |c |goto Stonetalon Mountains 66.3,63.6 |q 26028
 step
 talk Overlord Krom'gar##41023
-turnin Seek and Destroy##26009 |goto Stonetalon Mountains 66.3,63.6
+turnin Seek and Destroy##26009 |goto Stonetalon Mountains 66.3,63.6 |only if rep("Orgrimmar") < Revered
 turnin Mr. D's Wild Ride##26028 |goto Stonetalon Mountains 66.3,63.6
 step
 talk Chief Blastgineer Bombgutz##40902

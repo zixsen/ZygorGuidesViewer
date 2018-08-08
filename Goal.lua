@@ -76,6 +76,18 @@ local function dots(num) return dots_table[(num or 0)%8+1] end
 local function Lretrydots(goal) return dots(goal.Lretries)..(ZGV.db.profile.debug and goal.Lreasons or "") end
 
 
+local min,max=min,max
+local function norm_nums(numdone,numneeded)  -- normalize "x of y" to >=0,>=1
+	if numdone==true then numdone=1 end
+	numdone=max(0,numdone or 0)
+	numneeded=max(1,numneeded or 1)
+	return numdone,numneeded
+end
+local function norm_progress(numdone,numneeded)  -- normalize progress to 0..1 having normalized input pair
+	numdone,numneeded=norm_nums(numdone,numneeded)
+	return max(0,min(1,numdone/numneeded))
+end
+
 
 -- returns: current, needed, remaining
 local function GetQuestGoalData(questid,objnum,count)
@@ -197,264 +209,6 @@ Goal.GetAchievementGoalData = GetAchievementGoalData
 
 
 
-function Goal:GetStatus()
-	if self.fakestatus then return self.fakestatus end
-
-	if not self.prepared then self:Prepare() end
-
-	if not self:IsVisible() then return "hidden" end
-	if not self:IsCompleteable() then return "passive" end
-	local complete,possible,progress,warn,isbad = self:IsComplete()
-	if complete then return "complete" end
-	-- FIRST impossible (gray), THEN obsolete (blue).
-	if isbad then return "warning" end
-	if not possible then return "impossible" end
-	if ZGV.db.profile.skipobsolete and not self.parentStep.parentGuide.noobsolete and self:IsObsolete() then return "obsolete" end
-	-- only possible and progressing is left.
-	return "incomplete",progress
-end
-
-function Goal:UpdateStatus()
-	self.status = self:GetStatus()
-	return self.status
-end
-
-function Goal:IsVisible()
-	--if ZGV.db.profile.showwrongsteps then return true end
-	if not self:IsFitting() then return false end
-	if self.hidden then return false end
-	if self.grouprole and self.grouprole~="EVERYONE" and not ZGV.db.profile.showallroles and UnitGroupRolesAssigned("Player")~="NONE" then
-		local role,role2 = self.grouprole,self.grouprole2
-		if role=="DPS" or role=="DAMAGE" then role="DAMAGER" end
-		if role2=="DPS" or role2=="DAMAGE" then role2="DAMAGER" end
-		if UnitGroupRolesAssigned("Player")~=role and UnitGroupRolesAssigned("Player")~=role2 then return false end
-	end
-	if self.condition_visible then
-		if self.condition_visible_raw=="default" then
-			-- oo, special case: show this only if no others are visible!
-			for i,goal in ipairs(self.parentStep.goals) do
-				if goal~=self and goal.condition_visible and goal.condition_visible_raw~="default" and goal.condition_visible_raw~="ditto" and goal:IsVisible() then return false end
-			end
-			return true
-		elseif self.condition_visible_raw=="ditto" then
-			-- another special case: show this only if the one above was visible!
-			local prevgoal = self.parentStep.goals[self.num-1] 
-			return prevgoal:IsVisible()
-		else
-			ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
-			return self.condition_visible()
-		end
-	end
-	return true
-end
-
-
-local _c = { "goal","get","accept","turnin","collect","buy","fpath","home","level","havebuff","nobuff","invehicle","outvehicle","equipped","rep","condition","achieve","create","skill","skillmax","learn","learnspell","learnpet","learnmount","confirm","earn","fly","complete" }
-local completable = {}
-for i=1,#_c do completable[_c[i]]=true end
-
-function Goal:IsCompleteable()
-	--if type(goal)=="number" then goal=self.CurrentStep.goals[goal] end
-	if self.force_nocomplete then return false end
-
-	if self.questid --[[and self.objnum--]] then return true end
-	if self.scenario_criteriaid then return true end  --scenario
-	if self.achieveid then return true end
-	if self.condition_complete then return true end
-
-	if self.action=="from"
-	or self.action==""
-	--or (self.action=="goldcollect" and not self.demand)
-	then return false end
-
-	local GOALTYPE=GOALTYPES[self.action]
-	if GOALTYPE and GOALTYPE.iscompletable then return GOALTYPE.iscompletable(self) end
-
-	if (GOALTYPE and GOALTYPE.iscomplete and not GOALTYPE.default_not_completable) or completable[self.action] then return true end
-
-	if self.action=="goto" then
-		-- Make the last goto of a gotos-only step completable.
-		local all_gotos=true
-		local lastgoto
-		for i,goal in ipairs(self.parentStep.goals) do
-			if goal.action=="goto" and not goal.force_complete and not goal.force_nocomplete then  -- a goto with no extra flavours
-				lastgoto=goal
-			else
-				all_gotos=false
-				break
-			end
-		end
-		return (self.force_complete or (all_gotos and lastgoto==self))
-	end
-	return false
-end
-
-local goalstring_slain=QUEST_MONSTERS_KILLED:gsub(": .*","")
-
--- returns: true = complete, false = incomplete
--- second return: true = completable, false = incompletable
-function Goal:IsComplete()
-	if ZGV.CurrentGuide and (ZGV.db.char.guideTurnInsOnly == ZGV.CurrentGuide.title) then
-		if self.action~="turnin" then
-			return false,false 
-		end
-	end
-	
-	if (self.force_sticky and ZGV.recentlyCompletedGoals[self])
-		or ZGV.recentlyStickiedGoals[self]
-		or self:WasSavedStickyComplete()
-		or self.fake_complete then
-		return true,true,true
-	end
-
-	if self.countexprfun then
-		ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
-		local res,err = pcall(self.countexprfun)
-		if res then self.count=err else error("Error in step ".. self.parentStep.num .. " goal " .. self.num .. " count expression: "..err) end
-	end
-	
-	if self.force_nocomplete then return false,false, nil,"forced not completable" end ------------------------------- 
-
-	if self.updatescriptfun then
-		ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
-		local res,err = pcall(self.updatescriptfun)
-		if res then self.count=err else error("Error in step ".. self.parentStep.num .. " goal " .. self.num .. " updatescript: "..err) end
-	end
-
-	local completion_by_condition
-	if self.condition_complete then
-		ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
-		local res,err = pcall(self.condition_complete)
-		if res then completion_by_condition=err  else  error("Error in step ".. self.parentStep.num .. " goal " .. self.num .. " condition: "..err) end
-		-- condition overrides.
-		if completion_by_condition==true or completion_by_condition=="complete" then return true,true
-		elseif completion_by_condition=="incomplete" then return false,true
-		elseif completion_by_condition=="impossible" then return false,false
-		end
-	end
-
-
-	-- Handle accepts and turnins first.
-
-	if self.action=="accept" or self.action=="turnin" then return GOALTYPES[self.action].iscomplete(self) end ------------------
-
-
-
-	-- Fallthrough logic:
-    -- - if the goal is complete through a quest or achievement or scenario objective or something else "tagged on", it goes green and that's it.
-    -- - if it's not, then let's remember if the quest/achi/scen.obj considered it even possible at all, and try to let it complete on its own.
-    -- - if it completed, then report that; if it didn't, then stick with what the quest/achi/scen.obj said.
-
-	local fallthrough_ispossible,fallthrough_progress
-
-
-	-- Achievement-related?
-	
-	if self.achieveid then
-		local iscomplete,ispossible,progress,comment,isbad = GOALTYPES['achieve'].iscomplete(self)
-		if iscomplete then
-			return iscomplete,ispossible,progress,comment,isbad
-		else
-			fallthrough_ispossible,fallthrough_progress = ispossible,progress
-		end
-	end
-
-
-	-- Quest-related? Handle appropriately.
-
-	if self.questid then
-		local iscomplete,ispossible,progress,comment,isbad = GOALTYPES['q'].iscomplete(self)
-		if iscomplete or (not ispossible and not self.future) then
-			return iscomplete,ispossible,progress,comment,isbad
-		else
-			fallthrough_ispossible,fallthrough_progress = ispossible,progress
-		end
-	end
-
-
-	if self.scenario_criteriaid then -- handle scenarios
-		local iscomplete,ispossible,progress,comment,isbad = GOALTYPES['scenariogoal'].iscomplete(self)
-		if iscomplete then
-			return iscomplete,ispossible,progress,comment,isbad
-		else
-			fallthrough_ispossible,fallthrough_progress = ispossible,progress
-		end
-	end
-
-	if self.scenario_stagenum then -- handle scenarios
-		local iscomplete,ispossible,progress,comment,isbad = GOALTYPES['scenariostage'].iscomplete(self)
-		if iscomplete then
-			return iscomplete,ispossible,progress,comment,isbad
-		else
-			fallthrough_ispossible,fallthrough_progress = ispossible,progress
-		end
-	end
-	
-	-- Use the individual goal completion routine
-	local GOAL = GOALTYPES[self.action]
-	if GOAL and GOAL.iscomplete then
-		local iscomplete,ispossible,progress,comment,isbad = GOAL.iscomplete(self)
-		return iscomplete,ispossible or self.future or fallthrough_ispossible, progress or fallthrough_progress,"fallback '".. self.action .. "'" .. (comment and ": ".. comment  or  ""),isbad
-	end
-
-	return false,false or self.future or fallthrough_ispossible, fallthrough_progress , "complete check thru"
-end
-
-function Goal:CheckVisited()
-	if not self.map then return end
-
-	local isvisited = GOALTYPES['goto'].iscomplete(self)  -- complete me like one of your French gotos, Jack
-	if isvisited and not self.was_visited then
-		if self.status=="incomplete" then return end -- abort if it's a red incomplete line. These get really "visited" when they're complete.
-		self:OnVisited()
-	elseif not isvisited and self.was_visited then
-		self:OnDevisited()
-	end
-	self.was_visited=isvisited
-end
-
-function Goal:OnVisited()
-	self.parentStep.current_waypoint_goal_num = self.num
-	ZGV:Debug("Goal OnVisited! %d, cycling.",self.num)
-	ZGV.Pointer:CycleWaypoint(1,"no cycle")
-end
-
-function Goal:OnDevisited()
-	--print(CS.current_waypoint_goal_num)
-	--ZGV.Pointer:RemoveWaypoint(self.waypoint) ZGV:ShowWaypoints()  -- that's bullshit...
-end
-
-function Goal:GetWaypoint()
-	if not self.waypoint then return end
-	for k,v in ipairs(ZGV.Pointer.waypoints) do
-		if v==self.waypoint then return v end
-	end
-end
-
-function Goal:OnCompleted()
-	if self.oncompletefun then self.oncompletefun() end
-	if ZGV.Pointer.DestinationWaypoint and ZGV.Pointer.DestinationWaypoint.goal == self then  -- this waypoint is "complete", in whatever manner
-		ZGV:Debug("Goal: cycling waypoint from completed goal ".. self.num)
-		ZGV.Pointer:CycleWaypointFrom(self.num,self.parentStep)
-	end
-end
-
-function Goal:OnUncompleted()
-	-- formality. May be important at some point.
-end
-
-function Goal:GetTooltip()
-	local gettooltip = GOALTYPES[self.action].gettooltip
-	if gettooltip then return gettooltip(self) end
-	if self.grouprole then return "|cff00ff00Shift-click|r to share this tip to fellow players." end
-end
-
-
--- Sorta kinda similar to Utils.IsPOIComplete() in ESO, but not really . . .
-function Goal:IsPOIComplete(args)
-	return true
-end
-
 local function COLOR_LOC(s) return "|cffffee77"..tostring(s).."|r" end
 local function COLOR_COUNT(s) return "|cffffffcc"..tostring(s).."|r" end
 local function COLOR_ITEM(s) return "|cffaaeeff"..tostring(s).."|r" end
@@ -482,6 +236,36 @@ end
 
 local ParseID = ZGV.Parser.ParseID
 local ParseMapXYDist = ZGV.Parser.ParseMapXYDist
+
+
+
+
+
+
+--[[
+█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
+						 ██████╗  ██████╗  █████╗ ██╗  ████████╗██╗   ██╗██████╗ ███████╗███████╗
+						██╔════╝ ██╔═══██╗██╔══██╗██║  ╚══██╔══╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔════╝
+						██║  ███╗██║   ██║███████║██║     ██║    ╚████╔╝ ██████╔╝█████╗  ███████╗
+						██║   ██║██║   ██║██╔══██║██║     ██║     ╚██╔╝  ██╔═══╝ ██╔══╝  ╚════██║
+						╚██████╔╝╚██████╔╝██║  ██║███████╗██║      ██║   ██║     ███████╗███████║
+						 ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝      ╚═╝   ╚═╝     ╚══════╝╚══════╝
+
+█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
+]]
+
+--[[
+:parse(params)
+	Populate a goal type by parsing of text parameters, with the key word already cut off.
+	Returns: nothing.
+:iscomplete()
+	Check completion of goal.
+	Returns: iscomplete,ispossible,numdone,numneeded,comment,error
+	May not return numdone and numneeded. Assume 0/1 or 1/1, based on iscomplete.
+	Only to be called from :GetStatus().
+]]
 
 GOALTYPES['talknpcs'] = {
 	parse = function(self,params)
@@ -654,11 +438,10 @@ GOALTYPES['get'] = { -- combining old 'get' and 'collect' now.
 		if not self.count or self.count==0 then self.count=1 end  -- completable? has to have a count.
 		local got = GetItemCount(self.targetid)
 		if self.more then got=max(0,got-self.more_base) end
-		local progress = got/self.count
 		if self.exact then
-			return got==self.count, true, got<=self.count and progress or 0
+			return got==self.count, true, norm_nums(got,self.count)
 		else
-			return got>=self.count, true, progress>1 and 1 or progress
+			return got>=self.count, true, norm_nums(got,self.count)
 		end
 	end,
 	-- gettext complex; still in Goal:GetText()
@@ -671,7 +454,7 @@ GOALTYPES['toy'] = {
 	parse = GOALTYPES['_item'].parse,
 	iscomplete = function(self)
 		if not self.targetid then return false,true,0 end -- no known item... what the...
-		return PlayerHasToy(self.targetid),true,0
+		return PlayerHasToy(self.targetid),true
 	end,
 	gettext = function(self)
 		if not PlayerHasToy(self.targetid) then
@@ -689,27 +472,28 @@ GOALTYPES['goldcollect'] = {
 		local itemdata = ZGV.Gold.servertrends and ZGV.Gold.servertrends.items[self.targetid]
 		local demand = (itemdata and itemdata.sold) or (itemdata and itemdata.q_md) or 1
 		local got = GetItemCount(self.targetid)
-		local progress = (demand>0 and min(got/demand,1)) or 0
 		if self.exact then
-			return got==demand, true, got<=demand and progress or 0
+			return got==demand, true, norm_nums(got,demand)
 		else
-			return got>=demand, true, progress
+			return got>=demand, true, norm_nums(got,demand)
 		end
 	end,
 	-- gettext complex; still in Goal:GetText()! What is this doing here!?
 	NOgettext = function(self)
-		local iscomplete,ispossible,progress = self:IsComplete()
+		local iscomplete,ispossible,numdone,numneeded = self:IsComplete()
+		local progress = norm_progress(numdone,numneeded)
 		local got = GetItemCount(self.targetid)
 		if got==0 then
 			return (L["stepgoal_goldcollect"]):format(COLOR_ITEM(ZGV:GetItemInfo(self.targetid)))
 		else
-			return (L["stepgoal_goldcollect #_done"]):format(COLOR_COUNT(got),COLOR_ITEM(ZGV:GetItemInfo(self.targetid))), nil, ("(%d%%)"):format((progress or 0)*100)
+			return (L["stepgoal_goldcollect #_done"]):format(COLOR_COUNT(got),COLOR_ITEM(ZGV:GetItemInfo(self.targetid))), nil, ("(%d%%)"):format(progress*100)
 		end
 	end,
 	gettooltip = function(self)
-		local iscomplete,ispossible,progress = self:IsComplete()
+		local iscomplete,ispossible,numdone,numneeded = self:IsComplete()
+		local progress = norm_progress(numdone,numneeded)
 		local got = GetItemCount(self.targetid)
-		return (L["stepgoal_goldcollect #_done"]):format(COLOR_COUNT(got),COLOR_ITEM(ZGV:GetItemInfo(self.targetid))) .. ("\n|cffffbbbb(%d%% of demand)"):format((progress or 0)*100)
+		return (L["stepgoal_goldcollect #_done"]):format(COLOR_COUNT(got),COLOR_ITEM(ZGV:GetItemInfo(self.targetid))) .. ("\n|cffffbbbb(%d%% of demand)"):format(progress*100)
 	end
 }
 
@@ -764,8 +548,8 @@ GOALTYPES['kill'] = {
 	iscomplete = function(self)
 		-- could get completed earlier as a quest objective.
 		if self.usekillcount then --killcount version
-			local count = ZGV.recentKills[self.target]
-			return count and count>=self.count, true, min(count/(self.count or 1),1)
+			local count = ZGV.recentKills[self.target] or 0
+			return count>=self.count, true, norm_nums(count,self.count)
 		end
 	end,
 	-- gettext complex; still in Goal:GetText()
@@ -812,7 +596,7 @@ GOALTYPES['learn'] = {
 		if not self.recipeid then return "'learn': no recipe found" end
 	end,
 	iscomplete = function(self)
-		return ZGV.Professions:KnowsRecipe(self.recipeid)
+		return ZGV.Professions:KnowsRecipe(self.recipeid),true
 	end,
 	gettext = function(self) return L["stepgoal_learn"]:format(COLOR_ITEM(self.recipe)) end,
 }
@@ -941,7 +725,7 @@ GOALTYPES['q'] = {
 		--if ZGV.instantQuests[self.questid] and ZGV.dailyQuests[self.questid] then ZGV:QuestTracking_ResetDailyByTitle(self.quest) end
 
 		-- if the quest was done, the goal is done and over with. Bye.
-		if ZGV.completedQuests[self.questid] then return true,true,nil,"quest complete" end
+		if ZGV.completedQuests[self.questid] then return true,true,nil,nil,"quest complete" end
 
 		-- if the quest cannot be completed, and we're not a futureproof goal, bail.
 		--if not ZGV:IsQuestPossible(self.questid) and not self.future then return false,false end
@@ -956,31 +740,29 @@ GOALTYPES['q'] = {
 
 				if questGoalData then
 					if questGoalData.complete then
-						return true, true, nil,  "quest goal complete"
+						return true, true, nil,nil,  "quest goal complete"
 					else
-						local count = self.count or questGoalData.needed or 1
-						if count==0 then count=1 end
+						local num,count = norm_nums(questGoalData.num,self.count or questGoalData.needed)
 						if not self.count and count then self.count=count end  -- supply a count for countless lines.
 						if questGoalData.num>=count then
-							return true, true, nil,  "quest goal num over count"
+							return true, true, num,count,  "quest goal num at or over count"
 						else
 							--ZGV:Debug("Not yet completed: "..questself.num.."/"..questgoal.needed)
-							return false, true, questGoalData.num/count, "quest goal num below count"
+							return false,true, num,count, "quest goal num below count"
 						end
 					end
 				else
 					-- As of 6.0.2, this can happen normally on multi-goal quests. Future goals will NOT be accessible.
 					--ZGV:Print("WARNING: quest has no such goal! Step "..self.parentStep.num..", line "..(self.num)..", quest "..(self.questid or (self.quest and self.quest.title))..", goal "..(self.objnum or -1))
-					return false, false, nil, "no such goal", "bad"
+					return false, false, nil,nil, "no such goal", "bad"
 				end
-				assert(false,"WTF, not supposed to reach this!")
 			else
 				-- bound to quest, not to quest objective?
 				if not self.action or self.action=="" or self.action=="complete" then
 					-- okay, this is a simple "complete the quest" check
-					return quest.complete, true, nil,"quest completion"
+					return quest.complete, true, nil,nil, "quest completion"
 				else
-					return false,true,nil,"FALLTHROUGH"  -- code word is no longer obeyed
+					return false,true,nil,nil,"FALLTHROUGH"  -- code word is no longer obeyed
 				end
 				-- otherwise... just drop from here.
 
@@ -996,9 +778,9 @@ GOALTYPES['q'] = {
 			-- if quest is not in log, then it usually means screw its links as well.
 			-- Unless we're a future-proof goal, which drops through.
 			if not self.future then
-				return false,false , nil, "quest not in log"
+				return false,false, nil,nil, "quest not in log"
 			else
-				return false,true,nil,"FALLTHROUGH"  -- code word is no longer obeyed
+				return false,true,nil,nil, "FALLTHROUGH"  -- code word is no longer obeyed
 			end
 		end
 	end
@@ -1067,7 +849,7 @@ GOALTYPES['scenariostart'] = {
 		if self.scenario_name then
 			return name==self.scenario_name, true
 		else
-			return name, true
+			return name~=nil, true
 		end
 	end,
 	gettext = function(self) return self.scenario_name and L['stepgoal_scenariostart']:format(COLOR_BOLD(self.scenario_name)) or L['stepgoal_scenariostart_unknown'] end,
@@ -1087,10 +869,10 @@ GOALTYPES['scenariostage'] = {
 		--self.scenario_stagenum = tonumber(params)
 	end,
 	iscomplete = function(self)
-		if not C_Scenario.IsInScenario() then return false,false, nil, nil, "bad" end
+		if not C_Scenario.IsInScenario() then return false,false, nil, nil, "not in scenario","bad" end
 
 		local name, currentStage, numStages,_,_,_,completed = C_Scenario.GetInfo();
-		return completed or (currentStage>self.scenario_stagenum), currentStage>0, nil, nil, (not completed and currentStage==0) and "bad"
+		return completed or (currentStage>self.scenario_stagenum), currentStage>0, nil,nil, "n/c", (not completed and currentStage==0) and "bad"
 	end,
 	gettext = function(self	)
 		local name, currentStage, numStages = C_Scenario.GetInfo()
@@ -1116,12 +898,13 @@ GOALTYPES['scenariogoal'] = {
 	iscomplete = function(self)
 		if self.scenario_stagenum then
 			local iscomplete,ispossible = GOALTYPES['scenariostage'].iscomplete(self)
-			if iscomplete then return true,true,0, "complete by stage" end
+			if iscomplete then return true,true, nil,nil, "complete by stage" end
 		end
 		local current, needed, remaining, text, errortext,isbad = GetScenarioGoalData(self.scenario_criteriaid,self.count,self.scenario_stagenum)
-		if errortext then return false,C_Scenario.IsInScenario(),nil,errortext,isbad end
+		if errortext then return false,C_Scenario.IsInScenario(), nil,nil, errortext,isbad end
 		if needed>0 and self.count and self.count>needed then self.count=needed end
-		return (needed>0 and remaining<=0) , needed>0 , current/max(1,needed) , "scenario goal OK",isbad
+		local cur,nee=norm_nums(current,needed)
+		return (needed>0 and remaining<=0) , needed>0 , cur,nee, "scenario goal OK",isbad
 	end,
 	gettext = function(self)
 		local stageName, stageDescription, numCriteria = C_Scenario.GetStepInfo()
@@ -1189,9 +972,10 @@ GOALTYPES['scenariobonus'] = {
 			if iscomplete then return true,true,0, "complete by stage" end
 		end
 		local current, needed, remaining, text, errortext,isbad = GetScenarioBonusData(self.scenario_criteriaid,self.count,self.scenario_stagenum)
-		if errortext then return false,C_Scenario.IsInScenario(),nil,errortext,isbad end
+		if errortext then return false,C_Scenario.IsInScenario(),nil,nil,errortext,isbad end
 		if needed>0 and self.count and self.count>needed then self.count=needed end
-		return (needed>0 and remaining<=0) , needed>0 , current/max(1,needed) , "scenario goal OK",isbad
+		local cur,nee=norm_nums(current,needed)
+		return (needed>0 and remaining<=0) , needed>0 , cur,nee, "scenario goal OK",isbad
 	end,
 	gettext = function(self)
 		local stageName, stageDescription, numCriteria = C_Scenario.GetStepInfo()
@@ -1310,11 +1094,9 @@ GOALTYPES['create'] = {
 	end,
 	iscomplete = function(self)
 		if self.count then return GOALTYPES['collect'].iscomplete(self) end
-		if not self.skill then return end
+		if not self.skill then return false,false end
 		local skill = ZGV.Professions:GetSkill(self.skill)
-		if not skill then
-			return false,false 
-		end
+		if not skill then return false,false end
 		if self.skilllevel then
 			return skill.level>=self.skilllevel,skill.max>=self.skilllevel
 		elseif self.count and self.recipedata then
@@ -1382,9 +1164,9 @@ GOALTYPES['rep'] = {
 	iscomplete = function(self)
 		local faction = ZGV:GetReputation(self.faction)
 		if faction then
-			return faction.standing>=self.rep, true, 1-(faction:CalcTo(self.rep)/(faction.max-faction.min)) or 0
+			return faction.standing>=self.rep, true, norm_nums(faction:CalcTo(self.rep),faction.max-faction.min)
 		else
-			return nil,nil,nil
+			return false,false
 		end
 	end,
 	gettext = function(self)
@@ -1651,8 +1433,7 @@ GOALTYPES['earn'] = {
 	iscomplete = function(self)
 		local name,got = GetCurrencyInfo(self.targetid)
 		if not name then return end
-		local progress = got/self.count
-		return got>=self.count, true, progress>1 and 1 or progress
+		return got>=self.count, true, norm_nums(got,self.count)
 	end,
 	-- gettext complex; still in Goal:GetText()
 }
@@ -1675,7 +1456,7 @@ GOALTYPES['achieve'] = {
 		if self.achievesub then
 			if GetAchievementNumCriteria(self.achieveid) < self.achievesub then -- Causes errors when blizzard changes crap.
 				ZGV:Print("Guide ".. self.parentStep.parentGuide.title .." step ".. self.parentStep.num .." can not load because achievement ".. self.achieveid .." - criteria ".. self.achievesub .." doesn't exist.")
-				return false,false,0
+				return false,false
 			end
 			-- partial achievement
 			local desc,ctype,completed,quantity,required = Zygor_GetAchievementCriteriaInfo(self.achieveid,self.achievesub)
@@ -1688,7 +1469,7 @@ GOALTYPES['achieve'] = {
 			self.achievedesc = desc
 			self.achieverequired = required
 			self.achievequantity = quantity
-			return not not completed, true, quantity/required
+			return not not completed, true, norm_nums(quantity,required)
 		else
 			-- full achievement
 			local _, _, _, completed = GetAchievementInfo(self.achieveid)
@@ -1706,10 +1487,11 @@ GOALTYPES['achieve'] = {
 				completenum = numcrit
 			end
 
-			-- cache for gettext
+			-- cache for gettext  -- TODO: shouldn't be needed after the "done,needed" rework of 2018-07-17
 			self.achievenumcrit = numcrit
 			self.achievecompletenum = completenum
-			return not not completed, true, numcrit>0 and completenum/numcrit or 0, completed and "achieved" or "FALLTHROUGH"  -- code word is no longer obeyed
+			local cur,nee=norm_nums(completenum,numcrit)
+			return not not completed, true, cur,nee, completed and "achieved" or "FALLTHROUGH"  -- code word is no longer obeyed
 		end
 	end,
 	gettext = function(self)
@@ -1758,9 +1540,13 @@ GOALTYPES['level'] = {
 	end,
 	iscomplete = function(self)
 		local level = ZGV:GetPlayerPreciseLevel()
-		local percent = (level<self.level-1) and 0 or (level>=self.level) and 1.0 or UnitXP("player")/UnitXPMax("player")
-
-		return level>=tonumber(self.level), level<tonumber(self.level), percent
+		if level<self.level-1 then
+			return false,false
+		elseif level>=self.level then
+			return true,true
+		else
+			return false,true, norm_nums(UnitXP("player"),UnitXPMax("player"))
+		end
 	end,
 	gettext = function(self,complete,complete_extra,goalcountnow,goalcountneeded,remaining,brief)
 		local text = (brief and L["stepgoal_level_brief"] or L["stepgoal_level"]):format(COLOR_NPC(self.level))
@@ -1841,9 +1627,9 @@ GOALTYPES['goto'] = {
 			gm,gf=ZGV.GetCurrentMapID(),ZGV.GetCurrentMapDungeonLevel()
 		elseif ZGV.CurrentMapID and not (ZGV.CurrentMapID==gm or ZGV.CurrentMapID==gm2 or ZGV.CurrentMapID==gm3) then
 			-- map/floor is DIFFERENT (make it work only with a negative distance, which would mean "leave the zone"
-			return self.dist and self.dist<0 , true, 1, "away map"
+			return self.dist and self.dist<0 , true, nil,nil, "away map"
 		end
-		if ZGV.recentlyVisitedCoords[self] then return true, true, 1, "recently visited" end
+		if ZGV.recentlyVisitedCoords[self] then return true, true, nil,nil, "recently visited" end
 
 		-- don't complete anything while we are flying, to avoid completing a point we flew over
 		if UnitOnTaxi("Player") and not self.goto_on_taxi then return false,true end
@@ -1864,13 +1650,11 @@ GOALTYPES['goto'] = {
 			else
 				local prog
 				if dist>0 then prog = 1-((realdist-dist)/500) else prog = realdist/(-dist+0.1) end
-				if prog<0 then prog=0 end
-				if prog>1 then prog=1 end
-				return false, true, prog
+				return false, true, norm_nums(prog,1)
 			end
 		else
 			-- map correct, apparently
-			return not self.dist or self.dist>0,true,0,"not x or dungeon"
+			return not self.dist or self.dist>0,true,nil,nil,"not x or dungeon"
 		end
 	end,
 	-- gettext complex; still in Goal:GetText()
@@ -2543,6 +2327,293 @@ GOALTYPES['debugvar'] = { -- use for debugging step/goal completion.
 }
 
 
+--[[
+
+		█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+		█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+		█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+		█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
+]]
+
+function Goal:GetStatus()
+	if self.fakestatus then return self.fakestatus end
+
+	if not self.prepared then self:Prepare() end
+
+	if not self:IsVisible() then return "hidden" end
+	if not self:IsCompleteable() then return "passive" end
+	local complete,possible,numdone,numneeded,warn,isbad = self:IsComplete()
+	if complete then return "complete",numdone,numneeded end
+	-- FIRST impossible (gray), THEN obsolete (blue).
+	if isbad then return "warning" end
+	if not possible then return "impossible" end
+	if ZGV.db.profile.skipobsolete and not self.parentStep.parentGuide.noobsolete and self:IsObsolete() then return "obsolete" end
+	-- only possible and progressing is left.
+	return "incomplete",numdone,numneeded
+end
+
+function Goal:UpdateStatus()
+	self.status = self:GetStatus()
+	return self.status
+end
+
+function Goal:IsVisible()
+	--if ZGV.db.profile.showwrongsteps then return true end
+	if not self:IsFitting() then return false end
+	if self.hidden then return false end
+	if self.grouprole and self.grouprole~="EVERYONE" and not ZGV.db.profile.showallroles and UnitGroupRolesAssigned("Player")~="NONE" then
+		local role,role2 = self.grouprole,self.grouprole2
+		if role=="DPS" or role=="DAMAGE" then role="DAMAGER" end
+		if role2=="DPS" or role2=="DAMAGE" then role2="DAMAGER" end
+		if UnitGroupRolesAssigned("Player")~=role and UnitGroupRolesAssigned("Player")~=role2 then return false end
+	end
+	if self.condition_visible then
+		if self.condition_visible_raw=="default" then
+			-- oo, special case: show this only if no others are visible!
+			for i,goal in ipairs(self.parentStep.goals) do
+				if goal~=self and goal.condition_visible and goal.condition_visible_raw~="default" and goal.condition_visible_raw~="ditto" and goal:IsVisible() then return false end
+			end
+			return true
+		elseif self.condition_visible_raw=="ditto" then
+			-- another special case: show this only if the one above was visible!
+			local prevgoal = self.parentStep.goals[self.num-1] 
+			return prevgoal:IsVisible()
+		else
+			ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
+			return self.condition_visible()
+		end
+	end
+	return true
+end
+
+
+local _c = { "goal","get","accept","turnin","collect","buy","fpath","home","level","havebuff","nobuff","invehicle","outvehicle","equipped","rep","condition","achieve","create","skill","skillmax","learn","learnspell","learnpet","learnmount","confirm","earn","fly","complete" }
+local completable = {}
+for i=1,#_c do completable[_c[i]]=true end
+
+function Goal:IsCompleteable()
+	--if type(goal)=="number" then goal=self.CurrentStep.goals[goal] end
+	if self.force_nocomplete then return false end
+
+	if self.questid --[[and self.objnum--]] then return true end
+	if self.scenario_criteriaid then return true end  --scenario
+	if self.achieveid then return true end
+	if self.condition_complete then return true end
+
+	if self.action=="from"
+	or self.action==""
+	--or (self.action=="goldcollect" and not self.demand)
+	then return false end
+
+	local GOALTYPE=GOALTYPES[self.action]
+	if GOALTYPE and GOALTYPE.iscompletable then return GOALTYPE.iscompletable(self) end
+
+	if (GOALTYPE and GOALTYPE.iscomplete and not GOALTYPE.default_not_completable) or completable[self.action] then return true end
+
+	if self.action=="goto" then
+		-- Make the last goto of a gotos-only step completable.
+		local all_gotos=true
+		local lastgoto
+		for i,goal in ipairs(self.parentStep.goals) do
+			if goal.action=="goto" and not goal.force_complete and not goal.force_nocomplete then  -- a goto with no extra flavours
+				lastgoto=goal
+			else
+				all_gotos=false
+				break
+			end
+		end
+		return (self.force_complete or (all_gotos and lastgoto==self))
+	end
+	return false
+end
+
+local goalstring_slain=QUEST_MONSTERS_KILLED:gsub(": .*","")
+
+-- returns: true = complete, false = incomplete
+-- second return: true = completable, false = incompletable
+-- third and fourth: numdone,numneeded
+function Goal:IsComplete()
+	if ZGV.CurrentGuide and (ZGV.db.char.guideTurnInsOnly == ZGV.CurrentGuide.title) then
+		if self.action~="turnin" then
+			return false,false,0,1
+		end
+	end
+	
+	if (self.force_sticky and ZGV.recentlyCompletedGoals[self])
+		or ZGV.recentlyStickiedGoals[self]
+		or self:WasSavedStickyComplete()
+		or self.fake_complete then
+		return true,true,1,1
+	end
+
+	if self.countexprfun then
+		ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
+		local res,err = pcall(self.countexprfun)
+		if res then self.count=err else error("Error in step ".. self.parentStep.num .. " goal " .. self.num .. " count expression: "..err) end
+	end
+	
+	if self.force_nocomplete then return false,false, 0,1, "forced not completable" end ------------------------------- 
+
+	if self.updatescriptfun then
+		ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
+		local res,err = pcall(self.updatescriptfun)
+		if res then self.count=err else error("Error in step ".. self.parentStep.num .. " goal " .. self.num .. " updatescript: "..err) end
+	end
+
+	local completion_by_condition
+	if self.condition_complete then
+		ZGV.Parser.ConditionEnv:_SetLocal(self.parentStep.parentGuide,self.parentStep,self)
+		local res,err = pcall(self.condition_complete)
+		if res then completion_by_condition=err  else  error("Error in step ".. self.parentStep.num .. " goal " .. self.num .. " condition: "..err) end
+		-- condition overrides.
+		if completion_by_condition==true or completion_by_condition=="complete" then return true,true, 1,1
+		elseif completion_by_condition=="incomplete" then return false,true, 0,1
+		elseif completion_by_condition=="impossible" then return false,false, 0,1
+		end
+	end
+
+
+	-- Handle accepts and turnins first.
+
+	if self.action=="accept" or self.action=="turnin" then
+		local complete,possible = GOALTYPES[self.action].iscomplete(self)
+		return complete,possible,norm_nums(complete) ------------------
+	end
+
+
+
+	-- Fallthrough logic:
+    -- - if the goal is complete through a quest or achievement or scenario objective or something else "tagged on", it goes green and that's it.
+    -- - if it's not, then let's remember if the quest/achi/scen.obj considered it even possible at all, and try to let it complete on its own.
+    -- - if it completed, then report that; if it didn't, then stick with what the quest/achi/scen.obj said.
+
+	local fallthrough_ispossible,fallthrough_numdone,fallthrough_numneeded
+
+
+	-- Achievement-related?
+	
+	if self.achieveid then
+		local iscomplete,ispossible,numdone,numneeded,comment,isbad = GOALTYPES['achieve'].iscomplete(self)
+		numdone,numneeded = norm_nums(numdone or iscomplete,numneeded)
+		if not numdone and not numneeded then  numdone,numneeded = iscomplete and 1 or 0,1  end
+		if iscomplete then
+			return iscomplete,ispossible,numdone,numneeded,comment,isbad
+		else
+			fallthrough_ispossible,fallthrough_numdone,fallthrough_numneeded = ispossible,numdone,numneeded
+		end
+	end
+
+
+	-- Quest-related? Handle appropriately.
+
+	if self.questid then
+		local iscomplete,ispossible,numdone,numneeded,comment,isbad = GOALTYPES['q'].iscomplete(self)
+		numdone,numneeded = norm_nums(numdone or iscomplete,numneeded)
+		if not numdone and not numneeded then  numdone,numneeded = iscomplete and 1 or 0,1  end
+		if iscomplete or (not ispossible and not self.future) then
+			return iscomplete,ispossible,numdone,numneeded,comment,isbad
+		else
+			fallthrough_ispossible,fallthrough_numdone,fallthrough_numneeded = ispossible,numdone,numneeded
+		end
+	end
+
+
+	if self.scenario_criteriaid then -- handle scenarios
+		local iscomplete,ispossible,numdone,numneeded,comment,isbad = GOALTYPES['scenariogoal'].iscomplete(self)
+		numdone,numneeded = norm_nums(numdone or iscomplete,numneeded)
+		if not numdone and not numneeded then  numdone,numneeded = iscomplete and 1 or 0,1  end
+		if iscomplete then
+			return iscomplete,ispossible,numdone,numneeded,comment,isbad
+		else
+			fallthrough_ispossible,fallthrough_numdone,fallthrough_numneeded = ispossible,numdone,numneeded
+		end
+	end
+
+	if self.scenario_stagenum then -- handle scenarios
+		local iscomplete,ispossible,numdone,numneeded,comment,isbad = GOALTYPES['scenariostage'].iscomplete(self)
+		numdone,numneeded = norm_nums(numdone or iscomplete,numneeded)
+		if not numdone and not numneeded then  numdone,numneeded = iscomplete and 1 or 0,1  end
+		if iscomplete then
+			return iscomplete,ispossible,numdone,numneeded,comment,isbad
+		else
+			fallthrough_ispossible,fallthrough_numdone,fallthrough_numneeded = ispossible,numdone,numneeded
+		end
+	end
+	
+	-- Use the individual goal completion routine
+	local GOAL = GOALTYPES[self.action]
+	if GOAL and GOAL.iscomplete and (not GOAL.iscompletable or GOAL.iscompletable(self)) then
+		local iscomplete,ispossible,numdone,numneeded,comment,isbad = GOAL.iscomplete(self)
+		numdone,numneeded = norm_nums(numdone,numneeded)
+		if not numdone and not numneeded then  numdone,numneeded = iscomplete and 1 or 0,1  end
+		return
+			iscomplete,
+			ispossible or self.future or fallthrough_ispossible,
+			fallthrough_numdone or numdone, -- first-chance counts ("fallbacks") are MORE important!
+			fallthrough_numneeded or numneeded,
+			"fallback '".. self.action .. "'" .. (comment and ": ".. comment  or  ""),
+			isbad
+	end
+
+	return false,false or self.future or fallthrough_ispossible, fallthrough_numdone,fallthrough_numneeded , "complete check thru"
+end
+
+function Goal:CheckVisited()
+	if not self.map then return end
+
+	local isvisited = self:IsCompleteAs("goto")  -- complete me like one of your French gotos, Jack
+	if isvisited and not self.was_visited then
+		if self.status=="incomplete" then return end -- abort if it's a red incomplete line. These get really "visited" when they're complete.
+		self:OnVisited()
+	elseif not isvisited and self.was_visited then
+		self:OnDevisited()
+	end
+	self.was_visited=isvisited
+end
+
+function Goal:OnVisited()
+	self.parentStep.current_waypoint_goal_num = self.num
+	ZGV:Debug("Goal OnVisited! %d, cycling.",self.num)
+	ZGV.Pointer:CycleWaypoint(1,"no cycle")
+end
+
+function Goal:OnDevisited()
+	--print(CS.current_waypoint_goal_num)
+	--ZGV.Pointer:RemoveWaypoint(self.waypoint) ZGV:ShowWaypoints()  -- that's bullshit...
+end
+
+function Goal:GetWaypoint()
+	if not self.waypoint then return end
+	for k,v in ipairs(ZGV.Pointer.waypoints) do
+		if v==self.waypoint then return v end
+	end
+end
+
+function Goal:OnCompleted()
+	if self.oncompletefun then self.oncompletefun() end
+	if ZGV.Pointer.DestinationWaypoint and ZGV.Pointer.DestinationWaypoint.goal == self then  -- this waypoint is "complete", in whatever manner
+		ZGV:Debug("Goal: cycling waypoint from completed goal ".. self.num)
+		ZGV.Pointer:CycleWaypointFrom(self.num,self.parentStep)
+	end
+end
+
+function Goal:OnUncompleted()
+	-- formality. May be important at some point.
+end
+
+function Goal:GetTooltip()
+	local gettooltip = GOALTYPES[self.action].gettooltip
+	if gettooltip then return gettooltip(self) end
+	if self.grouprole then return "|cff00ff00Shift-click|r to share this tip to fellow players." end
+end
+
+
+-- Sorta kinda similar to Utils.IsPOIComplete() in ESO, but not really . . .
+function Goal:IsPOIComplete(args)
+	return true
+end
+
 function Goal:IsDynamic()
 	return not not self.dynamicwaypoint
 end
@@ -2726,6 +2797,10 @@ function Goal:AutoTranslate()
 	return oldL~=self.L
 end
 
+function Goal:IsCompleteAs(goaltype)
+	return GOALTYPES[goaltype].iscomplete(self)
+end
+
 local simulquest = {
 	['goals']={
 		{ type="monster",monster="Two Monsters",leaderboard="Monster slain: 0/2",needed=2,num=0 },
@@ -2854,7 +2929,7 @@ function Goal:GetText(showcompleteness,brief,showtotals,nocolor)
 
 	if self.action=="achievetext" then showcompleteness=true end
 
-	local complete,ext = self:IsComplete()
+	local complete,ext,numdone,numneeded = self:IsComplete()
 
 	if showcompleteness then
 		if self.scenario_criteriaid then -- give prio to scenario based counts over quest ones

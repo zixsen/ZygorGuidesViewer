@@ -4845,9 +4845,9 @@ Follow the path up |goto 30.68,80.05 < 15 |only if walking
 Follow the path |goto 36.26,75.27 < 30 |only if walking
 Continue following the path |goto 40.72,64.61 < 20 |only if walking
 Enter the building |goto Stormwind City/0 80.66,37.81 < 15 |walk
-talk Anduin Wrynn##107574
-turnin Rise of the Brotherhood##26322 |goto Stormwind City/0 85.8,31.7
-accept Return to Sentinel Hill##26370 |goto Stormwind City/0 85.8,31.7
+talk Grand Admiral Jes-Tereth##1750
+turnin Rise of the Brotherhood##26322 |goto Stormwind City/0 85.86,32.80
+accept Return to Sentinel Hill##26370 |goto Stormwind City/0 85.86,32.80
 step
 talk Marshal Gryan Stoutmantle##234
 turnin Return to Sentinel Hill##26370 |goto Westfall/0 56.37,49.63

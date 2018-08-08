@@ -1584,7 +1584,9 @@ function Pointer.frame_minimap_functions.OnClick(self,button)
 			Pointer:Debug_RemovePointFromPath(self.waypoint)
 		end
 
-		if self.waypoint.type=="manual" then ZGV.Pointer:RemoveWaypoint(self.waypoint)
+		if self.waypoint.type=="manual" then 
+			ZGV.Pointer:RemoveWaypoint(self.waypoint)
+			WorldMapTooltip:Hide()
 		elseif self.waypoint.surrogate_for and self.waypoint.surrogate_for.type=="manual" then ZGV.Pointer:RemoveWaypoint(self.waypoint.surrogate_for)
 		elseif self.waypoint.type=="route" then
 			-- if we're debugging, allow for banning a node
@@ -1598,6 +1600,7 @@ function Pointer.frame_minimap_functions.OnClick(self,button)
 		elseif self.waypoint.type=="way" then return
 		end
 		ZGV:ShowWaypoints()
+		Pointer.IgnoreThisButtonDown = true
 		return
 	end
 
@@ -3344,6 +3347,11 @@ function Pointer.Overlay_OnUpdate(frame,but,...)
 		repeat  -- left click handling
 			if not leftbutdown then break end
 			leftbutdown=nil
+
+			if Pointer.IgnoreThisButtonDown == true then -- this shift click was used to remove manual waypoint. don't reuse it to set another one
+				Pointer.IgnoreThisButtonDown = false
+				return
+			end
 
 			local map = WorldMapFrame:GetMapID()
 			if map<1 then break end  -------------------------- OUT: no sane map found.

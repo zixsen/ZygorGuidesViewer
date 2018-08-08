@@ -839,6 +839,10 @@ function GuideMenu:ShowOptions(opt)
 	for i,but in pairs(self.MainFrame.MenuOptions.buttons) do  if but.optiongroupblizname==opt or but.optiongroupname==opt then OptionButton_OnClick(but) return end end
 end
 
+local option_icons = { "main","menu","display","navi","poi","notification","gear","itemscore","gold","enhancements","profile","about" }
+local option_icons_rev = {}
+for k,v in ipairs(option_icons) do option_icons_rev[v]=k end
+
 function GuideMenu:ShowOptionButtons()
 	GuideMenu.MainFrame.MenuOptions.buttons = GuideMenu.MainFrame.MenuOptions.buttons or {}
 	local previous_button
@@ -846,7 +850,7 @@ function GuideMenu:ShowOptionButtons()
 		local opttable = ZGV.optiontables[opttableord.name]
 		if opttable.guiHidden then break end --continue
 		if not GuideMenu.MainFrame.MenuOptions.buttons[i] then
-			local button = GuideMenu:MakeMenuButton("ButtonOptions_"..opttableord.name,opttable.name,ZGV.DIR.."\\Skins\\options-menu-icons",2,2,i,16)
+			local button = GuideMenu:MakeMenuButton("ButtonOptions_"..opttableord.name,opttable.name,ZGV.DIR.."\\Skins\\options-menu-icons",2,2,option_icons_rev[opttableord.name] or 16,16)
 			--button:SetHighlightSprite(1,2,i,16)
 			button:SetParent(GuideMenu.MainFrame.MenuOptions)
 			if previous_button then

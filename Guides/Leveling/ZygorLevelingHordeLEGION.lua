@@ -1493,12 +1493,6 @@ image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
 step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##46809 |goto Broken Shore/0 44.73,63.28
-step
-talk Illanna Dreadmoore##97111
-turnin Delivering Lost Knowledge##46809 |goto Broken Shore/2 49.74,55.87
-step
 talk Archmage Khadgar##116302 |only if not completedq(46765)
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.74,63.27 |or |only if not completedq(46765)
 |tip |only if not completedq(46765)
@@ -3960,12 +3954,6 @@ image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
 step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47078 |goto Broken Shore/0 44.73,63.28
-step
-talk Vahu the Weathered##111736
-turnin Delivering Lost Knowledge##47078 |goto Mardum, the Shattered Abyss/3 62.04,75.02
-step
 talk Archmage Khadgar##116302 |only if not completedq(46765)
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.74,63.27 |or |only if not completedq(46765)
 |tip |only if not completedq(46765)
@@ -6269,12 +6257,6 @@ startlevel=110.0,
 },[[
 step
 talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47075 |goto Broken Shore/0 44.73,63.26
-step
-talk Celadine the Fatekeeper##111737
-turnin Delivering Lost Knowledge##47075 |goto The Dreamgrove/0 33.94,32.53
-step
-talk Archmage Khadgar##116302
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.73,63.26
 If you already have 35 Artifact Traits unlocked, click here to continue |confirm
 |only if not completedq(46765)
@@ -8511,12 +8493,6 @@ image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
 step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47073 |goto Broken Shore/0 44.73,63.28
-step
-talk Holt Thunderhorn##98737
-turnin Delivering Lost Knowledge##47073 |goto Trueshot Lodge/0 52.56,54.44
-step
 talk Archmage Khadgar##116302 |only if not completedq(46765)
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.74,63.27 |or |only if not completedq(46765)
 |tip |only if not completedq(46765)
@@ -10751,12 +10727,6 @@ startlevel=110.0,
 },[[
 step
 talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47070 |goto Broken Shore/0 44.73,63.28
-step
-talk Edirah##110624
-turnin Delivering Lost Knowledge##47070 |goto Hall of the Guardian/2 63.93,50.05
-step
-talk Archmage Khadgar##116302
 accept The Broken Shore: Investigating the Legion##46765 |goto Broken Shore/0 44.73,63.29
 step
 Follow the path |goto 46.86,58.63 < 25 |only if walking
@@ -12944,12 +12914,6 @@ condition_valid_msg="You must be a Monk to complete this guide!",
 image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
-step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47069 |goto Broken Shore/0 44.73,63.28
-step
-talk Lorewalker Cho##106942
-turnin Delivering Lost Knowledge##47069 |goto The Wandering Isle L/0 46.72,46.69
 step
 talk Archmage Khadgar##116302
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.74,63.28
@@ -15145,12 +15109,6 @@ startlevel=110.0,
 },[[
 step
 talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47071 |goto Broken Shore/0 44.73,63.28
-step
-talk Sister Elda##91190
-turnin Delivering Lost Knowledge##47071 |goto Eastern Plaguelands/20 37.73,57.22
-step
-talk Archmage Khadgar##116302
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.74,63.28
 Click here if you have all of your artifact traits unlocked |confirm
 step
@@ -17337,12 +17295,6 @@ image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
 step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47077 |goto Broken Shore/0 44.73,63.28
-step
-talk Juvess the Duskwhisperer##111738
-turnin Delivering Lost Knowledge##47077 |goto Netherlight Temple/1 59.83,28.11
-step
 talk Archmage Khadgar##116302 |only if not completedq(46765)
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.74,63.27 |or |only if not completedq(46765)
 |tip |only if not completedq(46765)
@@ -19516,12 +19468,6 @@ startlevel=110.0,
 },[[
 step
 talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47079 |goto Broken Shore/0 44.73,63.28
-step
-talk Filius Sparkstache##102641
-turnin Delivering Lost Knowledge##47079 |goto Dalaran L/4 38.59,70.02
-step
-talk Archmage Khadgar##116302
 accept The Broken Shore: Investigating the Legion##46765 |goto Broken Shore/0 44.73,63.29
 step
 Follow the path |goto 46.86,58.63 < 25 |only if walking
@@ -21625,12 +21571,6 @@ condition_valid_msg="You must be a Shaman to complete this guide!",
 image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
-step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47074 |goto Broken Shore/0 44.73,63.28
-step
-talk Gorma Windspeaker##111739
-turnin Delivering Lost Knowledge##47074 |goto The Maelstrom L/0 32.38,49.75
 step
 talk Archmage Khadgar##116302
 accept The Broken Shore: Investigating the Legion##46765 |goto Broken Shore/0 44.73,63.29
@@ -23789,30 +23729,6 @@ step
 talk Murr##110408
 turnin Champion Armaments##44228 |goto 57.29,52.50
 step
-talk Demonia Pickerin##113371
-|tip This quest will only be available if you chose to get the "Unleash Infernal" class hall upgrade.
-accept Unleashing our Wrath##44227 |goto 49.47,24.90
-step
-talk Demonia Pickerin##113371
-|tip The ritual will take 10 minutes to complete.
-Begin the Ritual |q 44227/1 |goto 49.47,24.90
-step
-click Enslaving Infernal##252778
-|tip The ritual will take 10 minutes to complete.
-Collect the Demonic Phylactery |q 44227/2 |goto 49.82,24.41
-step
-_Open Your World Map:_
-|tip Open the map to any Legion zone that has world quests available.
-Use the Unleash Infernal ability
-|tip It appears as a button in the corner of maps that have world quests available.
-Complete a World Quest
-|tip Click any world quest you want to complete instantly.
-|tip You can only instantly complete the world quests that are highlighted after clicking the ability button.
-Use the "Unleash Infernal" Ability on Your Map |q 44227/3
-step
-talk Demonia Pickerin##113371
-turnin Unleashing our Wrath##44227 |goto 49.47,24.90
-step
 talk Gakin the Darkbinder##106199
 accept Investigate the Broken Shore##45990 |goto 67.01,46.41
 step
@@ -23832,12 +23748,6 @@ condition_valid_msg="You must be a Warlock to complete this guide!",
 image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
-step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47076 |goto Broken Shore/0 44.73,63.28
-step
-talk Mile Raitheborne##111740
-turnin Delivering Lost Knowledge##47076 |goto Dreadscar Rift/0 57.04,41.04
 step
 talk Archmage Khadgar##116302 |only if not completedq(46765)
 accept Greater Power for Greater Threats##46744 |goto Broken Shore/0 44.74,63.27 |or |only if not completedq(46765)
@@ -25838,12 +25748,6 @@ condition_valid_msg="You must be a Warrior to complete this guide!",
 image=ZGV.DIR.."\\Guides\\Images\\The_Broken_Shore",
 startlevel=110.0,
 },[[
-step
-talk Archmage Khadgar##116302
-accept Delivering Lost Knowledge##47072 |goto Broken Shore/0 44.73,63.26
-step
-talk Fjornson Stonecarver##111741
-turnin Delivering Lost Knowledge##47072 |goto Skyhold/1 45.09,28.28
 step
 talk Archmage Khadgar##116302
 accept Greater Power For Greater Threats##46744 |goto Broken Shore/0 44.73,63.27

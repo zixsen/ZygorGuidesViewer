@@ -9865,9 +9865,9 @@ turnin The Coast Isn't Clear##26348 |goto 30.5,85.6
 turnin Keeper of the Flame##26347 |goto 30.5,85.6
 turnin The Coastal Menace##26349 |goto 30.5,85.6
 step
-talk King Varian Wrynn##29611
-turnin Rise of the Brotherhood##26322 |goto 85.8,31.7
-accept Return to Sentinel Hill##26370 |goto 85.8,31.7
+talk Grand Admiral Jes-Tereth##1750
+turnin Rise of the Brotherhood##26322 |goto 85.86,32.80
+accept Return to Sentinel Hill##26370 |goto 85.86,32.80
 step
 talk Marshal Gryan Stoutmantle##234
 turnin Return to Sentinel Hill##26370 |goto Westfall,56.4,49.6

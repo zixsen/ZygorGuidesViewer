@@ -1124,6 +1124,8 @@ function Parser:ParseEntry(guide,fully_parse,lastparsed)
 							step.is_sticky_only=true
 						end
 
+					elseif cmd=="shared_origin" then
+						step.shared_origin = tonumber(params)
 
 					--[[
 					elseif cmd=="@" then
@@ -1263,7 +1265,7 @@ function Parser:ParseEntry(guide,fully_parse,lastparsed)
 							goal.action = goal.action or cmd
 							local fun,err,cond_procd = MakeCondition(params,false)
 							if not fun then return parseerror(err) end
-							goal.condition_complete_raw = cond_procd
+							goal.condition_complete_raw = params
 							goal.condition_complete = fun
 
 
@@ -1294,7 +1296,7 @@ function Parser:ParseEntry(guide,fully_parse,lastparsed)
 								local subject = goal  if chunkcount==1 then subject=step end
 
 								local fun,err,cond_procd = MakeCondition(cond,true)
-								subject.condition_visible_raw=cond_procd
+								subject.condition_visible_raw=cond
 								subject.condition_visible_err=err
 								if not fun then return parseerror(err) end
 								subject.condition_visible=fun

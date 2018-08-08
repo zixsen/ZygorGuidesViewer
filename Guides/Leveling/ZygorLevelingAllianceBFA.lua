@@ -376,6 +376,130 @@ talk Anduin Wrynn##107574
 |tip Inside the building.
 turnin From the Ashes...##53310 |goto 85.90,31.57
 ]])
+ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Battle for Azeroth (110-120)\\The Battle for Lordaeron",{
+author="support@zygorguides.com",
+description="\nThis guide will assist you in completing the following:\n"..
+"\nBattle for Azeroth \"The Battle for Lordaeron\" introduction scenario\n",
+condition_suggested=function() return level >= 110 end,
+startlevel=110.0,
+endlevel=120.0,
+},[[
+step
+accept Hour of Reckoning##53370 |goto Stormwind City/0 22.39,32.47
+|tip You will automatically accept this quest when you enter Stormwind City.
+step
+talk Master Mathias Shaw##139798
+turnin Hour of Reckoning##53370 |goto 22.37,32.44
+accept The Battle for Lordaeron##51795 |goto 22.37,32.44
+step
+talk Captain Angelica##108920
+Tell her _"I am ready to sail to Lordaeron."_
+Travel to Lordaeron |scenariostart |goto 22.21,32.55 |q 51795 |or |next "Intro_Scenario"
+|tip It may take a moment to enter the scenario.
+_Or_
+Tell her _"I've heard this tale before... <Skip the scenario and begin your next mission.>"_
+|tip This will allow you to skip the intro scenario if you've already completed it on another character.
+Skip the Battle for Lordaeron |condition readyq(51795) |goto 22.21,32.55 |or |future |next "Intro_Scenario_Completed"
+step
+label "Intro_Scenario"
+Follow the path |goto Ruins of Lordaeron/0 49.10,27.11 < 7 |walk
+Continue following the path |goto 48.46,32.39 < 7 |only if walking
+Follow the path |goto 48.06,37.86 < 7 |only if walking
+Follow the path |goto 48.15,44.06 < 7 |only if walking
+Follow the path |goto 48.45,47.84 < 7 |only if walking
+Watch the dialogue
+|tip Follow General Hammond Clay as we walks.
+Follow Hammond Clay to Brill |scenariogoal 1/37049 |goto 47.50,50.40 |q 51795
+step
+Watch the dialogue
+|tip Follow Genn Greymane as he walks.
+Charge the Battlefield with Genn |scenariostage 1 |goto 48.13,53.51 |q 51795
+step
+Follow the path |goto 48.27,54.06 < 7 |only if walking
+kill Goblin Shredder##134015 |goto 48.35,57.60 |scenariobonus 2/39783 |q 51795
+step
+Kill enemies around this area
+clicknpc Auchenai Ballista##134016+
+|tip They look like wooden artillery vehicles with purple crystals on them on the ground around this area.
+|tip You can use them to fight, if you wish.
+Defend the Siege Towers |scenariostage 2 |goto 47.89,61.22 |q 51795
+step
+Watch the dialogue
+kill Azerite War Machine##132079
+Defeat the Azerite War Machine |scenariostage 3 |goto 48.42,63.71 |q 51795
+step
+Watch the dialogue
+Confront Sylvanas Windrunner |scenariostage 4 |goto 48.42,63.71 |q 51795
+step
+Kill enemies around this area
+talk Wounded Soldier##125622+
+|tip They look like Alliance soldiers standing with huge partially filled red bubbles above their heads around this area.
+|tip They will appear on your minimap as yellow dots.
+|tip Try to avoid the green blight areas on the ground.
+|tip You will have to keep moving north, try to stay near Anduin Wrynn as you walk, he will protect you from the blight.
+Defend King Anduin and Evacuate the Wounded |scenariostage 5 |goto 48.37,61.80 |q 51795
+step
+Watch the dialogue
+Fall Back with King Anduin Wrynn |scenariostage 6 |q 51795
+step
+Follow the path |goto 42.13,71.48 < 7 |only if walking
+Continue following the path |goto 42.88,72.40 < 7 |only if walking
+Watch the dialogue
+Kill enemies around this area
+Assist Jaina |scenariogoal 7/37297 |goto 43.19,73.53 |q 51795
+step
+Watch the dialogue
+Infiltrate the Keep with King Anduin |scenariostage 7 |goto 42.14,74.46 |q 51795
+step
+Kill enemies around this area
+Defeat the Darkspear Trolls |scenariogoal 8/0 |goto 42.15,76.40 |q 51795
+step
+kill Windseeker Durja##126612
+Defeat Durja |scenariostage 8 |goto 42.09,81.08 |q 51795
+step
+Follow the path |goto 42.11,81.46 < 7 |only if walking
+Watch the dialogue
+|tip Follow Anduin Wrynn as he walks.
+Follow King Anduin |scenariostage 9 |goto 42.63,85.96 |q 51795
+step
+Watch the dialogue
+Kill enemies around this area
+|tip You can click the Flametron 5000 vehicles nearby to use them to fight, if you wish.
+|tip They look like mechanical spider vehicles on the ground around this area.
+Assault Lordaeron City |scenariostage 10 |goto 43.47,87.15 |q 51795
+step
+Watch the dialogue
+Find Sylvanas Windrunner |scenariostage 11 |goto 49.29,89.41 |q 51795
+step
+Watch the dialogue
+clicknpc Gnomish Gyrocopter##126795
+|tip They look like metal helicopters hovering low to the ground around this area.
+Ride in the Gnomish Gyrocopter |invehicle |goto 49.00,88.71 |q 51795
+step
+Watch the dialogue
+Use the Gyrocopter to Pursue Sylvanas |scenariostage 12 |goto 48.62,72.66 |q 51795
+step
+Watch the dialogue
+kill High Overlord Saurfang##129179
+|tip He will eventually surrender.
+Watch the dialogue
+Confront High Overlord Saurfang |scenariostage 13 |goto 48.11,74.23 |q 51795
+step
+Cross the bridge |goto 48.09,74.78 < 7 |only if walking
+Follow the path |goto 48.29,75.69 < 7 |only if walking
+Enter the building |goto 48.71,76.64 < 5 |walk
+Run down the stairs |goto 48.50,77.29 < 5 |walk
+Follow the path |goto 48.09,77.65 < 5 |walk
+Watch the dialogue
+|tip Follow Anduin Wrynn as he walks.
+Confront Sylvanas Windrunner |scenarioend |goto 48.10,78.26 |q 51795
+step
+Complete the "The Battle for Lordaeron" Scenario |q 51795/2
+step
+label "Intro_Scenario_Completed"
+talk Halford Wyrmbane##142930
+turnin The Battle for Lordaeron##51795 |goto Stormwind City/0 27.64,21.29
+]])
 ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Battle for Azeroth (110-120)\\Void Elf Race Unlock",{
 author="support@zygorguides.com",
 description="This guide will walk you through unlocking the new Void Elf allied race.",
