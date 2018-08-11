@@ -54,7 +54,7 @@ local BACK = "Back"
 local defaultPoint = {"TOP",UIParent,"TOP",0,-50}
 local defaultPoint2 = {"TOP",UIParent,"TOP",500,-50}
 -- Header,Summary,Parent,PopupPt,LinePt, reasonToAdvance, OnShow
-local gen_help_1 = function() return {L['gold_1_header'],nil,L['gold_1_sum'],UIParent,defaultPoint,nil,"ahshow",function() ZGV.WhoWhere:FindNPC("A") end } end
+local gen_help_1 = function() return {L['gold_1_header'],nil,L['gold_1_sum'],UIParent,defaultPoint,nil,"ahshow",function() ZGV.WhoWhere:FindNPC("Auctioneer") end } end
 local gen_help_2 = function() return {L['gold_1_header'],nil,L['gold_1_sum'],AuctionFrame,{"TOPRIGHT",Goldguide.HelpPopup.line,"BOTTOMLEFT"}, {"TOPRIGHT",AuctionFrameTab4,"BOTTOMLEFT"} } end
 local gen_help_3 = function() return {L['gold_scanbutton_header'],nil,L['gold_scanbutton_sum'],ZygorAppraiser,{"TOPRIGHT",Goldguide.HelpPopup.line,"BOTTOMLEFT"}, {"TOPRIGHT",ZygorAppraiserFooter,"BOTTOMLEFT"} } end
 local gen_help_4 = function() return {L['gold_scantime_header'],nil,L['gold_scantime_sum'],ZygorAppraiser,{"TOPRIGHT",Goldguide.HelpPopup.line,"BOTTOMLEFT"}, {"TOPRIGHT",ZygorAppraiserFooter,"BOTTOMLEFT"} } end

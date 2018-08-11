@@ -13,6 +13,10 @@ end
 
 local HTMLColor=ZGV.HTMLColor
 
+-- Backwards compability with stealth skin "transparent viewer" option
+STYLE.TransparencyPrimary = 0.6
+STYLE.TransparencySecondary = 0.36
+
 -- Basics
 -- Black frame with a lightborder
 STYLE.MainBackdrop={bgFile=SKINSDIR.."white",edgeFile=SKINSDIR.."white",tile = true, edgeSize=1, tileSize = 20, insets = { left = 0, right = 0, top = 0, bottom = 0 }}
@@ -43,9 +47,11 @@ STYLE.AccentColor={ZGV.F.HTMLColor("#e5661aff")}
 -- Widget colors!
 -- TODO These are stealth only at the moment. Need to support midnight. Maybe?
 STYLE.ButtonBackdrop1=STYLE.MainBackdrop
-STYLE.ButtonColor1=STYLE.TriBackdropColor
+STYLE.ButtonColor1={ZGV.F.HTMLColor("#333333ff")}
 STYLE.ButtonBorderColor1={ZGV.F.HTMLColor("#808080ff")}
 STYLE.ButtonHighlightColor1={ZGV.F.HTMLColor("#444444ff")}
+STYLE.ButtonTextColor1Over={ZGV.F.HTMLColor("#ffffff77")}
+STYLE.ButtonTextColor1Out={ZGV.F.HTMLColor("#ffffffff")}
 STYLE.ButtonBackdrop2=STYLE.SecBackdrop
 STYLE.ButtonColor2=STYLE.AccentColor
 STYLE.ButtonHighlightColor2={ZGV.F.HTMLColor("#ea8548")}
@@ -123,17 +129,9 @@ STYLE.StepLineMarginY=1
 
 STYLE.StepLineIcons = STYLEDIR.."stepicons"
 STYLE.TitleButtons = STYLEDIR.."titlebuttons"
-STYLE.TitleLogo = SKINSDIR.."zygorlogo2"
-
-STYLE.ProgressBarBackdrop = {bgFile = SKINSDIR.."white", edgeFile=SKINSDIR.."white", tile = true, edgeSize=1, tileSize = 16, insets = { left = 1, right = 1, top = 1, bottom = 1 }}
-STYLE.ProgressBarBackdropColor=STYLE.SecBackdropColor
-STYLE.ProgressBarBackdropBorderColor=STYLE.DarkBorder
-STYLE.ProgressBarTexture = {1.0,1.0,1.0,1.0}
-STYLE.ProgressBarTextureHeight = 5
-STYLE.ProgressBarHeight = 7
-STYLE.ProgressBarInset = 0
-STYLE.ProgressBarColor = {0.0,0.8,0.0,1.0}
-STYLE.ProgressBarColor2 = {1/255,162/255,253/255,1.0}
+STYLE.TitleLogo = STYLEDIR.."zygorlogo"
+STYLE.TitleLogoSize = {110,110/4}
+STYLE.GuideIcons = SKINSDIR.."guideicons-small"
 
 STYLE.SectionTitleFontSize = 13
 
@@ -157,9 +155,51 @@ STYLE.NotificationBackdropBorderColor=STYLE.MainBackdropBorderColor
 
 STYLE.CVNoModelTexture = SKINSDIR.."zygor_mascot"
 
--- TODO can't we rewrite this declaratively?
-function STYLE:OnActivate()
-	local iconsize = 16
-	ZygorGuidesViewerFrame_Border_TitleBar_Logo:SetSize(110,110/4)
-	ZygorGuidesViewerFrame_Border_TitleBar_Logo:SetPoint("CENTER",ZygorGuidesViewerFrame_Border_TitleBar,"CENTER",0,-2)
-end
+---------------------GLASS UPDATE -------------------------------
+
+STYLE.GuideMenuMargin = 0
+STYLE.GuideMenuHeaderFooterBackground = {0,0,0,0}
+STYLE.GuideMenuHeaderFooterBorder = {0,0,0,0}
+STYLE.GuideMenuMenuBackground = {ZGV.F.HTMLColor("#2b2b2bff")}
+STYLE.GuideMenuSectionBorder = {0,0,0,1}
+STYLE.GuideMenuSearchEdit = {ZGV.F.HTMLColor("#7d7d7dff")}
+STYLE.GuideMenuContentBackground = {ZGV.F.HTMLColor("#222222ff")}
+STYLE.GuideMenuDetailsBackground = {ZGV.F.HTMLColor("#2b2b2bff")}
+STYLE.GuideMenuFooterElementsOffset = 5
+STYLE.GuideMenuSmallIcons = STYLEDIR.."guideicons-small"
+
+STYLE.AuctionToolsMargin = 0
+STYLE.AuctionToolsPriceIcons = ZGV.DIR.."\\Skins\\goldpricestatusicons"
+STYLE.AuctionToolsHeaderFooterBackground = {0,0,0,1}
+STYLE.AuctionToolsHeaderFooterBorder = {0,0,0,1}
+
+STYLE.TabsMargin = 10
+STYLE.TabsHeight = 20
+STYLE.TabsIconSize = 12
+STYLE.TabsIcons = ZGV.DIR.."\\Skins\\guideicons-big"
+STYLE.TabsBackdrop=STYLE.MainBackdrop
+STYLE.TabsBackdropActive={ZGV.F.HTMLColor("#222222ff")}
+STYLE.TabsBackdropInactive={ZGV.F.HTMLColor("#101010ff")}
+STYLE.TabsBorderColor={ZGV.F.HTMLColor("#000000ff")}
+STYLE.TabsSeparatorColor={ZGV.F.HTMLColor("#555555ff")}
+STYLE.TabsSeparatorTexture=SKINSDIR.."white"
+STYLE.TabsTextColor={ZGV.F.HTMLColor("#ffffffff")}
+STYLE.TabsTextColorOver={ZGV.F.HTMLColor("#ffffff77")}
+STYLE.TabsBusyIcon = ZGV.DIR.."\\Skins\\loading"
+
+STYLE.ProgressBarBackdrop = {bgFile = SKINSDIR.."white", edgeFile=SKINSDIR.."white", tile = true, edgeSize=1, tileSize = 16, insets = { left = 1, right = 1, top = 1, bottom = 1 }}
+STYLE.ProgressBarBackdropColor=STYLE.SecBackdropColor
+STYLE.ProgressBarBackdropBorderColor=STYLE.DarkBorder
+STYLE.ProgressBarTextureFile = STYLEDIR.."progressbar"
+STYLE.ProgressBarTextureFileOffset = {0,1/2,0,1/2}
+STYLE.ProgressBarDecorUse = 0
+STYLE.ProgressBarDecorFileOffset = {1/2,1,0,1/2}
+
+-- legacy
+STYLE.ProgressBarTexture = {1.0,1.0,1.0,1.0}
+STYLE.ProgressBarTextureHeight = 5
+STYLE.ProgressBarHeight = 7
+STYLE.ProgressBarInset = 0
+STYLE.ProgressBarColor = {0.0,0.8,0.0,1.0}
+STYLE.ProgressBarColor2 = {1/255,162/255,253/255,1.0}
+STYLE.ProgressBarSpaceHeight = 12

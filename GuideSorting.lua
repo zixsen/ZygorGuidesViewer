@@ -50,9 +50,8 @@ ZygorGuidesViewer:RegisterGuideSorting({
 	"Pandaria (80-90)",
 	"Draenor (90-100)",
 	"Legion (100-110)",
-	"Peak of Serenity",
+	"Battle for Azeroth (110-120)",
 	"The Loremaster",
-	"Battle for Azeroth",
 	})
 
 -- Leveling alliance starters
@@ -81,4 +80,32 @@ if UnitFactionGroup("player")=="Horde" then
 		"Pandaren (1-12)",
 		"Death Knight (55-58)",
 		"Demon Hunter (98-100)"})
+end
+
+
+
+
+
+
+
+
+------------------------
+-- BATTLE FOR AZEROTH --
+------------------------
+
+-- [Horde] Leveling - Battle for Azeroth (110-120) - Folder List
+if UnitFactionGroup("player")=="Horde" then 
+	ZygorGuidesViewer:RegisterGuideSorting({
+		"Zandalar",
+		"Allied Races"})
+end
+
+-- [Horde] Leveling - Battle for Azeroth (110-120) - Guide List
+if UnitFactionGroup("player")=="Horde" then 
+	ZygorGuidesViewer:RegisterGuideSorting({
+		"Intro & Quest Zone Choice",
+		"War Campaign",
+		"The Burning of Teldrassil",
+		"The Battle for Lordaeron",
+		"Silithus: The Wound"})
 end

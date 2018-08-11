@@ -105,8 +105,9 @@ end
 local cache={}  -- makes the lookup 50% faster (1mil runs on random maps: 2000ms without cache, 1300 with cache)
 
 -- subfloors in Dazar'Alor should be grouped, really. Link 1165 to others - others themselves will be fine.
-cache["1162_1165"]=true
+cache["1163_1164"]=true
 cache["1163_1165"]=true
+cache["1164_1165"]=true
 cache["1165_1166"]=true
 cache["1165_1167"]=true
 

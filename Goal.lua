@@ -1126,6 +1126,17 @@ GOALTYPES['oncomplete'] = {
 	end,
 }
 
+GOALTYPES['nexttab'] = {
+	parse = function(self,params)
+		if not params then return end
+		local guide = params:gsub("^\"(.-)\"$","%1")
+
+		self.oncompletefun = function()
+			ZGV.Tabs:OptionalTab(guide)
+		end
+	end,
+}
+
 
 local invslots = {'AmmoSlot','BackSlot','Bag0Slot','Bag1Slot','Bag2Slot','Bag3Slot','ChestSlot','FeetSlot','Finger0Slot','Finger1Slot','HandsSlot','HeadSlot','LegsSlot','MainHandSlot','NeckSlot','SecondaryHandSlot','ShirtSlot','ShoulderSlot','TabardSlot','Trinket0Slot','Trinket1Slot','WaistSlot','WristSlot'}
 GOALTYPES['equipped'] = {

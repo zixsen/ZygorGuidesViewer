@@ -59,8 +59,10 @@ function Config:Run()
 
 	if ZGV.db.profile.ranconfig2 then ZGV.db.global.saw_tutorial=true end
 
+	--[[
 	if not ZGV.db.global.saw_tutorial then
 		ZGV.Tutorial:Run()
 		ZGV.db.global.saw_tutorial=true
 	end
+	--]]
 end

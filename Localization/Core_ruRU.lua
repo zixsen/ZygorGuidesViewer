@@ -214,8 +214,8 @@ ZygorGuidesViewer_L("Main", "ruRU", function() return {
 	['step_num'] = "|cffaaaaaa%s|cff888888.|r ",
 	['step_level'] = "|cffaaccaaУровень: |cffcceecc%s|cffaaccaa|r ",
 
-	["questtitle"] = "`%s'",
-	["questtitle_part"] = "`%s' (часть %s)",
+	["questtitle"] = "'%s'",
+	["questtitle_part"] = "'%s' (часть %s)",
 	["coords"] = "%d,%d",
 	["map_coords"] = "%s %d,%d",
 

@@ -141,7 +141,7 @@ do
 			--Lib:MarkKnownByLevels() --Only needs to be ran once after the faction's information has been made available at startup
 			--Lib.frame:UnregisterEvent("UPDATE_FACTION")
 		elseif event=="PLAYER_CONTROL_LOST" then
-			if ZGV.DEV then
+			if ZGV and ZGV.DEV then
 				local taxis = LibRover.TaxiWhistlePredictor:FindNearestTaxis()
 				if taxis and taxis[1] and taxis[1][2]<50 then
 					Lib.traveltime_dep=taxis[1][1]
@@ -150,7 +150,7 @@ do
 				end
 			end
 		elseif event=="PLAYER_CONTROL_GAINED" then
-			if ZGV.DEV then
+			if ZGV and ZGV.DEV then
 				local taxis = LibRover.TaxiWhistlePredictor:FindNearestTaxis()
 				if taxis and taxis[1] and taxis[1][2]<50 and Lib.traveltime_time then
 					local triptime = ceil(GetTime()-Lib.traveltime_time)
@@ -789,11 +789,11 @@ do
 			local x,y = TaxiNodePosition(dest)
 			local taxitag = ("%03d:%03d"):format(x*1000,y*1000)
 
-			if not taxidata_by_slot[dest] then print("Sanity fault! Why no taxidata for slot",dest,"??") break end
+			local taxitype=TaxiNodeGetType(dest)
+
+			if not taxidata_by_slot[dest] then ret=ret .. ("%d. %s (%s) - Sanity fault, not in taxidata!\n"):format(dest,TaxiNodeName(dest),taxitype) break end
 			
 			local taxi = Lib:FindTaxiByNodeID(taxidata_by_slot[dest].nodeID) or Lib:FindTaxiByTag(cont,taxitag)
-
-			local taxitype=TaxiNodeGetType(dest)
 
 			local texkit = taxidata_by_slot[dest].textureKitPrefix or ""
 

@@ -7,6 +7,67 @@ data.basenodes.transit = {
 
 
 
+--------------------------------------------------
+-- ALLIANCE TRAVEL BETWEEN KUL TIRAS & ZULDAZAR --
+--			BFA			--
+--------------------------------------------------
+
+	-- Boralus to Zuldazar (Boat)
+		"Boralus/0 67.95,26.69 -to- Zuldazar/0 80.22,55.23 {fac:A} {mode:SHIP} {cost:30} {title:Talk to Grand Admiral Jes-Tereth, tell her \"Set sail for Zuldazar.\"} {cond:PlayerCompletedQuest(51308)}",
+
+	-- Zuldazar to Boralus
+		"Zuldazar/0 40.46,71.03 -to- Boralus/0 70.22,27.06 {fac:A} {mode:SHIP} {cost:30} {title:Talk to Daria Smithson, tell her \"Take us back to Boralus.\"} {cond:PlayerCompletedQuest(51418)}",
+
+	-- Boralus to Nazmir (Boat)
+		"Boralus/0 67.95,26.69 -to- Nazmir/0 61.95,39.92 {fac:A} {mode:SHIP} {cost:30} {title:Talk to Grand Admiral Jes-Tereth, tell her \"Set sail for Nazmir.\"} {cond:PlayerCompletedQuest(51571)}",
+	
+	-- Nazmir to Boralus
+		"Nazmir/0 62.06,40.08 -to- Boralus/0 70.22,27.06 {fac:A} {mode:SHIP} {cost:30} {title:Talk to Desha Stormwallow, tell her \"Take us back to Boralus.\"} {cond:PlayerCompletedQuest(51571)}",
+
+	-- Boralus to Vol'dun (Boat)
+		"Boralus/0 67.95,26.69 -to- Vol'dun/0 35.60,33.17 {fac:A} {mode:SHIP} {cost:30} {title:Talk to Grand Admiral Jes-Tereth, tell her \"Set sail for Vol'dun.\"} {cond:PlayerCompletedQuest(51572)}",
+
+	-- Boralus to Vol'dun (Boat)
+		"Vol'dun/0 34.91,33.76 -to- Boralus/0 70.22,27.06 {fac:A} {mode:SHIP} {cost:30} {title:Talk to Grand Admiral Jes-Tereth, tell her \"Take us back to Boralus.\"} {cond:PlayerCompletedQuest(51229)}",
+
+	-- Boralus to Vol'dun (Flight Master)
+		"Vol'dun/0 36.69,34.28 -to- Boralus/0 70.22,27.06 {fac:A} {mode:SHIP} {cost:30} {title:Talk to Barnard \"The Smasher\" Baysworth, tell her \"Take us back to Boralus.\"} {cond:PlayerCompletedQuest(51229)}",
+
+
+
+
+
+
+-----------------------------------------------
+-- HORDE TRAVEL BETWEEN KUL TIRAS & ZULDAZAR --
+--			BFA		     --
+-----------------------------------------------
+	
+	-- Zuldazar to Stormsong Valley (Boat)
+		"Zuldazar/0 58.46,62.99 -to- Drustvar/0 20.61,43.69 {fac:H} {mode:SHIP} {cost:30} {title:Talk to Dread-Admiral Tattersail, tell her \"Set sail for Drustvar.\"} {cond:PlayerCompletedQuest(51801)}",
+	
+	-- Drustvar to Zuldazar (Boat)
+		"Drustvar/0 20.60,43.34 -to- Zuldazar/0 58.40,62.50 {fac:H} {mode:SHIP} {cost:30} {title:Talk to Swellthrasher, tell him \"Take us back to Zuldazar.\"} {cond:PlayerCompletedQuest(51340)}",	
+	
+	-- Zuldazar to Stormsong Valley (Boat)
+		"Zuldazar/0 58.46,62.99 -to- Stormsong Valley/0 51.98,24.49 {fac:H} {mode:SHIP} {cost:30} {title:Talk to Dread-Admiral Tattersail, tell her \"Set sail for Stormsong Valley.\"} {cond:PlayerCompletedQuest(51802)}",
+
+	-- Stormsong Valley to Zuldazar (Boat)
+		"Stormsong Valley/0 51.95,24.46 -to- Zuldazar/0 58.40,62.50 {fac:H} {mode:SHIP} {cost:30} {title:Talk to Grok Seahandler, tell him \"Take me back to Zuldazar.\"} {cond:PlayerCompletedQuest(51532)}",
+	
+	-- Stormsong Valley to Zuldazar (Flight Master)
+		"Stormsong Valley/0 51.43,33.75 -to- Zuldazar/0 58.40,62.50 {fac:H} {mode:SHIP} {cost:30} {title:Talk to Muka Stormbreaker, tell her \"Take us back to Zuldazar.\"} {cond:PlayerCompletedQuest(51696)}",
+
+	-- Zuldazar to Tiragarde Sound (Boat)
+		"Zuldazar/0 58.46,62.99 -to- Tiragarde Sound/0 88.20,51.16 {fac:H} {mode:SHIP} {cost:30} {title:Talk to Dread-Admiral Tattersail, tell her \"Set sail for Tiragarde Sound.\"} {cond:PlayerCompletedQuest(51800)}",
+
+	-- Tiragarde Sound to Zuldazar (Boat)
+		"Tiragarde Sound/0 87.85,51.18 -to- Zuldazar/0 58.40,62.50 {fac:H} {mode:SHIP} {cost:30} {title:Talk to Erul Dawnbrook, tell him \"Take us back to Zuldazar.\"} {cond:PlayerCompletedQuest(51421)}",
+
+
+
+
+
 
 ---------------------------------
 -- ZULDAZAR WAVESIGNER FERRIES --
@@ -62,7 +123,7 @@ data.basenodes.transit = {
 	"Wetlands/0 6.37,62.24 <port:Menethil Harbor> -x- Dustwallow Marsh/0 71.51,56.34 {fac:A} {mode:SHIP}",
 
 	-- Menethil Harbor - Wetlands, Eastern Kingdoms -x- Valgarde - Howling Fjord, Northrend --
-	"Wetlands/0 5.10,55.72 <port:Menethil Harbor> -x- Howling Fjord/0 61.33,62.60 <port:Valgarde> {fac:A} {mode:SHIP}", --,cost=300}, --ship turnaround is 450, but takes forever to depart/arrive
+	"Wetlands/0 5.10,55.72 <port:Menethil Harbor> -x- Howling Fjord/0 61.33,62.60 <port:Valgarde> {fac:A} {mode:SHIP}", --cost=300, --ship turnaround is 450, but takes forever to depart/arrive
 
 	-- Booty Bay - The Cape of Stranglethorn, Eastern Kingdoms -x- Rachet - Northern Barrens, Kalimdor --
 	"The Cape of Stranglethorn/0 39.02,67.01 <port:Booty Bay> -x- Northern Barrens/0 70.16,73.27 <port:Ratchet> {mode:SHIP}",
@@ -77,7 +138,7 @@ data.basenodes.transit = {
 	"Dragonblight/0 49.64,78.43 -x- Howling Fjord/0 23.46,57.75 <port:Kamagua> {mode:SHIP} {template:turtle}",
 
 	-- Stormwind - Elwyyn Forest, Eastern Kingdoms -x- Tradewinds Market - Tiragarde Sound, Kul Tiras --
-	"Stormwind City/0 22.43,55.93 -x- Boralus/0 77.62,26.15 {fac:A} {mode:SHIP} {cond:ZGV.InPhase('bfa')",
+	"Stormwind City/0 22.43,55.93 -x- Boralus/0 77.62,26.15 {fac:A} {mode:SHIP} {cond:ZGV.InPhase('bfa')}",
 
 	-- Port of Zandalar - Zuldazar, Zandalar -x- Echo Isles - Durotar, Kalimdor --
 	"Zuldazar/0 58.02,65.07 -x- Echo Isles/0 70.90,38.23 {fac:H} {mode:SHIP} {cond:ZGV.InPhase('bfa')}",
@@ -242,7 +303,7 @@ data.basenodes.transit = {
 	"Stormwind City/0 75.34,16.43 -to- Twilight Highlands/0 79.48,77.79 <subtype:cityportal> {fac:A} {mode:PORTAL} {cond:PlayerCompletedQuest(27537) or UnitLevel('player')>=84}",
 
 	-- Stormwind - Elwynn Forest, Eastern Kingdoms -x- Boralus Harbor, Tiragarde Sound --
-	"Stormwind City/0 48.92,86.44 <subtype:cityportal> -to- Boralus/0 69.80,15.75 {fac:A} {mode:PORTAL} {title:Click the Portal to Boralus} {cond:ZGV.InPhase('bfa')",
+	"Stormwind City/0 48.92,86.44 <subtype:cityportal> -to- Boralus/0 69.80,15.75 {fac:A} {mode:PORTAL} {title:Click the Portal to Boralus} {cond:ZGV.InPhase('bfa')}",
 
 	-- Highbank - Twilight Highlands, Eastern Kingdoms -to- Stormwind - Elwynn Forest, Eastern Kingdoms --
 	"Twilight Highlands/0 79.47,77.80 <subtype:cityportal> -to- Stormwind City/0 75.17,16.81 {fac:A} {mode:PORTAL} {cond:PlayerCompletedQuest(27537)}",
@@ -537,41 +598,41 @@ data.basenodes.transit = {
 	---------------
 
 		-- Sanctum of the Sages - Boralus Harbor, Tiragarde Sound -to- Stormwind City - Elwynn Forest, Eastern Kingdoms --
-		"Tiragarde Sound/0 74.31,23.84 <subtype:cityportal> -to- Stormwind City/0 49.59,86.53 {fac:A} {mode:PORTAL} {title:Click the Portal to Stormwind} {cond:ZGV.InPhase('bfa')",
+		"Tiragarde Sound/0 74.31,23.84 <subtype:cityportal> -to- Stormwind City/0 49.59,86.53 {fac:A} {mode:PORTAL} {title:Click the Portal to Stormwind} {cond:ZGV.InPhase('bfa')}",
 
 		-- Sanctum of the Sages - Boralus Harbor, Tiragarde Sound -to- Ironforge - Dun Morogh, Eastern Kingdoms --
-		"Tiragarde Sound/0 74.49,23.50 <subtype:cityportal> -to- Ironforge/0 25.51,8.43 {fac:A} {mode:PORTAL} {title:Click the Portal to Ironforge} {cond:ZGV.InPhase('bfa')",
+		"Tiragarde Sound/0 74.49,23.50 <subtype:cityportal> -to- Ironforge/0 25.51,8.43 {fac:A} {mode:PORTAL} {title:Click the Portal to Ironforge} {cond:ZGV.InPhase('bfa')}",
 
 		-- Sanctum of the Sages - Boralus Harbor, Tiragarde Sound -to- The Exodar - Azuremyst Isle, Kalimdor --
-		"Tiragarde Sound/0 74.38,23.41 <subtype:cityportal> -to- The Exodar/0 47.62,59.82 {fac:A} {mode:PORTAL} {title:Click the Portal to Exodar} {cond:ZGV.InPhase('bfa')",
+		"Tiragarde Sound/0 74.38,23.41 <subtype:cityportal> -to- The Exodar/0 47.62,59.82 {fac:A} {mode:PORTAL} {title:Click the Portal to Exodar} {cond:ZGV.InPhase('bfa')}",
 
 		-- Sanctum of the Sages - Boralus Harbor, Tiragarde Sound -to- Magni's Encampment - Silithus, Kalimdor --
-		"Tiragarde Sound/0 73.83,25.31 -to- Silithus/0 41.41,45.19 {fac:A} {mode:PORTAL} {title:Click the Portal to Silithus} {cond:ZGV.InPhase('bfa')",
+		"Tiragarde Sound/0 73.83,25.31 -to- Silithus/0 41.41,45.19 {fac:A} {mode:PORTAL} {title:Click the Portal to Silithus} {cond:ZGV.InPhase('bfa')}",
 
 		-- Magni's Encampment - Silithus, Kalimdor -to- Sanctum of the Sages - Boralus Harbor, Tiragarde Sound --
-		"Silithus/0 41.49,44.85 <subtype:cityportal> -to- Tiragarde Sound/0 73.78,25.29 {fac:A} {mode:PORTAL} {title:Click the Portal to Tiragarde} {cond:ZGV.InPhase('bfa')",
+		"Silithus/0 41.49,44.85 -to- Tiragarde Sound/0 73.78,25.29 <subtype:cityportal> {fac:A} {mode:PORTAL} {title:Click the Portal to Tiragarde} {cond:ZGV.InPhase('bfa')}",
 
 	--------------
 	-- ZANDALAR --
 	--------------
 
 		-- Hall of Ancient Paths - Zuldazar, Zandalar -to- Silvermoon City, Eversong Woods --
-		"Dazar'alor/1 73.99,62.22 <subtype:cityportal> -to- Silvermoon City/0 58.26,19.24 {fac:H} {mode:PORTAL} {title:Click the Portal to Silvermoon City} {cond:ZGV.InPhase('bfa')",
+		"Dazar'alor/1 73.99,62.22 <subtype:cityportal> -to- Silvermoon City/0 58.26,19.24 {fac:H} {mode:PORTAL} {title:Click the Portal to Silvermoon City} {cond:ZGV.InPhase('bfa')}",
 
 		-- Hall of Ancient Paths - Zuldazar, Zandalar -to- Orgrimmar - Durotar, Kalimdor --
-		"Dazar'alor/1 74.04,69.94 <subtype:cityportal> -to- Orgrimmar/2 48.28,64.53 {fac:H} {mode:PORTAL} {title:Click the Portal to Orgrimmar} {cond:ZGV.InPhase('bfa')",
+		"Dazar'alor/1 74.04,69.94 <subtype:cityportal> -to- Orgrimmar/2 48.28,64.53 {fac:H} {mode:PORTAL} {title:Click the Portal to Orgrimmar} {cond:ZGV.InPhase('bfa')}",
 
 		-- Orgrimmar - Durotar, Kalimdor - Zuldazar, Zandalar -to- Hall of Ancient Paths --
-		"Orgrimmar/2 47.47,60.05 <subtype:cityportal> -to- Dazar'alor/1 68.28,64.58 {fac:H} {mode:PORTAL} {title:Click the Portal to Zuldazar} {cond:ZGV.InPhase('bfa')",
+		"Orgrimmar/2 47.47,60.05 <subtype:cityportal> -to- Dazar'alor/1 68.28,64.58 {fac:H} {mode:PORTAL} {title:Click the Portal to Zuldazar} {cond:ZGV.InPhase('bfa')}",
 
 		-- Hall of Ancient Paths - Zuldazar, Zandalar -to- Thunder Bluff - Mulgore, Kalimdor --
-		"Dazar'alor/1 73.60,77.38 <subtype:cityportal> -to- Thunder Bluff/0 22.21,16.87 {fac:H} {mode:PORTAL} {title:Click the Portal to Thunder Bluff} {cond:ZGV.InPhase('bfa')",
+		"Dazar'alor/1 73.60,77.38 <subtype:cityportal> -to- Thunder Bluff/0 22.21,16.87 {fac:H} {mode:PORTAL} {title:Click the Portal to Thunder Bluff} {cond:ZGV.InPhase('bfa')}",
 
 		-- Hall of Ancient Paths - Zuldazar, Zandalar -to- Silithus, Kalimdor --
-		"Dazar'alor/1 73.81,85.40 -to- Silithus/0 41.41,45.19 {fac:H} {mode:PORTAL} {title:Click the Portal to Silithus} {cond:ZGV.InPhase('bfa')",
+		"Dazar'alor/1 73.81,85.40 -to- Silithus/0 41.41,45.19 {fac:H} {mode:PORTAL} {title:Click the Portal to Silithus} {cond:ZGV.InPhase('bfa')}",
 
 		-- Silithus, Kalimdor -to- Hall of Ancient Paths - Zuldazar, Zandalar --
-		"Silithus/0 41.61,45.20 <subtype:cityportal> -to- Dazar'alor/1 68.28,64.58 {fac:H} {mode:PORTAL} {title:Click the Portal to Zuldazar} {cond:ZGV.InPhase('bfa')",
+		"Silithus/0 41.61,45.20 <subtype:cityportal> -to- Dazar'alor/1 68.28,64.58 {fac:H} {mode:PORTAL} {title:Click the Portal to Zuldazar} {cond:ZGV.InPhase('bfa')}",
 
 
 
@@ -598,7 +659,7 @@ data.basenodes.transit = {
 ---  Suramar  ---
 -----------------
 	-- Suramar, Broken Isles -x- Shal'Aran Cave - Suramar, Broken Isles --
-	"Suramar/0 34.93,47.82 -x- Suramar/0 36.19,47.09 <region:suramar_shalaran> {template:cave}",
+	"Suramar/0 34.93,47.82 -x- Suramar/0 36.19,47.09 <region:suramar_shalaran> {template:atob} {title_atob:Follow the corridor into the cave} {title_btoa:Follow the corridor out of the cave}",
 
 		-- Portal from Shal'Aran to Felsoul Hold
 			"Suramar/0 36.10,45.75 <region:suramar_shalaran> -to- Suramar/23 52.35,36.75 {mode:PORTAL}"..

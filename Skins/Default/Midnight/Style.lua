@@ -41,6 +41,9 @@ STYLE.ButtonBackdrop2=STYLE.MainBackdrop
 STYLE.ButtonColor2=STYLE.TriBackdropColor
 STYLE.ButtonHighlightColor2={ZGV.F.HTMLColor("#444444ff")}
 
+STYLE.ButtonTextColor1Over={ZGV.F.HTMLColor("#ffffff77")}
+STYLE.ButtonTextColor1Out={ZGV.F.HTMLColor("#ffffffff")}
+
 STYLE.DropDownBackdrop1=STYLE.SecBackdrop
 STYLE.DropDownBackdrop1Color=STYLE.TriBackdropColor
 STYLE.DropDownBackdrop2=STYLE.DropDownBackdrop1
@@ -121,6 +124,7 @@ STYLE.StepLineClickerBackdrop=STYLE.StepLineBackBackdrop
 STYLE.StepLineIcons = SKINSDIR.."icons"
 STYLE.TitleButtons = STYLEDIR.."titlebuttons"
 STYLE.TitleLogo = SKINSDIR.."zygorlogo"
+STYLE.TitleLogoSize = {110,110/4}
 
 STYLE.StepLineIconSize = 1.4
 
@@ -135,12 +139,46 @@ STYLE.CreatureViewerLabelColor = {1,0.8,0,1}
 STYLE.CreatureViewerGap = {0,0}
 --]]
 
+---------------------GLASS UPDATE -------------------------------
+
 STYLE.NotificationBackdrop=STYLE.MainBackdrop
 STYLE.NotificationBackdropColor=STYLE.MainBackdropColor
 STYLE.NotificationBackdropBorderColor=STYLE.MainBackdropBorderColor
 
-function STYLE:OnActivate()
-	local iconsize = 20
-	ZygorGuidesViewerFrame_Border_TitleBar_Logo:SetSize(120,120/4)
-	ZygorGuidesViewerFrame_Border_TitleBar_Logo:SetPoint("CENTER",ZygorGuidesViewerFrame_Border_TitleBar,"CENTER")
-end
+STYLE.GuideMenuMargin = 10
+STYLE.GuideMenuHeaderFooterBackground = {0,0,0,0}
+STYLE.GuideMenuHeaderFooterBorder = {0,0,0,0}
+STYLE.GuideMenuMenuBackground = {ZGV.F.HTMLColor("#2b2b2bff")}
+STYLE.GuideMenuSectionBorder = {0,0,0,1}
+STYLE.GuideMenuSearchEdit = {ZGV.F.HTMLColor("#7d7d7dff")}
+STYLE.GuideMenuContentBackground = {ZGV.F.HTMLColor("#222222ff")}
+STYLE.GuideMenuDetailsBackground = {ZGV.F.HTMLColor("#2b2b2bff")}
+STYLE.GuideMenuFooterElementsOffset = 13
+STYLE.GuideMenuSmallIcons = STYLEDIR.."guideicons-small"
+
+STYLE.AuctionToolsMargin = 10
+STYLE.AuctionToolsPriceIcons = ZGV.DIR.."\\Skins\\goldpricestatusicons"
+STYLE.AuctionToolsHeaderFooterBackground = {0,0,0,0}
+STYLE.AuctionToolsHeaderFooterBorder = {0,0,0,0}
+
+STYLE.TabsMargin = 10
+STYLE.TabsHeight = 20
+STYLE.TabsIconSize = 12
+STYLE.TabsIcons = ZGV.DIR.."\\Skins\\guideicons-big"
+STYLE.TabsBackdrop=STYLE.MainBackdrop
+STYLE.TabsBackdropActive={ZGV.F.HTMLColor("#222222ff")}
+STYLE.TabsBackdropInactive={0,0,0,1}
+STYLE.TabsBorderColor={0,0,0,1}
+STYLE.TabsSeparatorColor={ZGV.F.HTMLColor("#3f3f3fff")}
+STYLE.TabsSeparatorTexture=SKINSDIR.."white"
+STYLE.TabsTextColor={1,1,1,1}
+STYLE.TabsTextColorOver={ZGV.F.HTMLColor("#ffffff77")}
+STYLE.TabsBusyIcon = ZGV.DIR.."\\Skins\\loading"
+
+STYLE.ProgressBarBackdrop = {bgFile = SKINSDIR.."white", edgeFile=SKINSDIR.."white", tile = true, edgeSize=1, tileSize = 16, insets = { left = 1, right = 1, top = 1, bottom = 1 }}
+STYLE.ProgressBarBackdropColor=STYLE.SecBackdropColor
+STYLE.ProgressBarBackdropBorderColor=STYLE.DarkBorder
+STYLE.ProgressBarTextureFile = STYLEDIR.."progressbar"
+STYLE.ProgressBarTextureFileOffset = {0,1/2,0,1/2}
+STYLE.ProgressBarDecorUse = 0
+STYLE.ProgressBarDecorFileOffset = {1/2,1,0,1/2}

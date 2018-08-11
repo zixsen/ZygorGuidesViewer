@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ D:\UI.xsd">
+
+	<!--- Template: Text used to show goal text -->
 	<FontString name="ZGVF_Default_StepLineText" inherits="GameFontHighlightSmall" text="" justifyH="LEFT" justifyV="TOP" virtual="true">
 		<!-- multilineIndent="true" -->
 		<Anchors>
@@ -7,13 +9,13 @@
 		</Anchors>
 		<Color r="1.0" g="1.0" b="1.0" />
 	</FontString>
-	<Font name="ZGVF_Default_TabFont" inherits="SystemFont_Small" virtual="true">
-		<Color r="1.0" g="1.0" b="1.0" />
-		<FontHeight val="9" />
-	</Font>
+
+	<!--- Template: Texture used to show goal icon -->
 	<Texture name="ZGVF_Default_StepLineIcon" virtual="true">
 		<Size x="14" y="14" />
 	</Texture>
+
+	<!--- Template: Texture used to show goal change state animation -->
 	<Frame name="ZGVF_Default_StepLineBack" virtual="true">
 		<Animations>
 			<AnimationGroup name="$parent_white2green">
@@ -68,80 +70,7 @@
 			</AnimationGroup>
 		</Animations>
 	</Frame>
-	<Button name="ZygorGuidesViewer_ProgressBar">
-		<Size>
-			<AbsDimension x="0" y="18" />
-		</Size>
-		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="" tile="true">
-			<EdgeSize>
-				<AbsValue val="4" />
-			</EdgeSize>
-			<TileSize>
-				<AbsValue val="16" />
-			</TileSize>
-			<BackgroundInsets>
-				<AbsInset left="6" right="6" top="6" bottom="6" />
-			</BackgroundInsets>
-			<Color r="0.0" g="0.0" b="0.0" a="0.8" />
-		</Backdrop>
-		<Layers>
-			<Layer level="ARTWORK">
-				<Texture name="$parent_Texture" file="Interface\TargetingFrame\UI-StatusBar">
-					<Size>
-						<AbsDimension x="0" y="7" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT">
-							<AbsDimension x="5" y="" />
-						</Anchor>
-					</Anchors>
-					<Color r="0.0" g="1.0" b="0.0" a="0.8" />
-				</Texture>
-			</Layer>
-			<Layer level="OVERLAY">
-				<FontString name="$parent_TextString" inherits="SystemFont_Small" text="ProgressBar">
-					<Anchors>
-						<Anchor point="CENTER">
-							<AbsDimension x="0" y="1" />
-						</Anchor>
-					</Anchors>
-					<Color r="1.0" g="1.0" b="1.0" a="1.0" />
-				</FontString>
-			</Layer>
-		</Layers>
-		<Scripts>
-			<OnLoad>
-				ZygorGuidesViewer_ProgressBar:Hide()
-				ZygorGuidesViewer_ProgressBar_TextString:Hide()
-				self:RegisterForDrag("LeftButton")
-			</OnLoad>
-			<OnDragStart>
-				if not ZygorGuidesViewer.db.profile["windowlocked"] then 
-					if button=='LeftButton' then 
-						ZygorGuidesViewerFrameMaster:StartMoving() 
-						ZygorGuidesViewer.framemoving=true 
-					else 
-						ZygorGuidesViewer:SetOption("Display","resizeup") 
-					end 
-				end
-			</OnDragStart>
-			<OnDragStop>
-				ZygorGuidesViewerFrameMaster:StopMovingOrSizing() 
-				ZygorGuidesViewer:AlignFrame() 
-				ZGV.framemoving=nil
-			</OnDragStop>
-			<OnEnter>
-				ZygorGuidesViewer_ProgressBar_TextString:Show()
-				ZygorGuidesViewer_ProgressBar_OnEnter()
-			</OnEnter>
-			<OnLeave>
-				ZygorGuidesViewer_ProgressBar_OnExit()
-			</OnLeave>
-			<OnClick>
-				ZygorGuidesViewer_ProgressBar_OnClick()
-			</OnClick>
-		</Scripts>
-	</Button>
+
 	<Frame name="ZGVF_Default_StepLine" virtual="true">
 		<Frames>
 			<Frame name="$parentBack" inherits="ZGVF_Default_StepLineBack" hidden="true" parentKey="back" />
@@ -163,6 +92,7 @@
 			</Button>
 		</Frames>
 	</Frame>
+
 	<Button name="ZGVF_Default_Step" virtual="true" hidden="true" movable="true" enableMouse="true">
 		<Animations>
 			<AnimationGroup name="$parent_slideup">
@@ -206,11 +136,7 @@
 					ZygorGuidesViewer.framemoving=true 
 				end
 			</OnDragStart>
-			<OnDragStop>
-				ZygorGuidesViewerFrameMaster:StopMovingOrSizing() 
-				ZygorGuidesViewer:AlignFrame() 
-				ZGV.framemoving=nil
-			</OnDragStop>
+			<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 		</Scripts>
 		<!-- step mouse highlight, just in case we need it some day -->
 		<!--
@@ -223,78 +149,7 @@
 		</Layers>
 		-->
 	</Button>
-	<Frame name="ZGVF_Default_SpotLine" virtual="true">
-		<Frames>
-			<!-- <Button name="$parentClicker" hidden="false" frameStrata="LOW" parentKey="clicker" /> -->
-			<SimpleHTML name="$parentLabel" qinherits="" parentKey="label" />
-		</Frames>
-		<Layers>
-			<Layer level="ARTWORK">
-				<Texture name="$parentIcon" inherits="ZGVF_Default_StepLineIcon" hidden="true" parentKey="icon" />
-			</Layer>
-		</Layers>
-	</Frame>
-	<Button name="ZGVF_Default_Spot" virtual="true" hidden="true" movable="true" enableMouse="false">
-		<Frames>
-			<Frame name="$parent_Line1" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line2" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line3" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line4" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line5" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line6" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line7" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line9" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line8" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line10" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line11" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line12" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line13" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line14" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line15" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line16" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line17" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line18" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line19" inherits="ZGVF_Default_SpotLine" />
-			<Frame name="$parent_Line20" inherits="ZGVF_Default_SpotLine" />
-		</Frames>
-		<Layers>
-			<Layer level="ARTWORK">
-				<Texture name="$parent_Arrow" parentKey="arrow">
-					<Size x="30" y="30" />
-					<Anchors>
-						<Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
-					</Anchors>
-				</Texture>
-				<FontString name="$parent_ArrowDist" inherits="GameFontNormalSmall" text="" justifyH="CENTER" justifyV="TOP" parentKey="arrowdist">
-					<!-- multilineIndent="true" -->
-					<Anchors>
-						<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parent_Arrow" />
-						<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent_Arrow" />
-					</Anchors>
-					<Color r="1.0" g="1.0" b="1.0" />
-				</FontString>
-			</Layer>
-		</Layers>
-		<Scripts>
-			<OnDragStart>
-				if not ZygorGuidesViewer.db.profile["windowlocked"] then 
-					ZygorGuidesViewerFrameMaster:StartMoving() 
-					ZygorGuidesViewer.framemoving=true 
-				end
-			</OnDragStart>
-			<OnDragStop>
-				ZygorGuidesViewerFrameMaster:StopMovingOrSizing() 
-				ZygorGuidesViewer:AlignFrame() 
-				ZGV.framemoving=nil
-			</OnDragStop>
-		</Scripts>
-	</Button>
-	<Button name="ZGVF_Default_Tab" qinherits="UIPanelButtonTemplate" virtual="true" hidden="true">
-		<Size x="40" y="15" />
-		<NormalFont style="GameFontNormalSmall" />
-		<HighlightFont style="GameFontHighlightSmall" />
-		<HighlightTexture inherits="UIPanelButtonHighlightTexture" />
-	</Button>
+
 	<Button name="ZygorGuidesViewer_Default_Button" virtual="true">
 		<Size x="40" y="20" />
 		<Layers>
@@ -389,54 +244,13 @@
 			</OnLoad>
 		</Scripts>
 	</Button>
-	<!--
-	<CheckButton name="ZGVMFAction" inherits="ActionBarButtonTemplate" virtual="true">
-		<Attributes>
-			<Attribute name="type" value="action"/>
-			<Attribute name="action" type="number" value="13"/>
-			<Attribute name="unit" value="player"/>
-		</Attribute>
-	</CheckButton>
-	-->
+
 	<Frame name="ZygorGuidesViewerFrame_template_default" toplevel="true" hidden="true" frameStrata="LOW" resizable="true" clampedToScreen="true" virtual="true">
 		<Anchors>
 			<Anchor point="CENTER" relativePoint="CENTER" />
 		</Anchors>
 		<Size x="320" y="100" />
-		<Animations>
-			<AnimationGroup name="$parent_slideup">
-				<Translation duration="0.0" maxFramerate="30" smoothing="NONE" offsetX="0" offsetY="-50" order="1" />
-				<Translation duration="0.3" maxFramerate="30" smoothing="IN_OUT" offsetX="0" offsetY="50" order="2" />
-			</AnimationGroup>
-			<AnimationGroup name="$parent_size">
-				<Animation duration="0.5" maxFramerate="30" smoothing="IN_OUT">
-					<Scripts>
-						<OnPlay>
-							self.frame = self:GetParent():GetParent()
-							if self.frame.curheight then 
-								self.frame.height=self.frame.curheight 
-							end
-							self.frame.height = self.frame:GetHeight()
-						</OnPlay>
-						<OnUpdate>
-							self.frame.curheight = self.frame.height+self:GetSmoothProgress()*(self.frame.targetheight-self.frame.height)
-							self.frame:SetHeight(self.frame.curheight)
-							print("update "..self:GetProgress())
-						</OnUpdate>
-						<OnFinished>
-							self.frame.height=self.frame.targetheight
-							print("finish")
-						</OnFinished>
-					</Scripts>
-				</Animation>
-			</AnimationGroup>
-		</Animations>
 		<Scripts>
-			<!-- alpha stub - missing or empty functions
-			<OnEvent function="ZygorGuidesViewerFrame_OnEvent" />
-			<OnKeyDown function="ZygorGuidesViewerFrame_OnKeyDown" />
-			<OnKeyUp function="ZygorGuidesViewerFrame_OnKeyUp" />
-			-->
 			<OnLoad function="ZygorGuidesViewerFrame_OnLoad" />
 			<OnShow function="ZygorGuidesViewerFrame_OnShow" />
 			<OnHide function="ZygorGuidesViewerFrame_OnHide" />
@@ -447,23 +261,6 @@
 		<Frames>
 			<Button name="ZygorGuidesViewerFrame_FakeStep" inherits="ZGVF_Default_Step" />
 			<Frame setAllPoints="true">
-				<Layers>
-					<Layer level="OVERLAY">
-						<FontString name="ZygorGuidesViewerFrame_MissingText" inherits="GameFontNormalSmall" text="" justifyH="CENTER" justifyV="TOP">
-							<Anchors>
-								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
-									<Offset x="5" y="-70" />
-								</Anchor>
-								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
-									<Offset x="-5" y="-70" />
-								</Anchor>
-								<Anchor point="BOTTOM" relativePoint="BOTTOM">
-									<Offset x="0" y="5" />
-								</Anchor>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
 				<Frames>
 					<Button name="ZygorGuidesViewerFrame_Step1" inherits="ZGVF_Default_Step" />
 					<Button name="ZygorGuidesViewerFrame_Step2" inherits="ZGVF_Default_Step" />
@@ -485,26 +282,6 @@
 					<Button name="ZygorGuidesViewerFrame_Step18" inherits="ZGVF_Default_Step" />
 					<Button name="ZygorGuidesViewerFrame_Step19" inherits="ZGVF_Default_Step" />
 					<Button name="ZygorGuidesViewerFrame_Step20" inherits="ZGVF_Default_Step" />
-					<Button name="ZygorGuidesViewerFrame_Spot1" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot2" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot3" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot4" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot5" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot6" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot7" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot8" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot9" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot10" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot11" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot12" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot13" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot14" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot15" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot16" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot17" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot18" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot19" inherits="ZGVF_Default_Spot" />
-					<Button name="ZygorGuidesViewerFrame_Spot20" inherits="ZGVF_Default_Spot" />
 				</Frames>
 			</Frame>
 			<Frame name="$parent_Border" hidden="true" parentKey="Border" setAllPoints="true">
@@ -520,8 +297,8 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-							<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+							<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+							<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 							<OnLoad>self:RegisterForDrag("LeftButton")</OnLoad>
 						</Scripts>
 						<Layers>
@@ -566,12 +343,12 @@
 									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 								</Scripts>
 							</Button>
+							<!--
 							<Button name="ZygorGuidesViewerFrame_HelpButton" parentKey="HelpButton" hidden="true">
 								<Size x="20" y="20" />
 								<Anchors>
 									<Anchor point="CENTER" relativePoint="LEFT">
 										<Offset x="38" y="0" />
-										<!-- 35 -->
 									</Anchor>
 								</Anchors>
 								<NormalTexture parentKey="ntx"  />
@@ -585,10 +362,11 @@
 								<Scripts>
 									<OnLoad>self:Show() self:RegisterForClicks("LeftButtonUp","RightButtonUp")
 										self:RegisterForDrag("LeftButton")</OnLoad>
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 								</Scripts>
 							</Button>
+							-->
 							<Button name="ZygorGuidesViewerFrame_ReportButton" parentKey="ReportButton" hidden="true">
 								<Size x="20" y="20" />
 								<Anchors>
@@ -607,8 +385,8 @@
 								<Scripts>
 									<OnLoad>if (ZGV.DEV or ZGV.BETA) and ZGV.db.profile.reportbutton then self:Show() end  self:RegisterForClicks("LeftButtonUp","RightButtonUp") 
 										self:RegisterForDrag("LeftButton")</OnLoad>
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 								</Scripts>
 							</Button>
 							<Frame name="ZygorGuidesViewerFrame_Loading" parentKey="Loading"> <!--inherits="ZygorQuestsLoadingIcon"-->
@@ -623,7 +401,7 @@
 								<Size x="20" y="20" />
 								<Anchors>
 									<Anchor point="CENTER" relativePoint="RIGHT">
-										<Offset x="-35" y="0" />
+										<Offset x="-33" y="1" />
 									</Anchor>
 								</Anchors>
 								<NormalTexture parentKey="ntx"  />
@@ -634,8 +412,8 @@
 									<OnEnter function="ZygorGuidesViewerFrame_LockButton_OnEnter" />
 									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
 									<OnLoad>self:RegisterForDrag("LeftButton")</OnLoad>
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 								</Scripts>
 							</Button>
 							<Button name="ZygorGuidesViewerFrame_CloseButton" inherits="UIPanelCloseButton" parentKey="CloseButton">
@@ -648,8 +426,8 @@
 								<Scripts>
 									<OnClick function="ZygorGuidesViewerFrame_CloseButton_OnClick" />
 									<OnLoad>self:RegisterForDrag("LeftButton")</OnLoad>
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 								</Scripts>
 								<NormalTexture parentKey="ntx"  />
 								<PushedTexture parentKey="ptx"  />
@@ -661,7 +439,7 @@
 						<Size x="20" y="20" />
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
-								<Offset x="-5" y="5" />
+								<Offset x="-5" y="15" />
 								<!-- 35 -->
 							</Anchor>
 						</Anchors>
@@ -675,54 +453,19 @@
 						</Scripts>
 						<Scripts>
 							<OnLoad>self:RegisterForClicks("LeftButtonUp","RightButtonUp") self:RegisterForDrag("LeftButton")</OnLoad>
-							<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-							<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+							<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+							<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 						</Scripts>
 					</Button>
-					<Button name="$parentTab1" parentKey="Tab1" inherits="ZGVF_Default_Tab" />
-					<Button name="$parentTab2" parentKey="Tab2" inherits="ZGVF_Default_Tab" />
-					<Button name="$parentTab3" parentKey="Tab3" inherits="ZGVF_Default_Tab" />
-					<Button name="$parentTab4" parentKey="Tab4" inherits="ZGVF_Default_Tab" />
+
 					<Frame name="$parent_Guides" parentKey="Guides">
 						<Anchors>
 							<Anchor point="TOPLEFT">
-								<Offset x="5" y="0" />
+								<Offset x="5" y="50" />
 							</Anchor>
 						</Anchors>
 						<Size x="20" y="20" />
 						<Frames>
-							<Frame name="$parent_GuideBack" parentKey="GuideBack">
-								<Size x="1" y="1" />
-								<Layers>
-									<Layer level="OVERLAY">
-										<FontString name="$parent_SectionTitle" justifyH="LEFT" justifyV="CENTER"> <!-- bfa alpha change inherits="GameFontSmall" -->
-											<Size x="135" y="20" />
-											<Anchors>
-												<Anchor point="LEFT" relativePoint="LEFT">
-													<Offset x="4" y="0" />
-												</Anchor>
-												<Anchor point="RIGHT" relativePoint="RIGHT">
-													<Offset x="-30" y="0" />
-												</Anchor>
-											</Anchors>
-										</FontString>
-									</Layer>
-								</Layers>
-							</Frame>
-							<Button name="$parent_GuideButton" text="v" parentKey="GuideButton">
-								<Anchors>
-									<Anchor point="CENTER" relativePoint="RIGHT">
-										<Offset x="-62" y="0" />
-									</Anchor>
-								</Anchors>
-								<Size x="20" y="20" />
-								<Scripts>
-									<OnClick function="ZygorGuidesViewerFrame_Guides_GuideButton_OnClick" />
-									<OnEnter function="ZygorGuidesViewerFrame_Guides_GuideButton_OnEnter" />
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-									<OnLoad>self:RegisterForClicks("LeftButtonUp","RightButtonUp")</OnLoad>
-								</Scripts>
-							</Button>
 							<Button name="$parent_MiniButton" parentKey="MiniButton">
 								<Size x="20" y="20" />
 								<Anchors>
@@ -738,8 +481,8 @@
 									<OnEnter function="ZygorGuidesViewerFrame_Guides_MiniButton_OnEnter" />
 									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
 									<OnLoad>self:RegisterForClicks("LeftButtonUp","RightButtonUp") self:RegisterForDrag("LeftButton")</OnLoad>
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 								</Scripts>
 							</Button>
 							<Button name="$parent_QuestCleanupButton" parentKey="QuestCleanupButton">
@@ -756,16 +499,38 @@
 									<OnClick function="ZygorGuidesViewerFrame_Guides_QuestCleanupButton_OnClick" />
 									<OnEnter function="ZygorGuidesViewerFrame_Guides_QuestCleanupButton_OnEnter" />
 									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
+									<OnLoad>self:RegisterForDrag("LeftButton")</OnLoad>
+								</Scripts>
+							</Button>
+
+							<Button name="$parent_GuideShareButton" parentKey="GuideShareButton">
+								<Size x="20" y="20" />
+								<Anchors>
+									<Anchor point="CENTER" relativeTo="$parent_QuestCleanupButton">
+										<Offset x="-21" y="0" />
+									</Anchor>
+								</Anchors>
+								<NormalTexture parentKey="ntx"  />
+								<PushedTexture parentKey="ptx"  />
+								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
+								<Scripts>
+									<OnClick function="ZygorGuidesViewerFrame_Guides_GuideShareButton_OnClick" />
+									<OnEnter function="ZygorGuidesViewerFrame_Guides_GuideShareButton_OnEnter" />
+									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
 									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
 									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
 									<OnLoad>self:RegisterForDrag("LeftButton")</OnLoad>
 								</Scripts>
 							</Button>
+
+
 							<Button name="$parent_PrevButton" parentKey="PrevButton">
 								<Size x="20" y="20" />
 								<Anchors>
-									<Anchor point="CENTER" relativePoint="LEFT">
-										<Offset x="17" y="0" />
+									<Anchor point="LEFT" relativePoint="LEFT">
+										<Offset x="4" y="0" />
 									</Anchor>
 								</Anchors>
 								<NormalTexture parentKey="ntx"  />
@@ -775,8 +540,8 @@
 									<OnClick function="ZygorGuidesViewerFrame_PrevButton_OnClick" />
 									<OnEnter function="ZygorGuidesViewerFrame_PrevButton_OnEnter" />
 									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 									<OnLoad>self:RegisterForDrag("LeftButton")</OnLoad>
 								</Scripts>
 							</Button>
@@ -797,8 +562,8 @@
 								<Scripts>
 									<OnLoad>self:EnableMouseWheel() self:RegisterForDrag("LeftButton")</OnLoad>
 									<OnMouseWheel function="ZygorGuidesViewerFrame_Stepnum_OnMouseWheel" />
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 								</Scripts>
 							</Frame>
 							<Button name="$parent_NextButton" parentKey="NextButton">
@@ -815,145 +580,13 @@
 									<OnClick function="ZygorGuidesViewerFrame_NextButton_OnClick" />
 									<OnEnter function="ZygorGuidesViewerFrame_NextButton_OnEnter" />
 									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-									<OnDragStart>if not ZygorGuidesViewer.db.profile["windowlocked"] then if button=='LeftButton' then ZygorGuidesViewerFrameMaster:StartMoving() ZygorGuidesViewer.framemoving=true else ZygorGuidesViewer:SetOption("Display","resizeup") end end</OnDragStart>
-									<OnDragStop>ZygorGuidesViewerFrameMaster:StopMovingOrSizing() ZygorGuidesViewer:AlignFrame() ZGV.framemoving=nil</OnDragStop>
+									<OnDragStart>ZGV.GenericDragStartHandler(button)</OnDragStart>
+									<OnDragStop>ZGV.GenericDragStopHandler()</OnDragStop>
 									<OnLoad>self:RegisterForDrag("LeftButton")</OnLoad>
 								</Scripts>
 							</Button>
 						</Frames>
 					</Frame>
-					<!-- bfa alpha change unused frame?
-					<Frame name="$parent_Gold" parentKey="Gold">
-						<Size x="20" y="20" />
-						<Layers>
-							<Layer level="BACKGROUND">
-								<Texture name="$parent_FilterBack" parentKey="FilterBack">
-									<Size x="120" y="20" />
-									<Anchors>
-										<Anchor point="LEFT" relativePoint="LEFT">
-											<Offset x="55" y="0" />
-										</Anchor>
-									</Anchors>
-								</Texture>
-								<Texture name="$parent_RangeBack" parentKey="RangeBack">
-									<Size x="120" y="20" />
-									<Anchors>
-										<Anchor point="LEFT" relativePoint="LEFT">
-											<Offset x="105" y="0" />
-										</Anchor>
-									</Anchors>
-								</Texture>
-							</Layer>
-							<Layer level="OVERLAY">
-								<FontString name="$parent_FilterTitle" justifyH="LEFT" justifyV="CENTER" text="Spots:">
-									<Size x="45" y="20" />
-									<Anchors>
-										<Anchor point="LEFT" relativePoint="LEFT">
-											<Offset x="5" y="0" />
-										</Anchor>
-									</Anchors>
-								</FontString>
-								<FontString name="$parent_RangeTitle" justifyH="LEFT" justifyV="CENTER" text="Range:">
-									<Size x="45" y="20" />
-									<Anchors>
-										<Anchor point="LEFT" relativePoint="LEFT">
-											<Offset x="85" y="0" />
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Frames>
-							<Button name="$parent_FilterAllButton" parentKey="FilterAllButton">
-								<Size x="20" y="20" />
-								<Anchors>
-									<Anchor point="CENTER" relativePoint="LEFT">
-										<Offset x="55" y="0" />
-									</Anchor>
-								</Anchors>
-								<NormalTexture parentKey="ntx"  />
-								<PushedTexture parentKey="ptx"  />
-								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
-								<Scripts>
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-								</Scripts>
-							</Button>
-							<Button name="$parent_FilterDropButton" parentKey="FilterDropButton">
-								<Size x="20" y="20" />
-								<Anchors>
-									<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent_FilterAllButton" />
-								</Anchors>
-								<NormalTexture parentKey="ntx"  />
-								<PushedTexture parentKey="ptx"  />
-								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
-								<Scripts>
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-								</Scripts>
-							</Button>
-							<Button name="$parent_FilterOreButton" parentKey="FilterOreButton">
-								<Size x="20" y="20" />
-								<Anchors>
-									<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent_FilterDropButton" />
-								</Anchors>
-								<NormalTexture parentKey="ntx"  />
-								<PushedTexture parentKey="ptx"  />
-								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
-								<Scripts>
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-								</Scripts>
-							</Button>
-							<Button name="$parent_FilterHerbButton" parentKey="FilterHerbButton">
-								<Size x="20" y="20" />
-								<Anchors>
-									<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent_FilterOreButton" />
-								</Anchors>
-								<NormalTexture parentKey="ntx"  />
-								<PushedTexture parentKey="ptx"  />
-								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
-								<Scripts>
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-								</Scripts>
-							</Button>
-							<Button name="$parent_FilterSkinButton" parentKey="FilterSkinButton">
-								<Size x="20" y="20" />
-								<Anchors>
-									<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent_FilterHerbButton" />
-								</Anchors>
-								<NormalTexture parentKey="ntx"  />
-								<PushedTexture parentKey="ptx"  />
-								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
-								<Scripts>
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-								</Scripts>
-							</Button>
-							<Button name="$parent_FilterBuyButton" parentKey="FilterBuyButton">
-								<Size x="20" y="20" />
-								<Anchors>
-									<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent_FilterSkinButton" />
-								</Anchors>
-								<NormalTexture parentKey="ntx"  />
-								<PushedTexture parentKey="ptx"  />
-								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
-								<Scripts>
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-								</Scripts>
-							</Button>
-							<Button name="$parent_RangeButton" parentKey="RangeButton">
-								<Size x="20" y="20" />
-								<Anchors>
-									<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent_FilterBuyButton" />
-									<Offset x="70" y="0" />
-								</Anchors>
-								<NormalTexture parentKey="ntx"  />
-								<PushedTexture parentKey="ptx"  />
-								<HighlightTexture parentKey="htx"  alphaMode="ADD" />
-								<Scripts>
-									<OnLeave function="ZygorGuidesViewerFrame_HideTooltip" />
-								</Scripts>
-							</Button>
-						</Frames>
-					</Frame>
-					-->
 					<Frame name="$parent_Flash" alpha="0.0" parentKey="Flash">
 						<Anchors>
 							<Anchor point="TOPLEFT" />
@@ -1046,7 +679,11 @@
 					</AnimationGroup>
 				</Animations>
 			</Frame>
+
+			<!-- Template: Menu used in goal rightclick -->
 			<Frame name="ZGVF_Default_Menu" inherits="UIDropDownForkTemplate" hidden="true" />
+
+
 			<Frame name="$parent_ResizerLeft" parentKey="ResizerLeft">
 				<Size x="10" y="10" />
 				<Anchors>

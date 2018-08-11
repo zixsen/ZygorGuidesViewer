@@ -113,7 +113,7 @@ ZGV.mentionedQuests = {}
 ZGV.MapIDsByName = LibRover.data.MapIDsByName
 
 -- TODO these should be culled and moved into Skin styles
-local STEP_LINE_SPACING = 2
+local STEP_LINE_SPACING = 3
 local MIN_HEIGHT=80
 local ICON_INDENT=17
 ZGV.ICON_INDENT = ICON_INDENT  -- so that other files can access it; silly, I know
@@ -121,6 +121,10 @@ local STEP_SPACING = 2
 ZGV.STEP_SPACING=STEP_SPACING
 -- ZGV.STEPMARGIN_X=3
 -- ZGV.STEPMARGIN_Y=3
+
+local LINE_MARGIN_TOP = 3
+local LINE_MARGIN_BOTTOM = 3
+
 
 -- This gets really useful, probably move to functions or make it ZGV member?
 local function SkinData(parm)
@@ -600,7 +604,7 @@ function ZGV:Startup_LoadGuides_Threaded()
 
 	self.guidesloaded=true
 
-	self:UpdateGuideMenuButton()
+	--self:UpdateGuideMenuButton()
 
 	yield("loadguides: complete.")
 end
@@ -667,6 +671,9 @@ local function _StartupThread()
 	waitformaint("maint_startup_modules") ---------------------
 
 	
+	local popup = ZGV.PopupHandler:NewPopup("GenericPopup","default")
+
+
 	yield("Before startups.")
 
 	-- startup 'modules'
@@ -712,7 +719,7 @@ local function _StartupThread()
 	-- fast start!
 	self:SetVisible(nil,self.db.profile.enable_viewer)
 	self:UpdateFrame(true)
-	self:UpdateGuideMenuButton()
+	--self:UpdateGuideMenuButton()
 
 	self:Startup_LoadGuides_Threaded()
 
@@ -968,27 +975,32 @@ function ZGV:LoadInitialGuide(fastload)
 		end
 
 		if not self.CurrentGuide and not fastload then
-			self:Print("Finding proper starter section.")
-			local gs = self:FindSuggestedGuides()
-			if gs['LEVELING'] then gs=gs['LEVELING'] end
-			if not gs or #gs==0 then
-				self:Print("No guides suggested for your char. Please open guide menu and select the guide you want to use.")
-			elseif #gs==1 then
-				self:SetGuide(gs[1])
-			else --many
-				local was_excl
-				for gi,guide in ipairs(gs) do
-					if guide.condition_suggested_exclusive then
-						self:SetGuide(guide)
-						was_excl=true
+			if self.db.char.tabguides and next(self.db.char.tabguides) then -- try loading one of existing tabs first
+				local _,guidedata = next(self.db.char.tabguides)
+				self:SetGuide(guidedata.title,guidedata.step)
+			else -- look for starter guide
+				self:Print("Finding proper starter section.")
+				local gs = self:FindSuggestedGuides()
+				if gs['LEVELING'] then gs=gs['LEVELING'] end
+				if not gs or #gs==0 then
+					self:Print("No guides suggested for your char. Please open guide menu and select the guide you want to use.")
+				elseif #gs==1 then
+					self:SetGuide(gs[1])
+				else --many
+					local was_excl
+					for gi,guide in ipairs(gs) do
+						if guide.condition_suggested_exclusive then
+							self:SetGuide(guide)
+							was_excl=true
+						end
+					end
+					if not was_excl then
+						self:Print("There were "..#gs.." guides suggested. Loading first one.")
+						self:SetGuide(gs[1])
 					end
 				end
-				if not was_excl then
-					self:Print("There were "..#gs.." guides suggested. Loading first one.")
-					self:SetGuide(gs[1])
-				end
+				--self.db.char["starting"] = false
 			end
-			--self.db.char["starting"] = false
 		end
 	end
 
@@ -1034,10 +1046,12 @@ function ZGV:SetGuide(name,step,hack,silent) --hack used for testing
 	--self:Debug("SetGuide "..name.." ("..tostring(step)..")")
 
 	ZGV.db.char.guideTurnInsOnly = false
+	--[[ -- tabs say no more auto cleanup
 	if ZGV.db.char.forceCleanUp then
 		ZGV:ShowQuestCleanup(true) -- true = automated, will not show popup if there are no quests to abandon
 		ZGV.db.char.forceCleanUp = false
 	end
+	--]]
 
 	local guide
 	if type(name)=="number" then
@@ -1115,13 +1129,7 @@ function ZGV:SetGuide(name,step,hack,silent) --hack used for testing
 			self.db.char.stephistory = {}
 
 
-			-- History: remove
-			local history = self.db.char.guides_history
-			local found
-			for gi,guide_step in ipairs(history) do
-				if guide_step[1]==self.CurrentGuide.title then tremove(history,gi) break end
-			end
-
+			-- History support moved to tabs:AssignGuide
 
 			self.CurrentStep = nil
 			self.CurrentStepNum = nil
@@ -1141,15 +1149,11 @@ function ZGV:SetGuide(name,step,hack,silent) --hack used for testing
 
 				self:SendMessage("ZGV_GUIDE_LOADED",guide.title)
 
-				-- History: (re)instate at index 1
-				if not silent then -- don't log switched world quest guides
-					while #self.db.char.guides_history>=MAX_GUIDES_HISTORY do tremove(self.db.char.guides_history) end
-					tinsert(self.db.char.guides_history,1,{guide.title,stepobj.num})
-				end
+				-- History support moved to tabs:AssignGuide
 
 				self:FocusStep(stepobj.num,true)
 
-				ZygorGuidesViewerFrame_Border_Guides_GuideButton:UnlockHighlight()
+				ZGV.Tabs.AddButton:UnlockHighlight()
 			else
 				err = "No valid steps!"
 			end
@@ -1171,6 +1175,9 @@ function ZGV:SetGuide(name,step,hack,silent) --hack used for testing
 	if self.CurrentGuide and not self.CurrentGuide.headerdata.shared and self.db.profile.share_masterslave==2 then  -- disable slave mode if user picks another guide
 		ZGV:SetOption("Share","share_masterslave 0")
 		ZGV:Print("Share: slave mode deactivated.")
+	elseif self.CurrentGuide.headerdata.shared and self.db.profile.share_masterslave~=2 then 
+		self.db.profile.share_masterslave=2 -- reenable slave mode if user tabs back in to shared tab
+		ZGV:Print("Share: slave mode reactivated.")
 	end
 
 	self.pause = nil
@@ -1188,7 +1195,8 @@ function ZGV:SetGuide(name,step,hack,silent) --hack used for testing
 		ZGV.Poi:RegisterPoints()
 	end
 
-	ZygorGuidesViewer_ProgressBar_Update()
+	ZGV.ProgressBar:Update()
+	ZGV.Tabs:UpdateCurrentTab()
 end
 
 function ZGV:FindSuggestedGuides()
@@ -1394,6 +1402,7 @@ function ZGV:FocusStep(num,forcefocus)
 
 
 	ZGV:SetActionButtons()
+	ZGV.Tabs:UpdateCurrentTab()
 end
 
 function ZGV:SetActionButtons()
@@ -1565,9 +1574,11 @@ function ZGV:PreviousStep(fast,forcefocus)
 
 	if #history==0 then
 		self.fastforward = false
+		self.skipping = false
 		self.pause = true
 	else
 		self.fastforward = fast
+		self.skipping = fast
 		self.pause = not fast
 	end
 
@@ -1575,7 +1586,7 @@ function ZGV:PreviousStep(fast,forcefocus)
 
 	self:FocusStep(step,forcefocus)
 
-	ZygorGuidesViewer_ProgressBar_Update()
+	ZGV.ProgressBar:Update()
 end
 
 function ZGV:SkipStep(fast,hack,forcefocus) --Hack used for testing, forces showing endguide popup
@@ -1584,6 +1595,7 @@ function ZGV:SkipStep(fast,hack,forcefocus) --Hack used for testing, forces show
 	self.LastSkip = 1
 	self.lastskip_rec = 1
 	self.fastforward = fast
+	self.skipping = fast
 
 	local nextstep
 
@@ -1616,6 +1628,7 @@ function ZGV:SkipStep(fast,hack,forcefocus) --Hack used for testing, forces show
 		-- final step
 		self.pause = true
 		self.fastforward = false
+		self.skipping = false
 		if self.CurrentGuide.next and ZGV.db.profile.n_popup_guides and not hack then
 			local nextguide = ZGV:GetGuideByTitle(ZGV.CurrentGuide.next)
 			if nextguide then
@@ -1695,13 +1708,14 @@ function ZGV:SkipStep(fast,hack,forcefocus) --Hack used for testing, forces show
 	end
 	--]]
 
-	ZygorGuidesViewer_ProgressBar_Update()
+	ZGV.ProgressBar:Update()
 end
 
 function ZGV:ReloadStep(fast)
 	self.LastSkip=1
 	self.pause = not fast
 	self.fastforward = fast
+	self.skipping = fast
 	self.CurrentStep.needsreload = nil
 	self:FocusStep(self.CurrentStepNum)
 end
@@ -1913,6 +1927,7 @@ function ZGV:TryToCompleteStep(force)
 			interval = self.completionintervallong
 			self.pause=nil
 			self.fastforward=nil
+			self.skipping = false
 			self.LastSkip = 1
 			--self.completioninterval = self.completionlonginterval
 		end
@@ -2222,7 +2237,7 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 	local do_showwaypoints
 
-	if self.loading then ZygorGuidesViewerFrame_Border_Guides_GuideBack_SectionTitle:SetText(self.loading:format((self.loadprogress or 0)*100)) end
+	--if self.loading then ZygorGuidesViewerFrame_Border_GuideBack_SectionTitle:SetText(self.loading:format((self.loadprogress or 0)*100)) end
 
 	local showbriefsteps = self.db.profile.showbriefsteps-- and self.db.profile.minimode
 
@@ -2245,11 +2260,10 @@ function ZGV:DoUpdateFrame(full,onupdate)
 		--if full then
 			ZygorGuidesViewerFrame_ScrollScrollBar:SetMinMaxValues(1,#self.CurrentGuide.steps>0 and #self.CurrentGuide.steps or 1)
 			ZygorGuidesViewerFrame_Border_Guides_StepNum.Step:SetText(self.CurrentStepNum)
-			ZygorGuidesViewerFrame_Border_Guides_GuideBack_SectionTitle:SetText(self.CurrentGuide.title_short)
+			--ZygorGuidesViewerFrame_Border_GuideBack_SectionTitle:SetText(self.CurrentGuide.title_short)
 		--end
 
 		Scroll:Show()
-		--ZygorGuidesViewerFrame_MissingText:Hide()
 
 		local totalheight = 0
 
@@ -2510,13 +2524,13 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 						if goaltxt~="?" and goaltxt~="" and lineframe then
 							line=line+1  lineframe=frame.lines[line]
-							local link = ((goal.tooltip and not self.db.profile.tooltipsbelow) or (goal.x and not self.db.profile.windowlocked)) and " |cffdd44ff*|r" or ""  -- goto asterisk
-							if stepdata:IsCurrentlySticky() then link="" end
+							--local link = ((goal.tooltip and not self.db.profile.tooltipsbelow) or (goal.x and not self.db.profile.windowlocked)) and " |cffdd44ff*|r" or ""  -- goto asterisk
+							--if stepdata:IsCurrentlySticky() then link="" end
 							if not lineframe then error ("line "..line.." does not exist") end
 							if not lineframe.label then error ("label in line "..line.." does not exist") end
 							if not goal or not goal.action then error("invalid goal") end
 							lineframe.label:SetFont(FONT,round(goal.action~="info" and self.db.profile.fontsize + (self.CurrentSkinStyle.StepFontSizeMod or 0) or self.db.profile.fontsecsize)) -- TODO skindata() friendly?
-							lineframe.label:SetText(indent..goaltxt..link)
+							lineframe.label:SetText(indent..goaltxt)
 							lineframe.goal = goal
 							lineframe.briefhidden = briefhidden
 							lineframe.special = (goal.parentStep and goal.parentStep.is_sticky and goal.parentStep~=ZGV.CurrentStep and "stickyline")
@@ -2636,7 +2650,7 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 					textheight = text:GetHeight()
 					--if text:IsTruncated() then textheight=textheight+self.db.profile.fontsize+6 end
-					lineheight = textheight + STEP_LINE_SPACING
+					lineheight = textheight + STEP_LINE_SPACING + LINE_MARGIN_BOTTOM - 1 
 
 					if lineframe.special=="stickyseparator" then
 						if self.db.profile.stickydisplay==1 then
@@ -2798,10 +2812,9 @@ function ZGV:DoUpdateFrame(full,onupdate)
 						local needsAnimating = goalsneedanimating[goal]
 
 						-- ICONS
-
-						if self.db.profile.goalicons then
-							--label:SetPoint("TOPLEFT",icon_indent+2,(l==1 and -2 or -1))
-							icon:SetPoint("CENTER",line.content,"TOPLEFT",self.db.profile.fontsize*0.5+1,-self.db.profile.fontsize*0.5-1)
+						if goal and self.db.profile.goalicons then
+							label:SetPoint("TOPLEFT",icon_indent+2,-LINE_MARGIN_TOP+1)
+							icon:SetPoint("TOPLEFT",line,"TOPLEFT",1,-2)
 							icon:SetSize(self.CurrentSkinStyle.StepLineIconSize * self.db.profile.fontsize,self.CurrentSkinStyle.StepLineIconSize * self.db.profile.fontsize) -- TODO SkinData friendly?
 							icon:Show()
 
@@ -3105,17 +3118,19 @@ function ZGV:DoUpdateFrame(full,onupdate)
 
 		-- steps displayed, clear the remaining slots
 
+	--[[
 	else -- no current guide?
 
 		local guides = self:GetGuides()
 		if #guides>0 then
-			ZygorGuidesViewerFrame_Border_Guides_GuideBack_SectionTitle:SetText(L["guide_notselected"])
+			ZGV:Print(L["guide_notselected"])
 		else
-			ZygorGuidesViewerFrame_Border_Guides_GuideBack_SectionTitle:SetText(L["guide_notloaded"])
+			ZGV:Print(L["guide_notloaded"])
 		end
 		for i,stepframe in ipairs(self.stepframes) do stepframe:Hide() end
-		self.Frame.Border.ProgressBar:Hide()
+		self.ProgressBar:Hide()
 		minh=0
+	--]]
 	end
 
 	if minh<MIN_HEIGHT+tabh then minh=MIN_HEIGHT+tabh end
@@ -3443,17 +3458,21 @@ function ZGV:ResizeFrame()
 			end
 		end
 
-		local tabh = ZygorGuidesViewerFrame_Border_TabBack:GetHeight()
+		--local tabh = ZygorGuidesViewerFrame_Border_TabBack:GetHeight()
 
-		height = height + TOP_HEIGHT + tabh
+		--height = height + TOP_HEIGHT + tabh
+		height = height + TOP_HEIGHT
 		--self:Debug("Height "..height.."  min "..MIN_HEIGHT)
-		if height < MIN_HEIGHT + tabh then height=MIN_HEIGHT + tabh end
+		--if height < MIN_HEIGHT + tabh then height=MIN_HEIGHT + tabh end
+		if height < MIN_HEIGHT then height=MIN_HEIGHT end
 		if not InCombatLockdown() then
-			self.Frame:SetHeight(height+ZGV.CurrentSkinStyle:SkinData("GuideButtonSize") - 4)
+			self.Frame:SetHeight(height+ZGV.CurrentSkinStyle:SkinData("ProgressBarSpaceHeight") + ZGV.CurrentSkinStyle:SkinData("TabsHeight") - 2)
 		end
 	end
 
-	ZygorGuidesViewer_ProgressBar_Refresh()
+	-- do not call this on the same frame, as getwidth/height inside will be broken
+	-- self:ScheduleTimer(function() ZGV.ProgressBar:Refresh() end,0)
+	
 
 
 	--self:Debug(("%d %d"):format(left,bottom))
@@ -3524,6 +3543,7 @@ function ZGV:ToggleFrame()
 	else 
 		self.Frame:Show() 
 		self.db.profile.enable_viewer = true
+		ZGV.Tabs:ReanchorTabs()
 	end
 end
 
@@ -6096,7 +6116,7 @@ function ZGV.WQTwrapper(object)
 end
 
 local world_quest_guides = nil
-function ZGV:FindWorldQuestStep(questID,mapID)
+local function find_world_quest_step(questID,mapID)
 	local labelstep, zoneguide
 	local mapid = mapID or WorldMapFrame and WorldMapFrame:GetMapID()
 
@@ -6133,12 +6153,33 @@ function ZGV:FindWorldQuestStep(questID,mapID)
 	return false,false
 end
 
+local function add_world_quest_notification(questID,questTitle,guide,labelstep,tab)
+	ZGV:Debug("&_SUB &worldquests popup for "..questID)
+	ZGV.NotificationCenter.AddButton(
+	"worldquest",
+	questTitle,
+	L["tabs_world_quest_new"],
+	ZGV.DIR.."\\Skins\\guideicons-big",
+	{0, 0.25, 0, 0.25},
+	function() 
+		local tab = ZGV.Tabs:GetSpecialTabFromPool("worldquestzone")
+		tab:SetAsCurrent()
+		ZGV:SetGuide(guide.title,labelstep) end,
+	nil,
+	1,
+	10, --poptime
+	30, --removetime
+	false, --quiet
+	nil,--onopen
+	"worldquest")
+end
+
 function ZGV:SuggestWorldQuestGuide(object,questID,force,mapID)
 	local questID = object and object.worldQuest and object.questID or questID
 	if not questID then return end
 
 	if IsWorldQuestWatched(questID) or force then
-		local guide,labelstep = self:FindWorldQuestStep(questID,mapID)
+		local guide,labelstep = find_world_quest_step(questID,mapID)
 
 		if not labelstep then
 			ZGV:Debug("&_SUB &worldquests no label for "..questID)
@@ -6152,28 +6193,19 @@ function ZGV:SuggestWorldQuestGuide(object,questID,force,mapID)
 			return
 		end
 
-		if ZGV.CurrentGuide==guide then -- same guide, no switch needed
-			ZGV:Debug("&_SUB &worldquests switching to "..questID)
-			ZGV:FocusStep(labelstep,true)
-		elseif ZGV.CurrentGuide.headerdata.worldquestzone then
-			ZGV:SetGuide(guide.title,labelstep)
+		-- current guide is for world quests - focus step or load guide
+		if ZGV.CurrentGuide.headerdata.worldquestzone then
+			local mapid = WorldMapFrame and WorldMapFrame:GetMapID()
+			if ZGV.CurrentGuide.headerdata.worldquestzone == mapid then
+				ZGV:Debug("&_SUB &worldquests switching to "..questID)
+				ZGV:FocusStep(labelstep,true)
+			else
+				ZGV:Debug("&_SUB &worldquests setting to "..questID)
+				ZGV:SetGuide(guide.title,labelstep,false,"silent")
+			end
 		else
-
-			ZGV:Debug("&_SUB &worldquests popup for "..questID)
-			ZGV.NotificationCenter.AddButton(
-			"worldquest",
-			questTitle,
-			"Click here to open the guide for this world quest",
-			ZGV.DIR.."\\Skins\\guideicons-big",
-			{0, 0.25, 0, 0.25},
-			function() ZGV:SetGuide(guide.title,labelstep) end,
-			nil,
-			1,
-			10, --poptime
-			30, --removetime
-			false, --quiet
-			nil,--onopen
-			"worldquest")
+			ZGV:Debug("&_SUB &worldquests show popup for "..questID)
+			add_world_quest_notification(questID,questTitle,guide,labelstep)
 		end
 	else
 		self:Debug("&worldquests won't switch to "..questID)

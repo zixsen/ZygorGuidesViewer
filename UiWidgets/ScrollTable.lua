@@ -58,6 +58,7 @@ local DEFAULT_DATA = {
 				titlepadding=5, -- amount of padding before the column header
 				font=FONT, 
 				texture="file" -- texture to use if type is button or icon
+				textureskinname="name" -- texture name, used to get file name from skindata
 				textureoffset={1,2,3,4} -- if texture, array to unpack for SetTexCoord
 				texturecolor={1,2,3,4} -- if texture, array to unpack for SetVertexColor
 				onentertooltip=function(row) --do something, GameTooltip is created and placed-- end
@@ -257,7 +258,10 @@ function ScrollTable:New(parent,name,COLUMNS,DATA,useparent)
 					end)
 				.__END		
 			end
-			if col.texture then
+			if col.texture or col.textureskinname then
+				if type(col.texture)=="function" then col.texture = col.texture() end
+				if type(col.texturecolor)=="function" then col.texturecolor = col.texturecolor() end
+
 				if col.type=="button" then
 					widget:SetNormalTexture(col.texture)
 					if col.textureoffset then widget:GetNormalTexture():SetTexCoord(unpack(col.textureoffset)) end

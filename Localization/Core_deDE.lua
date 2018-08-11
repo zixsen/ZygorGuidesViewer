@@ -204,8 +204,8 @@ ZygorGuidesViewer_L("Main", "deDE", function() return {
 	['step_num'] = "|cffaaaaaa%s|cff888888.|r ",
 	['step_level'] = "|cffaaccaaStufe: |cffcceecc%s|cffaaccaa|r ",
 
-	["questtitle"] = "`%s'",
-	["questtitle_part"] = "`%s' (teil %s)",
+	["questtitle"] = "'%s'",
+	["questtitle_part"] = "'%s' (teil %s)",
 	["coords"] = "%d,%d",
 	["map_coords"] = "%s %d,%d",
 

@@ -6885,30 +6885,65 @@ ZygorGuidesViewer:RegisterInclude("Legion_World_Quest_Emissaries",[[
 ]])
 
 ZygorGuidesViewer:RegisterInclude("BFA_World_Quest_Emissaries",[[
+		Choose a World Quest to Complete |confirm
+		|tip With the "World Quests" guide loaded, open your world map.
+		|tip Left-click on a world quest icon to select that world quest.
+		|tip The guide will automatically load the steps for that world quest.
+		'|confirm |next "Tortollan_Seekers_WQ" |condition ZGV.questsbyid[50604] and (ZGV.questsbyid[50604].complete and ZGV.questsbyid[50604].inlog)
+		'|confirm |next "Alliance_War_Effort_WQ" |condition ZGV.questsbyid[50605] and (ZGV.questsbyid[50605].complete and ZGV.questsbyid[50605].inlog)
+		'|confirm |next "Order_of_Embers_WQ" |condition ZGV.questsbyid[50600] and (ZGV.questsbyid[50600].complete and ZGV.questsbyid[50600].inlog)
+		'|confirm |next "Proudmoore_Admirality__WQ" |condition ZGV.questsbyid[50599] and (ZGV.questsbyid[50599].complete and ZGV.questsbyid[50599].inlog)
+		'|confirm |next "Storm's_Wake_WQ" |condition ZGV.questsbyid[50601] and (ZGV.questsbyid[50601].complete and ZGV.questsbyid[50601].inlog)
+		'|confirm |next "Champions_of_Azeroth_WQ" |condition ZGV.questsbyid[50562] and (ZGV.questsbyid[50562].complete and ZGV.questsbyid[50562].inlog)
+	step
+	label "Tortollan_Seekers_WQ"
+		Follow the path |goto Stormsong Valley/0 40.46,36.95 < 7 |only if walking and ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
 		talk Collector Kojo##135793 |only if ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
-		turnin Tortollan Seekers##50604 |goto Tiragarde Sound/0 40.54,36.41 |only if ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
+		turnin Tortollan Seekers##50604 |goto Stormsong Valley/0 40.54,36.41 |only if ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
 		|next "Alliance_War_Effort_WQ"
 	step
 	label "Alliance_War_Effort_WQ"
+		Jump down here |goto Boralus/0 70.56,17.65 < 5 |only if walking and ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
+		Run up the stairs |goto 69.21,21.28 < 5 |only if walking and ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
+		Enter the building |goto 68.70,21.11 < 5 |only if walking and ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
+		Follow the path |goto 67.54,20.67 < 7 |only if walking and ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
+		Leave the building |goto 67.07,23.46 < 5 |only if walking and ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
+		Run up the ramp |goto 67.40,25.18 < 5 |only if walking and ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
+		Follow the path |goto 68.09,25.29 < 5 |only if walking and ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
 		talk Vindicator Jaelaana##135446 |only if ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
-		turnin Alliance War Effort##50605 |goto Tiragarde Sound/0  62.06,40.08 |only if ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
+		turnin Alliance War Effort##50605 |goto Boralus/0 69.32,24.94 |only if ZGV.questsbyid[50605] and ZGV.questsbyid[50605].complete
 		|next "Order_of_Embers_WQ"
 	step
 	label "Order_of_Embers_WQ"
+		Follow the path |goto Drustvar/0 38.31,51.71 < 5 |only if walking and ZGV.questsbyid[50600] and ZGV.questsbyid[50600].complete
+		Continue following the path |goto 37.82,50.10 < 7 |only if walking and ZGV.questsbyid[50600] and ZGV.questsbyid[50600].complete
 		talk Quartermaster Alcorn##135815 |only if ZGV.questsbyid[50600] and ZGV.questsbyid[50600].complete
 		turnin Order of Embers##50600 |goto Drustvar/0 37.91,48.94 |only if ZGV.questsbyid[50600] and ZGV.questsbyid[50600].complete
 		|next "Proudmoore_Admirality__WQ"
 	step
 	label "Proudmoore_Admirality__WQ"
+		Jump down here |goto Boralus/0 70.56,17.65 < 5 |only if walking and ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
+		Run up the stairs |goto 69.21,21.28 < 5 |only if walking and ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
+		Enter the building |goto Tiragarde Sound/0 73.97,24.87 < 5 |walk |only if ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
+		Follow the path |goto 73.68,24.80 < 7 |walk |only if ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
+		Run down the stairs |goto 73.64,25.31 < 5 |walk |only if ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
+		Follow the path |goto 73.77,25.25 < 5 |walk |only if ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
 		talk Provisioner Fray##135808 |only if ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
 		turnin Proudmoore Admiralty##50599 |goto Tiragarde Sound/0 73.68,24.99 |only if ZGV.questsbyid[50599] and ZGV.questsbyid[50599].complete
 		|next "Storm's_Wake_WQ"
 	step
 	label "Storm's_Wake_WQ"
+		Follow the path |goto Stormsong Valley/0 59.42,70.02 < 7 |only if walking and ZGV.questsbyid[50601] and ZGV.questsbyid[50601].complete
 		talk Sister Lilyana##135800 |only if ZGV.questsbyid[50601] and ZGV.questsbyid[50601].complete
 		turnin Storm's Wake##50601 |goto Stormsong Valley/0 59.29,69.33 |only if ZGV.questsbyid[50601] and ZGV.questsbyid[50601].complete
+		|next "Champions_of_Azeroth_WQ"
 	step
 	label "Champions_of_Azeroth_WQ"
+		Follow the path |goto Boralus/0 69.65,16.33 < 7 |only if walking and ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
+		Run down the stairs |goto 71.34,16.44 < 3 |only if walking and ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
+		Run down the stairs |goto 71.68,17.07 < 3 |only if walking and ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
+		Follow the path |goto 70.97,18.82 < 7 |only if walking and ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
+		Enter the building |goto Tiragarde Sound/0 74.38,24.04 < 5 |walk
 		talk Magni Bronzebeard##130216 |only if ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
 		turnin Champions of Azeroth##50562 |goto Silithus/0 42.22,44.27 |only if ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
 		|next "Choose_World_Quest"

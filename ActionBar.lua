@@ -11,6 +11,7 @@ ZGV.ActionBar = ActionBar
 local CHAIN = ZGV.ChainCall
 local L = ZGV.L
 local ui = ZGV.UI
+local SkinData = ui.SkinData
 
 local BUTTON_SIZE = 30
 local BAR_HEIGHT = BUTTON_SIZE+10
@@ -60,7 +61,7 @@ function ActionBar:CreateFrame()
 				ActionBar:ToggleFrame()
 			 end)
 			.__END
-		ZGV.F.AssignButtonTexture(ActionBar.Frame.close,(ZGV.UI.SkinData("TitleButtons")),6,32)
+		ZGV.F.AssignButtonTexture(ActionBar.Frame.close,(SkinData("TitleButtons")),6,32)
 		
 		if ZGV.db.profile.actionbar_anchor then
 			ZGV.db.profile.actionbar_anchor[2]=UIParent
@@ -68,6 +69,18 @@ function ActionBar:CreateFrame()
 			ActionBar.Frame:SetPoint(unpack(ZGV.db.profile.actionbar_anchor))
 		end
 	end
+	
+	ActionBar:ApplySkin()
+end
+
+function ActionBar:ApplySkin()
+	local MF = ActionBar.Frame
+	if not MF then return end
+
+	ZGV.F.AssignButtonTexture(MF.close,(SkinData("TitleButtons")),6,32)
+
+	MF:SetBackdropColor(unpack(SkinData("MainBackdropColor")))
+	MF:SetBackdropBorderColor(unpack(SkinData("MainBackdropBorderColor")))
 
 	ActionBar:SetAlpha()
 	ActionBar:SetScale() 

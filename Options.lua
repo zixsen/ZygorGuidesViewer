@@ -257,7 +257,38 @@ function ZGV:Options_DefineOptionTables()
 		--AddOptionSep({ type="description", name=" |n |n |n" })
 		
 		AddOption('noisy',{ type = 'toggle', width = "full", set=Setter_Loud, _default=true })
-	
+
+
+		local style_sort_order = {
+			glass=1,
+			stealth=2,
+		}
+		local style_sort_order_rev = {}  for id,sort in pairs(style_sort_order) do style_sort_order_rev[sort]=id end
+
+		AddOption('skinstyle',{
+			type = "select",
+			values = function()
+				if not self.CurrentSkin then return {} end
+				local t={}
+				for id,style in pairs(self.CurrentSkin.styles) do
+					t[style_sort_order[id] or (#t+1)]=style.name  -- add it at its rightful position... or just at the end if there's no numeric value known.
+				end
+				return t  -- [1]="Stealth (default)", [2]="Midnight"
+			end,
+			set = function(_,n) -- this gets called with both numeric and string style identifiers, needs to understand both.
+				--print("skinstyle set to "..n)
+				self:SetSkin(self.db.profile.skin,style_sort_order_rev[n] or n)  -- use string id if number given
+				self:ScrollToCurrentStep()
+				--print("skinstyle ultimately set to "..(style_sort_order_rev[n] or n))
+			end,
+			get = function()
+				return style_sort_order[self.db.profile.skinstyle] or 99
+			end,
+			hidden = function() return not self.CurrentSkin or not self.CurrentSkin.styles or not next(self.CurrentSkin.styles,next(self.CurrentSkin.styles)) end,
+			_default = "glass",
+			})
+
+
 		
 		-- hidden options
 		AddOption('profiler',{
@@ -429,132 +460,10 @@ function ZGV:Options_DefineOptionTables()
 		})
 		--]]
 
-		--- skin selection: removed
 
-			--ZygorGuidesViewer:ToggleFrame
-			--AddOption('skin',{
-			--	type = "select",
-			--	values = function()
-			--		local t={}
-			--		for id,skin in pairs(self.Skins) do  t[id]=skin.name  end
-			--		return t
-			--	end,
-			--	set = function(_,n)
-			--		self:SetSkin(n)
-			--		self:ScrollToCurrentStep()
-			--	      end,
-			--	_default = "default", -- TODO make (default) tag autoappendable
-			--})
-
-			--[[
-			local style_sort_order = {
-				stealth=1,
-				midnight=2,
-				more_styles=3,
-				can_go_here=4
-			}
-			local style_sort_order_rev = {}  for id,sort in pairs(style_sort_order) do style_sort_order_rev[sort]=id end
-			
-			AddOption('skinstyle',{
-				type = "select",
-				values = function()
-					if not self.CurrentSkin then return {} end
-					local t={}
-					for id,style in pairs(self.CurrentSkin.styles) do
-						t[style_sort_order[id] or (#t+1)]=style.name  -- add it at its rightful position... or just at the end if there's no numeric value known.
-					end
-					return t  -- [1]="Stealth (default)", [2]="Midnight"
-				end,
-				set = function(_,n) -- this gets called with both numeric and string style identifiers, needs to understand both.
-					--print("skinstyle set to "..n)
-					self:SetSkin(self.db.profile.skin,style_sort_order_rev[n] or n)  -- use string id if number given
-					self:ScrollToCurrentStep()
-					--print("skinstyle ultimately set to "..(style_sort_order_rev[n] or n))
-				end,
-				get = function()
-					return style_sort_order[self.db.profile.skinstyle] or 99
-				end,
-				hidden = function() return not self.CurrentSkin or not self.CurrentSkin.styles or not next(self.CurrentSkin.styles,next(self.CurrentSkin.styles)) end,
-				_default = "stealth",
-			})
-			
-			AddOption('skin',{
-				type = "select",
-				values = function()
-					local t={}
-					for id,skin in pairs(self.Skins) do  t[id]=skin.name  end
-					return t
-				end,
-				set = function(_,n)
-					self:SetSkin(n)
-					self:ScrollToCurrentStep()
-					end,
-				_default = "default", -- TODO make (default) tag autoappendable
-				hidden = true,
-			})
-			--]]
-
-			--[[
-			AddOption('skinstyle2',{
-				type = "select",
-				values = function()
-					if not self.CurrentSkin then return {} end
-					local t={}
-					t['stealth']="Stealth (default)" -- A bit of a hack and BAD hardcoding, but Andrew wants a certain order ~~Jeremiah
-					t['midnight']="Midnight"
-					return t
-				end,
-				_default="stealth",
-			})
-			
-			AddOption('skinstylesorted',{
-				type = "select",
-				values = function()
-					if not self.CurrentSkin then return {} end
-					local t={}
-					t[1]="Stealth (default)" -- A bit of a hack and BAD hardcoding, but Andrew wants a certain order ~~Jeremiah
-					t[2]="Midnight"
-					return t
-				end,
-				set = function(_,n)
-					--local u={}
-					--for id,style in pairs(self.CurrentSkin.styles) do
-					--	u[id]=style.name
-					--end
-					if n==1 then -- TODO: BAD hardcoding ~~Jeremiah
-						self.db.profile.skinstyle = "stealth"
-						self.db.profile.skinstylesorted = 1
-					elseif n==2 then
-						self.db.profile.skinstyle = "midnight"
-						self.db.profile.skinstylesorted = 2
-					end
-					self:SetSkin(self.db.profile.skin,self.db.profile.skinstyle)
-					self:ScrollToCurrentStep()
-					end,
-				hidden = function() return not self.CurrentSkin or not self.CurrentSkin.styles or not next(self.CurrentSkin.styles,next(self.CurrentSkin.styles)) end,
-				get = function()
-					if self.db.profile.skinstyle == "stealth" then -- TODO: BAD hardcoding ~~Jeremiah
-						return 1
-					elseif self.db.profile.skinstyle == "midnight" then
-						return 2
-					end
-					return 1
-				end,
-				_default=1,
-			})
-			--]]
-		---
-
-		AddOption('opacitytoggle',{
-			type = 'toggle',
-			set = function(i,v) Setter_Simple(i,v)  self.db.profile.opacitymain = (v and 0.6 or 1.0)  self:UpdateSkin() ZGV.ActionBar:SetAlpha() end,
-			--stepBasis = 0,
-			width="full",
-			_default = false,
-		})
 		AddOptionSpace()
 
-		local framescales={0.8,1.0,1.2,1.4,1.6}
+		local framescales={0.75,1.0,1.25,1.5,1.75}
 		AddOption('framescale_s',{
 			type = 'select',
 			values = {[1]=L["opt_framescale_s_small"],[2]="||",[3]="'",[4]="'",[5]=L["opt_framescale_s_large"]},
@@ -616,11 +525,185 @@ function ZGV:Options_DefineOptionTables()
 			      end,
 			width="full", 
 		})
-		AddOption('showinlinetravel',{ type = 'toggle', width = "full", _default=true, set = function(i,v) Setter_Simple(i,v) ZGV:ShowWaypoints() end })
-		AddOption('showallroles',{ type = 'toggle', width = "full", desc = function() return L['opt_showallroles_desc'] .. (UnitGroupRolesAssigned("Player")=="NONE" and "\n"..L['opt_showallroles_descwarnnone'] or "") end, _default=true, })
 		AddOption('hideincombat',{ type = 'toggle', width="full", _default = false, })
 
+		AddOptionSpace()
+		AddOption('',{ type = 'description', name=L['opt_dispotions_title'], font=ZGV.font_dialog_gray})
+			AddOption('showinlinetravel',{ type = 'toggle', width = "full", _default=false, set = function(i,v) Setter_Simple(i,v) ZGV:ShowWaypoints() end })
+			AddOption('showallroles',{ type = 'toggle', width = "full", desc = function() return L['opt_showallroles_desc'] .. (UnitGroupRolesAssigned("Player")=="NONE" and "\n"..L['opt_showallroles_descwarnnone'] or "") end, _default=true, })
+
 		AddOptionSep()
+
+		AddOptionSpace()
+		AddOption('',{ type = 'description', name=L['opt_actionbuttons_title'], font=ZGV.font_dialog_gray})
+			AddOption('enable_actionbuttons',{  type = 'toggle',  
+				get = function() 
+					return self.db.profile.enable_actionbuttons 
+				end,  
+				set = function(i,v)
+					Setter_Simple(i,v)
+					if not v then 
+						ZGV.ActionBar:ClearBar()
+					else
+						ZGV:SetActionButtons()
+					end
+					ZGV.ActionBar:ToggleFrame()
+				end,
+				_default=true,
+				width="double",
+			})
+
+			AddOption('enable_actionbar',{  type = 'toggle',  
+				get = function() 
+					return self.db.profile.enable_actionbar
+				end,  
+				set = function(i,v)
+					Setter_Simple(i,v)
+					ZGV.ActionBar:ToggleFrame()
+				end,
+				_default=true,
+				width="double",
+				disabled = function() return not self.db.profile.enable_actionbuttons end,
+			})
+
+
+			local framescales={0.8,1.0,1.2,1.4,1.6}
+			AddOption('actionbar_scale_s',{
+				type = 'select',
+				values = {[1]=L["opt_framescale_s_small"],[2]="||",[3]="'",[4]="'",[5]=L["opt_framescale_s_large"]},
+				style = 'slider',
+				set = function(i,v)
+					Setter_Simple(i,v)
+					self.db.profile.actionbar_scale = framescales[v]
+					self.ActionBar:SetScale(ZGV.db.profile.actionbar_scale)
+				end,
+				get = function(i,v)
+					for k,v in ipairs(framescales) do if self.db.profile.actionbar_scale==v then return k end end
+					return 2
+				end,
+				_default=2,
+				width="single", 
+				_inline=true,
+				disabled = function() return not self.db.profile.enable_actionbuttons end,
+			})
+
+		AddOption('resetwindow',{
+			type = 'execute',
+			func = function()
+				if self.Tutorial.Running then
+					self.Tutorial:Close()
+				end
+				self.Frame:GetParent():ClearAllPoints()
+				self.Frame:GetParent():SetPoint("CENTER")
+				self:SetOption("Display","dispmodepri on")
+				ZygorGuidesViewerMapIcon:ClearAllPoints()
+				ZygorGuidesViewerMapIcon:SetPoint("CENTER",Minimap,"BOTTOMLEFT",16,16)
+				self:UpdateFrame(true)
+				ZygorGuidesViewerPointer_ArrowCtrl:ClearAllPoints()
+				ZygorGuidesViewerPointer_ArrowCtrl:SetPoint("TOP",UIParent,"TOP",0,-200)
+				if ZGV.ActionBar.Frame then
+					ZGV.ActionBar.Frame:ClearAllPoints()
+					ZGV.ActionBar.Frame:SetPoint("BOTTOMLEFT",ZGV.Frame,"TOPLEFT",0,10)
+					ZGV.db.profile.actionbar_anchor = nil
+				end
+				--[[
+				if self.db.profile.mv_enabled then
+					ZGV.CV:AlignFrame() -- merged reset buttons
+				end
+				--]]
+			end,
+		})
+
+
+		--[[hidden--]] AddOption('tabs_icon', { type = 'toggle', width="double", desc="Use tabs icons", _default = true, set=function(i,v) Setter_Simple(i,v) ZGV.Tabs:ApplySkin() end, hidden=true })
+		
+		local tabsizes={60,80,100,120,140}
+		--[[hidden--]] AddOption('tabs_minwdth_s',{
+			desc="Min  tab width", 
+			type = 'select',
+			values = {[1]=L["opt_framescale_s_small"],[2]="||",[3]="'",[4]="'",[5]=L["opt_framescale_s_large"]},
+			style = 'slider',
+			set = function(i,v)
+				Setter_Simple(i,v)
+				self.db.profile.tabs_minwdth = tabsizes[v]
+				ZGV.Tabs:ReanchorTabs()
+			end,
+			get = function(i,v)
+				for k,v in ipairs(tabsizes) do if self.db.profile.tabs_minwdth==v then return k end end
+				return 2
+			end,
+			_default=2,
+			width="single", 
+			_inline=true,
+			hidden=true 
+		})
+
+		--[[AddOptionSep() --]]
+		--[[hidden--]] AddOption('briefopentime',{ type = 'range', min = 0.1, max = 2, step = 0.1, bigStep = 0.1, _default=0.5, hidden=true })
+		--[[hidden--]] AddOption('briefclosetime',{ type = 'range', min = 0.1, max = 5, step = 0.1, bigStep = 0.1, _default=1.0, hidden=true })
+		--[[ hidden --]] AddOption('dispmodepri',{
+			type = 'toggle',
+			hidden=true,
+			set = function(i,v)
+				self.db.profile.dispmodepri = v
+				self:Options_SetFromMode()
+				end,
+		})
+
+
+		--[[
+		AddOption('actionbar_hide_useless',{  type = 'toggle',  
+			get = function() 
+				return self.db.profile.actionbar_hide_useless
+			end,  
+			set = function(i,v)
+				Setter_Simple(i,v)
+				ZGV:SetActionButtons()
+				ZGV.ActionBar:ReanchorButtons()
+			end,
+			_default=false,
+			width="double",
+			disabled = function() return not self.db.profile.enable_actionbuttons end,
+		})
+		--]] 
+
+		--AddOption('mv_reset',{ type = 'execute', width = "single", disabled = function() return not self.db.profile.mv_enabled end, func=function() ZGV.CV:AlignFrame() end, descStyle="inline", })
+
+
+		--[[ CreatureViewer removal, 7.0
+		AddOption('',{ type = "header", name = L["model_viewer_header"]:format(), })
+
+			AddOption('mv_enabled',{ type = 'toggle', set = function(i,v) Setter_Simple(i,v)  self:TryToDisplayCreature() end, _default = true, })
+			AddOptionSep()
+			AddOption('mv_rotation',{ type = 'toggle', disabled = function() return not self.db.profile.mv_enabled end, _default = true, })
+			AddOption('mv_slideshow',{ type = 'toggle', disabled = function() return not self.db.profile.mv_enabled end, _default = true, })
+		--]]
+
+		--[[
+			AddOption('guidesinhistory',{
+				type = 'range',
+				min = 3, max = 15, step = 1, bigStep = 1,
+				set = function(i,v)
+					Setter_Simple(i,v)
+					for gtype,guides in pairs(self.db.char.guides_history) do
+						while (#guides>v) do
+							tremove(guides)
+						end
+					end
+				end,
+				_default = 5,
+			})
+		--]]
+
+		--[[
+			-- no longer an option
+			AddOption('trackchains',{
+				type = 'toggle',
+				width = "full",
+			})
+				},
+			}
+		--]]
 
 		--[[
 		AddSubgroup("sticky_subgroup")
@@ -727,14 +810,6 @@ function ZGV:Options_DefineOptionTables()
 		EndSubgroup()
 		--]]
 
-		--[[ hidden --]] AddOption('dispmodepri',{
-			type = 'toggle',
-			hidden=true,
-			set = function(i,v)
-				self.db.profile.dispmodepri = v
-				self:Options_SetFromMode()
-				end,
-		})
 
 		--[[AddSubgroup('prisecmodes')
 
@@ -778,138 +853,6 @@ function ZGV:Options_DefineOptionTables()
 		EndSubgroup()
 		]]--
 
-		AddOption('enable_actionbuttons',{  type = 'toggle',  
-			get = function() 
-				return self.db.profile.enable_actionbuttons 
-			end,  
-			set = function(i,v)
-				Setter_Simple(i,v)
-				if not v then 
-					ZGV.ActionBar:ClearBar()
-				else
-					ZGV:SetActionButtons()
-				end
-				ZGV.ActionBar:ToggleFrame()
-			end,
-			_default=true,
-			width="double",
-		})
-
-		AddOption('enable_actionbar',{  type = 'toggle',  
-			get = function() 
-				return self.db.profile.enable_actionbar
-			end,  
-			set = function(i,v)
-				Setter_Simple(i,v)
-				ZGV.ActionBar:ToggleFrame()
-			end,
-			_default=true,
-			width="double",
-			disabled = function() return not self.db.profile.enable_actionbuttons end,
-		})
-
-		--[[
-		AddOption('actionbar_hide_useless',{  type = 'toggle',  
-			get = function() 
-				return self.db.profile.actionbar_hide_useless
-			end,  
-			set = function(i,v)
-				Setter_Simple(i,v)
-				ZGV:SetActionButtons()
-				ZGV.ActionBar:ReanchorButtons()
-			end,
-			_default=false,
-			width="double",
-			disabled = function() return not self.db.profile.enable_actionbuttons end,
-		})
-		--]] 
-
-		local framescales={0.8,1.0,1.2,1.4,1.6}
-		AddOption('actionbar_scale_s',{
-			type = 'select',
-			values = {[1]=L["opt_framescale_s_small"],[2]="||",[3]="'",[4]="'",[5]=L["opt_framescale_s_large"]},
-			style = 'slider',
-			set = function(i,v)
-				Setter_Simple(i,v)
-				self.db.profile.actionbar_scale = framescales[v]
-				self.ActionBar:SetScale(ZGV.db.profile.actionbar_scale)
-			end,
-			get = function(i,v)
-				for k,v in ipairs(framescales) do if self.db.profile.actionbar_scale==v then return k end end
-				return 2
-			end,
-			_default=2,
-			width="single", 
-			_inline=true,
-			disabled = function() return not self.db.profile.enable_actionbuttons end,
-		})
-
-		
-		--[[hidden--]] AddOption('briefopentime',{ type = 'range', min = 0.1, max = 2, step = 0.1, bigStep = 0.1, _default=0.5, hidden=true })
-		--[[hidden--]] AddOption('briefclosetime',{ type = 'range', min = 0.1, max = 5, step = 0.1, bigStep = 0.1, _default=1.0, hidden=true })
-		AddOption('resetwindow',{
-			type = 'execute',
-			func = function()
-				if self.Tutorial.Running then
-					self.Tutorial:Close()
-				end
-				self.Frame:GetParent():ClearAllPoints()
-				self.Frame:GetParent():SetPoint("CENTER")
-				self:SetOption("Display","dispmodepri on")
-				ZygorGuidesViewerMapIcon:ClearAllPoints()
-				ZygorGuidesViewerMapIcon:SetPoint("CENTER",Minimap,"BOTTOMLEFT",16,16)
-				self:UpdateFrame(true)
-				ZygorGuidesViewerPointer_ArrowCtrl:ClearAllPoints()
-				ZygorGuidesViewerPointer_ArrowCtrl:SetPoint("TOP",UIParent,"TOP",0,-200)
-				if ZGV.ActionBar.Frame then
-					ZGV.ActionBar.Frame:ClearAllPoints()
-					ZGV.ActionBar.Frame:SetPoint("BOTTOMLEFT",ZGV.Frame,"TOPLEFT",0,10)
-					ZGV.db.profile.actionbar_anchor = nil
-				end
-				--[[
-				if self.db.profile.mv_enabled then
-					ZGV.CV:AlignFrame() -- merged reset buttons
-				end
-				--]]
-			end,
-		})
-		--AddOption('mv_reset',{ type = 'execute', width = "single", disabled = function() return not self.db.profile.mv_enabled end, func=function() ZGV.CV:AlignFrame() end, descStyle="inline", })
-
-
-		--[[ CreatureViewer removal, 7.0
-		AddOption('',{ type = "header", name = L["model_viewer_header"]:format(), })
-
-			AddOption('mv_enabled',{ type = 'toggle', set = function(i,v) Setter_Simple(i,v)  self:TryToDisplayCreature() end, _default = true, })
-			AddOptionSep()
-			AddOption('mv_rotation',{ type = 'toggle', disabled = function() return not self.db.profile.mv_enabled end, _default = true, })
-			AddOption('mv_slideshow',{ type = 'toggle', disabled = function() return not self.db.profile.mv_enabled end, _default = true, })
-		--]]
-
-		--[[
-			AddOption('guidesinhistory',{
-				type = 'range',
-				min = 3, max = 15, step = 1, bigStep = 1,
-				set = function(i,v)
-					Setter_Simple(i,v)
-					for gtype,guides in pairs(self.db.char.guides_history) do
-						while (#guides>v) do
-							tremove(guides)
-						end
-					end
-				end,
-				_default = 5,
-			})
-		--]]
-
-		--[[
-			-- no longer an option
-			AddOption('trackchains',{
-				type = 'toggle',
-				width = "full",
-			})
-				},
-			}
-		--]]
 	end
 
 	AddOptionGroup("navi","Navi","zgnavi")	---- OPTIONS: navigation
@@ -2051,26 +1994,11 @@ function ZGV:Options_DefineOptionTables()
 			--	 end,
 			--	 width='single',
 			--})
-			AddOption('share_toggle',{
-				name = function() return ZGV.db.profile.share_enabled and "Stop sharing" or "Start sharing" end,
-				type = 'execute',
-				width="full",
-				disabled=function() return not ZGV.Sync:IsInGroup() end,
-				func=function() if ZGV.db.profile.share_enabled then ZGV:SetOption("Share","share_enabled off") else ZGV.Sync:ActivateAsMasterWithConfirmation() end ZGV:RefreshOptions() end,
-			})
-
 			AddOption('share_enabled',{
-				type = 'toggle',
-				_default = false,
-				width="full",
-				set=function(i,v) Setter_Simple(i,v) if v then ZGV.Sync:Activate() end  ZGV:UpdateFrame()  end,
-			})
-			AddOption('share_showparty',{
 				type = 'toggle',
 				_default = true,
 				width="full",
-				set = function(i,v) Setter_Simple(i,v)  ZGV:UpdateFrame()  end,
-				disabled = function() return not self.db.profile.share_enabled end,
+				set=function(i,v) Setter_Simple(i,v) if v then ZGV.Sync:Activate() end ZGV.Sync:UpdateButtonColor() ZGV:UpdateFrame()  end,
 			})
 			AddOption('share_masterslave',{
 				type = 'select',
@@ -2083,34 +2011,7 @@ function ZGV:Options_DefineOptionTables()
 				width="double",
 				set = function(i,v) Setter_Simple(i,v)  ZGV.Sync:Activate()  if ZGV.CurrentGuide and ZGV.CurrentGuide.headerdata.shared then ZGV:ClearCurrentGuide() end end,
 				disabled = function() return not self.db.profile.share_enabled end,
-			})
-			AddOptionSpace()
-			AddOption('share_partydisplaystyle',{
-				name = "Party display style:",
-				type = 'select',
-				values = {
-					[1]="Party: |cffff8888Alice|r, |cff00ff00Bob|r",
-					[2]="Alice (incomplete), Bob (complete)",
-					[3]="Alice [ ], Bob [X]",
-					[4]="|cffff8888Alice|r, |cffff8888Bob [1/3]|r, |cff00ff00Charlie|r",
-				},
-				_default = 1,
-				width="double",
-			})
-			AddOption('share_fakeparty',{
-				name = "Fake party:",
-				type = 'select',
-				values = {
-					[0]="Off",
-					[1]="Mixed (Alice is done, Bob slacks)",
-					[2]="All done",
-					[3]="Full house",
-					[4]="Random",
-					[5]="Me and Myself",
-				},
-				_default = 0,
-				set=function(i,v) Setter_Simple(i,v) ZGV.Sync:FakePartyGenerator(v) ZGV:UpdateFrame() end,
-				width="double",
+				hidden=true,
 			})
 			AddOptionSpace()
 		end
@@ -2508,6 +2409,7 @@ function ZGV:Options_DefineOptionTables()
 			AddOption('debug_centermap',{ name = "Keep map centered", type="toggle", width = "full", _default = false })
 
 			AddOption('disabledev',{ name = "Disable dev menu for next reload", type = 'execute', width = "double", func = function() self.db.profile.hide_dev_once=true ReloadUI() end})
+			AddOption('debug_newicons',{ type = 'toggle', name="Use new test icons", width = "full", _default = false })
 		end
 
 		AddOptionGroup("debugfake","DebugFake","zgdebugfake", { name="Debug: faking stuff", guiHidden = not self.DEV or self.db.profile.hide_dev_once, })
@@ -3392,7 +3294,7 @@ function ZGV:Options_DefineOptionTables()
 
 				AddOption('',{ type="header", name=L["opt_guide_step_other"], hidden=function() return not self.db.profile.guide_viewer_advanced end })
 
-				AddOption('progress',{ type = 'toggle', width = "double", set = function(i,v) Setter_Simple(i,v) ZygorGuidesViewer_ProgressBar_SetUp() end, _default = true, hidden=function() return not self.db.profile.guide_viewer_advanced end})
+				AddOption('progress',{ type = 'toggle', width = "double", set = function(i,v) Setter_Simple(i,v) ZGV.ProgressBar:SetUp() end, _default = true, hidden=function() return not self.db.profile.guide_viewer_advanced end})
 			EndSubgroup()
 			
 			
@@ -3443,14 +3345,14 @@ function ZGV:Options_DefineOptionTables()
 				--local antcolor_hidden = function()  return ZGV.optiontables.travelsystem.args.ants.args.customcolorants:hidden() or self.db.profile.singlecolorants  end
 				local antcolor_hidden = function()  return  not self.db.profile.multicolorants  end
 
-				AddOption('singlecolorantscolor',{
+				AddOption('colorantssingle',{
 					type = 'color',
 					--hidden = function()  return ZGV.optiontables.travelsystem.args.ants.args.customcolorants:hidden() or not self.db.profile.singlecolorants or not self.db.profile.customcolorants  end,
 					--hidden = function()  return  not antcolor_hidden()   end,
 					disabled = function()  return  not antcolor_hidden()   end,
-					get = function()  return rgb2list(self.db.profile.singlecolorantscolor)  end,
+					get = function()  return rgb2list(self.db.profile.colorantssingle)  end,
 					set = function(_,r,g,b,a)
-						setrgb(self.db.profile.singlecolorantscolor, r, g, b, a)
+						setrgb(self.db.profile.colorantssingle, r, g, b, a)
 						ZGV.Pointer.Icons:SetAntColorsFromOptions()
 					end,
 					hasAlpha = true,
@@ -3539,9 +3441,78 @@ function ZGV:Options_DefineOptionTables()
 				})
 			EndSubgroup()
 
-			AddOption('object_dropdown',{ type='select', values = {[1]={name="Boo",id="boo"},[2]={name="Baa",id="baaaa"},[8]={name="Foo",id="foofoo"}}, set=function(i,v) Setter_Simple(i,v) print("Selected: key:",v,"  object:",i.option.values[v],"  id:",i.option.values[v].id) end })
+			AddOption('opacitytoggle',{
+				type = 'toggle',
+				set = function(i,v) Setter_Simple(i,v)  self.db.profile.opacitymain = (v and 0.6 or 1.0)  self:UpdateSkin() ZGV.ActionBar:SetAlpha() end,
+				--stepBasis = 0,
+				width="full",
+				_default = false,
+			})
+
+			AddOption('skin',{
+				type = "select",
+				values = function()
+					local t={}
+					for id,skin in pairs(self.Skins) do  t[id]=skin.name  end
+					return t
+				end,
+				set = function(_,n)
+					self:SetSkin(n)
+					self:ScrollToCurrentStep()
+				      end,
+				_default = "default", -- TODO make (default) tag autoappendable
+			})		
+
+		
 		end
 		self.db.profile.hide_dev_once = false
+
+		AddOptionGroup("debugshare","DebugShare","zgdebugshare", { name="Debug: share", guiHidden = not self.DEV or self.db.profile.hide_dev_once, })
+		do
+			AddOption('share_toggle',{
+				name = function() return ZGV.db.profile.share_enabled and "Stop sharing" or "Start sharing" end,
+				type = 'execute',
+				width="full",
+				disabled=function() return not ZGV.Sync:IsInGroup() end,
+				func=function() ZygorGuidesViewerFrame_Guides_GuideShareButton_OnClick() end,
+			})
+
+			AddOption('share_showparty',{
+				type = 'toggle',
+				_default = true,
+				width="full",
+				set = function(i,v) Setter_Simple(i,v)  ZGV:UpdateFrame()  end,
+				disabled = function() return not self.db.profile.share_enabled end,
+			})
+			AddOption('share_partydisplaystyle',{
+				name = "Party display style:",
+				type = 'select',
+				values = {
+					[1]="Party: |cffff8888Alice|r, |cff00ff00Bob|r",
+					[2]="Alice (incomplete), Bob (complete)",
+					[3]="Alice [ ], Bob [X]",
+					[4]="|cffff8888Alice|r, |cffff8888Bob [1/3]|r, |cff00ff00Charlie|r",
+				},
+				_default = 4,
+				width="double",
+			})
+			AddOption('share_fakeparty',{
+				name = "Fake party:",
+				type = 'select',
+				values = {
+					[0]="Off",
+					[1]="Mixed (Alice is done, Bob slacks)",
+					[2]="All done",
+					[3]="Full house",
+					[4]="Random",
+					[5]="Me and Myself",
+				},
+				_default = 0,
+				set=function(i,v) Setter_Simple(i,v) ZGV.Sync:FakePartyGenerator(v) ZGV:UpdateFrame() end,
+				width="double",
+			})
+			AddOptionSpace()
+		end
 	--end
 
 
@@ -3769,7 +3740,7 @@ function ZGV:Options_RegisterDefaults()
 	defaults.profile.colorantsship=ZGV.Pointer.Icons.ant_ship_default
 	defaults.profile.colorantportal=ZGV.Pointer.Icons.ant_portal_default
 	defaults.profile.colorantsfly=ZGV.Pointer.Icons.ant_flying_default
-	defaults.profile.singlecolorantscolor=ZGV.Pointer.Icons.ant_default
+	defaults.profile.colorantssingle=ZGV.Pointer.Icons.ant_default
 
 	defaults.profile.autoaccept=defaults.profile.autoacceptturnin
 	defaults.profile.autoturnin=defaults.profile.autoacceptturnin
@@ -3830,7 +3801,9 @@ function ZGV:Options_RegisterDefaults()
 	self.db.profile.dispprimary.showborder = true
 	self.db.profile.dispprimary.hideborder = false
 
-	if not self.db.profile.singlecolorants__renamed then
+	self.db.profile.opacitymain = 1
+
+	if self.db.profile.singlecolorants~=nil and not self.db.profile.singlecolorants__renamed then
 		self.db.profile.multicolorants = not self.db.profile.singlecolorants
 		self.db.profile.singlecolorants=nil
 		self.db.profile.singlecolorants__renamed=true
@@ -3839,6 +3812,11 @@ function ZGV:Options_RegisterDefaults()
 	if not self.db.profile.tmp__was_sheened then  -- one-time switch to stealth
 		self.Pointer:SetArrowSkin("stealth")
 		self.db.profile.tmp__was_sheened = true
+	end
+
+	if not self.db.profile.tmp__was_stealth then  -- one-time switch to new viewer style: glass
+		self.db.profile.skinstyle="glass"
+		self.db.profile.tmp__was_stealth = true
 	end
 
 	-- auto-guess debug frame, to make it easier.

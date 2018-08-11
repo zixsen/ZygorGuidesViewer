@@ -669,10 +669,26 @@ do
 				-- But, if the node ALREADY has a special neighbour... then delete this; it's a multi-special whore node.
 
 				if not conndata.dontsetborder then -- allow for some linkages that are NOT special
-					n1.border = n1.border and "multi" or n2
-					if n2 then  n2.border = n2.border and "multi" or n1  end
-					if n1.border==n2 then n1.bordermeta=link12 end
-					if n2 and n2.border==n1 then n2.bordermeta=link21 end
+					if n1.border then
+						n1.borders = n1.borders or {}
+						n1.borders[n1.border]=n1.bordermeta
+						n1.borders[n2]=link12
+						n1.border="multi"
+					else
+						n1.border=n2
+						n1.bordermeta=link12
+					end
+					if n2 then
+						if n2.border then
+							n2.borders = n2.borders or {}
+							n2.borders[n2.border]=n2.bordermeta
+							n2.borders[n1]=link21
+							n2.border="multi"
+						else
+							n2.border=n1
+							n2.bordermeta=link21
+						end
+					end
 				end
 			end
 
@@ -780,8 +796,26 @@ do
 				-- But, if the node ALREADY has a special neighbour... then delete this; it's a multi-special whore node.
 
 				if not data.dontsetborder then -- allow for some linkages that are NOT special
-					n1.border = n1.border and "multi" or n2
-					if n2 then  n2.border = n2.border and "multi" or n1  end
+					if n1.border then
+						n1.borders = n1.borders or {}
+						n1.borders[n1.border]=n1.bordermeta
+						n1.borders[n2]=link12
+						n1.border="multi"
+					else
+						n1.border=n2
+						n1.bordermeta=link12
+					end
+					if n2 then
+						if n2.border then
+							n2.borders = n2.borders or {}
+							n2.borders[n2.border]=n2.bordermeta
+							n2.borders[n1]=link21
+							n2.border="multi"
+						else
+							n2.border=n1
+							n2.bordermeta=link21
+						end
+					end
 				end
 			end
 
@@ -2855,8 +2889,8 @@ do
 						if neigh.type=="taxi"
 						and (mode=="walk" or mode=="fly")
 						and not neigh.known then
-							if (neigh.quest and not ZGV.completedQuests[neigh.quest])
-							or (neigh.condition and not neigh.condition()) then
+							if (neigh.quest and not IsQuestFlaggedCompleted(neigh.quest))
+							or (neigh.cond_fun and not neigh.cond_fun()) then
 								mycost=mycost+COST_FAILURE+20
 								if cost_debugging then costdesc = costdesc .. "no walk to missing-quest/failed-condition taxi; " end
 							elseif (neigh.factionid and ZGV:GetReputation(neigh.factionid).standing<(neigh.factionstanding or 3)) then
@@ -2890,6 +2924,11 @@ do
 					if neigh.cond_fun and not neigh.cond_fun() then
 						mycost=mycost+COST_FAILURE+21
 						if cost_debugging then costdesc = costdesc .. "failed cond_fun; " end
+					end
+
+					if neigh.type=="road" and (current.border==neigh or (current.borders and current.borders[neigh])) and mode~="fly" then
+						mycost=mycost*0.7
+						if cost_debugging then costdesc = costdesc .. "road; " end
 					end
 
 					-- Ban nodes by quest/faction.
@@ -3305,6 +3344,8 @@ do
 						if n.noskip -- TODO: make it... something better?
 						or n.type=="portal"
 						or n.type=="taxi"
+						or n.type=="ship"
+						or n.type=="zeppelin"
 						then dobreak=true break end  -- Cancel skipping. Just forget it.
 					end
 					if dobreak then break end
@@ -3345,8 +3386,8 @@ do
 				
 				--if (n1.type=="border" or n1.type=="fly" or n1.type=="walk")
 				while sn and n1 and n2
-				and (n1.link.mode=="walk" or n1.link.mode=="fly")
-				and n2.link and (n2.link.mode=="walk" or n2.link.mode=="fly" or n2.link.mode=="border")
+				and (n1.link.mode=="walk" or n1.link.mode=="fly" or n1.link.mode=="road")
+				and n2.link and (n2.link.mode=="walk" or n2.link.mode=="fly" or n2.link.mode=="road" or n2.link.mode=="border")
 				and not n1.border_in_flighte
 				--and n2.border
 				and
@@ -4744,16 +4785,16 @@ do
 				local taxidists_thiszone = {}
 				local zone = self.pm  -- set by FindNearestTaxis
 
-				if zone==1080 --[[ Thunder Totem ]] then zone=1024 --[[ Highmountain ]] end  -- Thunder Totem isn't considered a separate zone. Remap it to Highmountain.
+				if zone==750 or zone==652 --[[ Thunder Totem ]] then zone=650 --[[ Highmountain ]] end  -- Thunder Totem isn't considered a separate zone. Remap it to Highmountain.
 				for t,td in ipairs(taxidists) do repeat
 					if not td[1].known then break end  -- ignore unknown taxis
 					local taxi_zone = td[1].m
 					local force=nil
-					if taxi_zone==1080 --[[ Thunder Totem ]] then taxi_zone=1024 --[[ Highmountain ]] end  -- Thunder Totem isn't considered a separate zone. Remap it to Highmountain.
-					if zone==1077 --[[ Dreamgrove ]] and taxi_zone==1077 --[[ also Dreamgrove ]] then break end -- Dreamgrove is INVALID from inside Dreamgrove, go figure.
-					if zone==1077 --[[ Dreamgrove ]] and taxi_zone==1024 --[[ Highmountain ]] then force=true end -- Only Highmountain is valid from inside Dreamgrove, go figure again.
-					--if zone==1077 --[[ Dreamgrove ]] and taxi_zone~=1077 --[[ anything else ]] then taxi_zone=zone end -- Anything's valid from Dreamgrove, except... Dreamgrove.
-					if zone==1018 --[[ Val'sharah ]] and taxi_zone==1077 --[[ Dreamgrove ]] then force=true end -- Dreamgrove taxi is valid for Val'sharah.
+					if taxi_zone==750 or taxi_zone==652 --[[ Thunder Totem ]] then taxi_zone=650 --[[ Highmountain ]] end  -- Thunder Totem isn't considered a separate zone. Remap it to Highmountain.
+					if zone==747 --[[ Dreamgrove ]] and taxi_zone==747 --[[ also Dreamgrove ]] then break end -- Dreamgrove is INVALID from inside Dreamgrove, go figure.
+					if zone==747 --[[ Dreamgrove ]] and taxi_zone==650 --[[ Highmountain ]] then force=true end -- Only Highmountain is valid from inside Dreamgrove, go figure again.
+					--if zone==747 --[[ Dreamgrove ]] and taxi_zone~=747 --[[ anything else ]] then taxi_zone=zone end -- Anything's valid from Dreamgrove, except... Dreamgrove.
+					if zone==641 --[[ Val'sharah ]] and taxi_zone==747 --[[ Dreamgrove ]] then force=true end -- Dreamgrove taxi is valid for Val'sharah.
 
 					if taxi_zone==zone or force then  tinsert(taxidists_thiszone,td)  end
 				until true end
@@ -4772,7 +4813,7 @@ do
 			function TWP:AnnouncePrediction()
 				if not self.taxidists_thiszone or not self.predicted_taxi then print("Make a prediction first.") return end
 				print(("Expected Flight Master Whistle destinations from |cff88ffff%s/%d %.1f,%.1f|r:"):format(ZGV.GetMapNameByID(self.pm),self.pf,self.px*100,self.py*100))
-				if self.pm==1077 then print("(You're in Dreamgrove. Get ready to be whistled to somewhere in Highmountain...)") end
+				if self.pm==747 then print("(You're in Dreamgrove. Get ready to be whistled to somewhere in Highmountain...)") end
 				for i=1,3 do
 					if i>#self.taxidists_thiszone then break end
 					local taxi = self.taxidists_thiszone[i][1]
@@ -4817,6 +4858,44 @@ do
 			function TWP.FrameOnEvent(frame,event,...)
 				TWP:CatchEvent(event,...)
 			end
+
+			local valid_maps_broken = {
+				[630]=true,	-- Azsuna
+				[650]=true,	-- Highmountain
+				[634]=true,	-- Stormheim
+				[696]=true,
+				[680]=true,	-- Suramar
+				[750]=true,	-- Thunder Totem
+				[739]=true,	-- Trueshot Lodge
+				[641]=true,	-- Val\'sharah
+				[646]=true,	-- Broken Shore
+			}
+			local valid_maps_argus = {
+				[830]=true,	-- Krokuun	
+				[882]=true,	-- Mac\'Aree
+				[885]=true,	-- Antoran Wastes
+			}
+			local valid_maps_battle = {
+				[1161]=true,	-- Boralus
+				[896]=true,	-- Drustvar
+				[942]=true,	-- Stormsong Valley
+				[1014]=true,	-- Kul Tiras
+				[895]=true,	-- Tiragarde Sound
+				[863]=true,	-- Nazmir
+				[864]=true,	-- Vol'dun
+				[1011]=true,	-- Zandalar
+				[862]=true,	-- Zuldazar
+				[1165]=true,	-- Dazar'alor
+			}
+
+			function TWP:IsOnValidMap()  -- check if whistle can be used here. moved from data_items.
+				local m=ZGV.CurrentMapID
+				if valid_maps_broken[m] then return true end
+				if valid_maps_argus[m] and IsQuestFlaggedCompleted(38995) then return true end
+				if valid_maps_battle[m] and (IsQuestFlaggedCompleted(52450) or IsQuestFlaggedCompleted(51916)) then return true end
+				return false
+			end
+
 			tinsert(Lib.startup_modules_funcs,{"Setting up Taxi Whistle predictor",function(self)
 				--if ZGV.DEV then
 					TWP:SetupListener()

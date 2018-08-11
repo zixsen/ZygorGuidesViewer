@@ -143,10 +143,10 @@ function Appraiser:AddItemToBuy(itemid,count,source,priceMax,itemlink,sourcemode
 
 	ZGV.db.char.GGbuyitems = ZGV.db.char.GGbuyitems or {}
 
-	local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, icon, vendorPrice, classID, subclassID = ZGV:GetItemInfo(itemid)
-	
 	if not itemid and string.match(itemlink,"battlepet:") then itemid = ZGV.PetBattle:GetPetFakeIdByLink(itemlink) end
 
+	local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, icon, vendorPrice, classID, subclassID = ZGV:GetItemInfo(itemid)
+	
 	if itemid and not itemlink then
 		name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, icon, vendorPrice, classID, subclassID = ZGV:GetItemInfo(itemid)
 	end

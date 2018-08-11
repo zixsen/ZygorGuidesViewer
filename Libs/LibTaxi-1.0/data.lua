@@ -10,13 +10,13 @@ data.taxipoints = {
 			-- Horde --
 			{name="Vorrik's Sanctum",faction="H",npc="Lugo the Windrider",npcid=135385,x=47.30,y=35.23},
 			{name="Vulpera Hideaway",faction="H",npc="Narishi",npcid=124107,x=56.96,y=49.25},
-			{name="Goldtusk Inn",faction="H",npc="Volni",npcid=129365,x=42.74,y=61.08,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(48320) end},
+			{name="Goldtusk Inn",faction="H",npc="Volni",npcid=129365,x=42.74,y=61.08,quest=48320},
 			{name="Scorched Sands Outpost",faction="H",npc="Makaanji",npcid=135654,x=43.90,y=75.92},
 			{name="Temple of Akunda",faction="H",npc="Sejiju",npcid=128334,x=53.72,y=89.18},
 
 			-- Alliance --
-			{name="Shatterstone Harbor",faction="A",npc="Barnard \"the Smasherr\" Baysworth",npcid=135383,x=36.68,y=34.28,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(51229) end},
-			{name="Deadwood Cove",faction="A",npc="Explosioneer Zoidfuse",npcid=135388,x=39.79,y=83.82}, --Maybe quest (52041)
+			{name="Shatterstone Harbor",faction="A",npc="Barnard \"the Smasherr\" Baysworth",npcid=135383,x=36.68,y=34.28,quest=51229},
+			{name="Deadwood Cove",faction="A",npc="Explosioneer Zoidfuse",npcid=135388,x=39.79,y=83.82,maybe__quest=52041},
 
 
 			-- Neutral --
@@ -30,6 +30,7 @@ data.taxipoints = {
 			{name="Zo'bal Ruins",faction="H",npc="Du'ba",npcid=122191,x=40.17,y=42.83},
 			{name="Gloom Hollow",faction="H",npc="Cuja",npcid=121207,x=66.98,y=43.76},
 			{name="Zul'jan",faction="H",npc="Zabar",npcid=121828,x=38.85,y=78.14},
+			{name="Forlorn Ruins",faction="H",npc="Zibir the Wingmaster",npcid=122198,x=82.15,y=26.69},
 
 			-- Alliance --
 			{name="Redfield's Watch",faction="A",npc="Joseph Redfield",npcid=139995,x=50.82,y=20.77},
@@ -105,8 +106,8 @@ data.taxipoints = {
 			{name="Firebreaker Expedition",faction="A",npc="Joshua Neeman",npcid=132105,x=63.84,y=30.38,taxioperator="ferry",quest=52128},
 
 			-- Horde --
-			{name="Plunder Harbor",faction="H",npc="Skrash",npcid=138265,x=87.28,y=50.66,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(51438) end},
-			{name="Timberfell Outpost",faction="H",npc="Michaela Reed",npcid=133861,x=72.18,y=51.91,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(51591) end},
+			{name="Plunder Harbor",faction="H",npc="Skrash",npcid=138265,x=87.28,y=50.66,quest=51438},
+			{name="Timberfell Outpost",faction="H",npc="Michaela Reed",npcid=133861,x=72.18,y=51.91,quest=51591},
 			{name="Waning Glacier",faction="H",npc="Kip Wingnut",npcid=142740,x=39.68,y=18.54},
 		},
 
@@ -114,17 +115,18 @@ data.taxipoints = {
 			-- Alliance --
 			{name="Hangman's Point",faction="A",npc="Aaron Ridgeley",npcid=128576,x=71.06,y=40.88},
 			{name="Fletcher's Hollow",faction="A",npc="Bridget Bran",npcid=126724,x=70.21,y=60.45},
-			{name="Falconhurst",faction="A",npc="Viviana Swailes",npcid=134866,x=26.98,y=72.38},--Missing a quest requirement
+			{name="Falconhurst",faction="A",npc="Viviana Swailes",npcid=134866,x=26.98,y=72.38},
 			{name="Arom's Stand",faction="A",npc="Jess Albury",npcid=135023,x=38.14,y=52.53},
-			{name="Watchman's Rise",faction="A",npc="Ensign Wallace",npcid=135024,x=31.87,y=30.45,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(50003) end},
-			{name="Fallhaven",faction="A",npc="Clarence Page",npcid=124466,x=55.13,y=34.70,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(47982) end},
+			{name="Watchman's Rise",faction="A",npc="Ensign Wallace",npcid=135024,x=31.87,y=30.45,quest=50003},
+			{name="Fallhaven",faction="A",npc="Clarence Page",npcid=124466,x=55.13,y=34.70,quest=47982},
 			{name="Barbthorn Ridge",faction="A",npc="Anna Ridgeley",npcid=129984,x=62.61,y=23.99},
+			{name="Deadwood Cove",faction="A",npc="Explosioneer Zoidfuse",npcid=135388,x=39.79,y=83.81},
 
 			-- Horde --
-			{name="Krazzlefrazz Outpost",faction="H",npc="Rixi Rocketboom",npcid=138022,x=37.37,y=24.04,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(51234) end},
+			{name="Krazzlefrazz Outpost",faction="H",npc="Rixi Rocketboom",npcid=138022,x=37.37,y=24.04,quest=51234},
 
 			-- Neutral --
-			{name="Anyport",faction="B",npc="Tan Lotuswind",npcid=135988,x=19.14,y=43.31,quest=50978},
+			{name="Anyport",faction="B",npc="Tan Lotuswind",npcid=135988,x=19.14,y=43.31,cond_fun=function() return IsQuestFlaggedCompleted(50978) or IsQuestFlaggedCompleted(51340) end},
 			{name="Whitegrove Chapel",faction="B",npc="Bertram",npcid=135025,x=25.74,y=16.56},
 
 			-- Alliance Ferries --
@@ -141,19 +143,19 @@ data.taxipoints = {
 			{name="Brennadam",faction="A",npc="Anna Skyspirit",npcid=134704,x=59.73,y=70.56},
 			{name="Mildenhall Meadery",faction="A",npc="Colony Caretaker",npcid=142060,x=68.53,y=64.99},
 			{name="Tidecross",faction="A",npc="Marla Featherfoot",npcid=134696,x=65.56,y=48.00},
-			{name="Shrine of the Storm",faction="A",npc="Galeheart",npcid=137693,x=78.32,y=29.00,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(51319) end},
+			{name="Shrine of the Storm",faction="A",npc="Galeheart",npcid=137693,x=78.32,y=29.00,quest=51319},
 			
 			-- Neutral --
 			{name="Seekers Vista",faction="B",npc="Scroll of Flight",npcid=137318,x=40.03,y=37.32},
 			
 			-- Horde --
-			{name="Warfang Hold",faction="H",npc="Muka Stormbreaker",npcid=138097,x=51.42,y=33.74,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(51986) end},
+			{name="Warfang Hold",faction="H",npc="Muka Stormbreaker",npcid=138097,x=51.42,y=33.74,quest=51986},
 			{name="Hillcrest Pasture",faction="H",npc="Hosan Cloudhoof",npcid=134842,x=52.76,y=80.13},
 			{name="Ironmaw Overlook",faction="H",npc="Chulani Cloudbreath",npcid=134850,x=75.88,y=64.14},
 			{name="Shrine of the Storm",faction="H",npc="Dark Ranger Allanah",npcid=134853,x=77.90,y=24.07},
 			{name="Diretusk Hollow",faction="H",npc="Kudra Windblade",npcid=134848,x=54.27,y=49.35},
-			--{name="Windfall Cavern",faction="H",npc="",npcid=,x=,y=},
-			--{name="Stonetusk Watch",faction="H",npc="",npcid=,x=,y=},
+			{name="Windfall Cavern",faction="H",npc="Allabas",npcid=138251,x=60.8,y=27.0},		-- FIX WITH MORE ACCURATE COORDS AND QUEST TAG LATER
+			{name="Stonetusk Watch",faction="H",npc="Wyna Breezehorn",npcid=134844,x=38.87,y=66.68},	-- FIX WITH MORE ACCURATE COORDS AND QUEST TAG LATER
 
 
 
@@ -163,7 +165,7 @@ data.taxipoints = {
 	-- Kalimdor --
 	[12]={
 		['Ashenvale']={
-			{name="Astranaar",faction="A",npc="Daelyshia",npcid=4267,x=34.41,y=47.99,cond_fun=function() return not ZGV.Parser.ConditionEnv.completedq(52062) end},
+			{name="Astranaar",faction="A",npc="Daelyshia",npcid=4267,x=34.41,y=47.99,quest=52062},
 			{name="Blackfathom Camp",faction="A",npc="Solais",npcid=34374,x=18.14,y=20.59},
 			{name="Forest Song",faction="A",npc="Suralais Farwind",npcid=22935,x=85.09,y=43.45},
 			{name="Stardust Spire",faction="A",npc="Myre Moonglide",npcid=34378,x=35.02,y=72.07},
@@ -190,12 +192,12 @@ data.taxipoints = {
 
 		['Darkshore']={
 			{name="Grove of the Ancients",faction="A",npc="Delanea",npcid=33253,x=44.41,y=75.47},
-			{name="Lor'danel",faction="A",npc="Teldira Moonfeather",npcid=3841,x=51.72,y=17.65,cond_fun=function() return not ZGV.Parser.ConditionEnv.completedq(52279) end},
-			{name="Darkshore Cat 1",extitle="Lor'danel",faction="A",npc="Nightsaber Rider",npcid=33359,x=52.22,y=22.27,taxioperator="blackcat",cond_fun=function() return not ZGV.Parser.ConditionEnv.completedq(52279) end},
-			{name="Darkshore Cat 2",extitle="Lor'danel",faction="A",npc="Nightsaber Rider",npcid=33359,x=51.03,y=22.75,taxioperator="blackcat",cond_fun=function() return not ZGV.Parser.ConditionEnv.completedq(52279) end},
-			{name="Darkshore Cat 3",extitle="Ruins of Mathystra",faction="A",npc="Nightsaber Rider",npcid=33359,x=58.57,y=19.99,taxioperator="blackcat",cond_fun=function() return not ZGV.Parser.ConditionEnv.completedq(52279) end},
-			{name="Darkshore Cat 4",extitle="Shatterspear Vale",faction="A",npc="Nightsaber Rider",npcid=33359,x=69.11,y=18.87,taxioperator="blackcat",cond_fun=function() return not ZGV.Parser.ConditionEnv.completedq(52279) end},
-			{name="Darkshore Cat 5",extitle="Bashal'Aran",faction="A",npc="Nightsaber Rider",npcid=33359,x=46.85,y=33.18,taxioperator="blackcat",cond_fun=function() return not ZGV.Parser.ConditionEnv.completedq(52279) end},
+			{name="Lor'danel",faction="A",npc="Teldira Moonfeather",npcid=3841,x=51.72,y=17.65,cond_fun=function() return not IsQuestFlaggedCompleted(52279) end},
+			{name="Darkshore Cat 1",extitle="Lor'danel",faction="A",npc="Nightsaber Rider",npcid=33359,x=52.22,y=22.27,taxioperator="blackcat",cond_fun=function() return not IsQuestFlaggedCompleted(52279) end},
+			{name="Darkshore Cat 2",extitle="Lor'danel",faction="A",npc="Nightsaber Rider",npcid=33359,x=51.03,y=22.75,taxioperator="blackcat",cond_fun=function() return not IsQuestFlaggedCompleted(52279) end},
+			{name="Darkshore Cat 3",extitle="Ruins of Mathystra",faction="A",npc="Nightsaber Rider",npcid=33359,x=58.57,y=19.99,taxioperator="blackcat",cond_fun=function() return not IsQuestFlaggedCompleted(52279) end},
+			{name="Darkshore Cat 4",extitle="Shatterspear Vale",faction="A",npc="Nightsaber Rider",npcid=33359,x=69.11,y=18.87,taxioperator="blackcat",cond_fun=function() return not IsQuestFlaggedCompleted(52279) end},
+			{name="Darkshore Cat 5",extitle="Bashal'Aran",faction="A",npc="Nightsaber Rider",npcid=33359,x=46.85,y=33.18,taxioperator="blackcat",cond_fun=function() return not IsQuestFlaggedCompleted(52279) end},
 		},
 
 		['Darnassus']={
@@ -271,8 +273,8 @@ data.taxipoints = {
 		},
 
 		['Silithus']={
-			{name="Cenarion Hold",faction="A",npc="Cloud Skydancer",npcid=15177,x=54.40,y=32.72,cond_fun=function() return ZGV.Parser.ConditionEnv.hasbuff(609811) or not ZGV.Parser.ConditionEnv.completedq(49015) end},
-			{name="Cenarion Hold",faction="H",npc="Runk Windtamer",npcid=15178,x=52.78,y=34.64,cond_fun=function() return ZGV.Parser.ConditionEnv.hasbuff(609811) or not ZGV.Parser.ConditionEnv.completedq(49015) end},
+			{name="Cenarion Hold",faction="A",npc="Cloud Skydancer",npcid=15177,x=54.40,y=32.72,cond_fun=function() return ZGV.InPhase("Old Silithius") end},
+			{name="Cenarion Hold",faction="H",npc="Runk Windtamer",npcid=15178,x=52.78,y=34.64,cond_fun=function() return ZGV.InPhase("Old Silithius") end},
 		},
 
 		['Southern Barrens']={
@@ -363,12 +365,12 @@ data.taxipoints = {
 		},
 
 		['Blasted Lands']={
-			{name="Nethergarde Keep",faction="A",npc="Alexandra Constantine",npcid=8609,x=61.25,y=21.58,cond_fun=function() return UnitLevel('player')<90 or ZGV.Parser.ConditionEnv.hasbuff(609811) end},
-			{name="Surwich",faction="A",npc="Graham McAllister",npcid=43107,x=47.13,y=89.36,cond_fun=function() return UnitLevel('player')<90 or ZGV.Parser.ConditionEnv.hasbuff(609811) end},
-			{name="Shattered Beachhead",faction="A",npc="Araazi",npcid=85731,x=67.64,y=27.97,cond_fun=function() return UnitLevel('player')>89 and not ZGV.Parser.ConditionEnv.hasbuff(609811) end},
-			{name="Sunveil Excursion",faction="H",npc="Salena",npcid=43114,x=50.92,y=72.88,cond_fun=function() return UnitLevel('player')<90 or ZGV.Parser.ConditionEnv.hasbuff(609811) end},
-			{name="Dreadmaul Hold",faction="H",npc="Preda",npcid=43121,x=43.71,y=14.25,cond_fun=function() return UnitLevel('player')<90 or ZGV.Parser.ConditionEnv.hasbuff(609811) end},
-			{name="Shattered Landing",faction="H",npc="Ameri Windblade",npcid=85734,x=72.95,y=48.63,cond_fun=function() return UnitLevel('player')>89 and not ZGV.Parser.ConditionEnv.hasbuff(609811) end},
+			{name="Nethergarde Keep",faction="A",npc="Alexandra Constantine",npcid=8609,x=61.25,y=21.58,cond_fun=function() return ZGV.InPhase("Old Blasted Lands") end},
+			{name="Surwich",faction="A",npc="Graham McAllister",npcid=43107,x=47.13,y=89.36,cond_fun=function() return ZGV.InPhase("Old Blasted Lands") end},
+			{name="Shattered Beachhead",faction="A",npc="Araazi",npcid=85731,x=67.64,y=27.97,cond_fun=function() return ZGV.InPhase("New Blasted Lands") end},
+			{name="Sunveil Excursion",faction="H",npc="Salena",npcid=43114,x=50.92,y=72.88,cond_fun=function() return ZGV.InPhase("Old Blasted Lands") end},
+			{name="Dreadmaul Hold",faction="H",npc="Preda",npcid=43121,x=43.71,y=14.25,cond_fun=function() return ZGV.InPhase("Old Blasted Lands") end},
+			{name="Shattered Landing",faction="H",npc="Ameri Windblade",npcid=85734,x=72.95,y=48.63,cond_fun=function() return ZGV.InPhase("New Blasted Lands") end},
 		},
 
 		['Burning Steppes']={
@@ -710,7 +712,7 @@ data.taxipoints = {
 			{name="Paw'Don Village",faction="A",npc="Wing Kyo",npcid=66227,x=46.04,y=85.15},
 			{name="Pearlfin Village",faction="A",npc="Ut-Nam",npcid=56737,x=57.95,y=82.51},
 			{name="Honeydew Village",faction="H",npc="Wing Hya",npcid=66227,x=28.11,y=15.62},
-			{name="Grookin Hill",faction="H",npc="Grookin Flapmaster",npcid=60952,x=27.81,y=47.91,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(29935) end},
+			{name="Grookin Hill",faction="H",npc="Grookin Flapmaster",npcid=60952,x=27.81,y=47.91,quest=29935},
 			{name="Serpent's Overlook",faction="B",npc="Sky Dancer Ji",npcid=64310,x=43.10,y=68.49},
 			{name="Sri-La Village",faction="B",npc="Gingo Alebottom",npcid=59733,x=55.38,y=23.73},
 			{name="Emperor's Omen",faction="B",npc="Supplier Towsa",npcid=59735,x=50.82,y=26.80},
@@ -723,7 +725,7 @@ data.taxipoints = {
 		['Krasarang Wilds']={
 			{name="Sentinel Basecamp",faction="A",npc="Maylen Moonfeather",npcid=59048,x=25.14,y=33.46},
 			{name="Lion's Landing",faction="A",npc="Daggin Windbeard",npcid=68226,x=88.33,y=34.69},
-			{name="The Incursion",faction="A",npc="Tylen Moonfeather",npcid=59049,x=67.77,y=32.49,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(30274) end},
+			{name="The Incursion",faction="A",npc="Tylen Moonfeather",npcid=59049,x=67.77,y=32.49,quest=30274},
 			{name="Thunder Cleft",faction="H",npc="Lira Skysplitter",npcid=59046,x=59.20,y=24.67},
 			{name="Dawnchaser Retreat",faction="H",npc="Munch Windhoof",npcid=59047,x=29.00,y=50.32},
 			{name="Domination Point",faction="H",npc="Kromthar",npcid=67785,x=9.69,y=52.51},
@@ -751,8 +753,8 @@ data.taxipoints = {
 		},
 
 		['Kun-Lai Summit']={
-			{name="Westwind Rest",faction="A",npc="Tabo the Flyer",npcid=61744,x=53.98,y=84.27,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(30514) end},
-			{name="Eastwind Rest",faction="H",npc="Soaring Paw",npcid=61745,x=62.43,y=80.72,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(30515) end},
+			{name="Westwind Rest",faction="A",npc="Tabo the Flyer",npcid=61744,x=53.98,y=84.27,quest=30514},
+			{name="Eastwind Rest",faction="H",npc="Soaring Paw",npcid=61745,x=62.43,y=80.72,quest=30515},
 			{name="Serpent's Spine",faction="H",npc="Morla Skyblade",npcid=65863,x=35.97,y=83.71,region="topofthewallKLS"},
 			{name="Binan Village",faction="B",npc="Jo the Wind Watcher",npcid=61474,x=72.55,y=94.17},
 			{name="Temple of the White Tiger",faction="B",npc="Big Greenfeather",npcid=61118,x=66.31,y=50.67},
@@ -804,13 +806,13 @@ data.taxipoints = {
 
 		['Gorgrond']={
 			{name="Deeproot",faction="A",npc="Rangari Nogo",npcid=81888,x=46.47,y=76.60},
-			{name="Highpass",faction="A",npc="Rangari Rajess",npcid=81074,x=52.83,y=59.33,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(35063) end},
+			{name="Highpass",faction="A",npc="Rangari Rajess",npcid=81074,x=52.83,y=59.33,quest=35063},
 			{name="Wildwood Wash",faction="A",npc="Rangari Thewe",npcid=81884,x=64.16,y=57.50},
 			{name="Bastion Rise",faction="A",npc="Rangari Yaval",npcid=84507,x=46.40,y=92.41},
 			{name="Evermorn Springs",faction="H",npc="Chucklespine",npcid=84495,x=41.31,y=87.17},
 			{name="Bastion Rise",faction="H",npc="Windscreamer",npcid=84508,x=47.43,y=90.79},
 			{name="Beastwatch",faction="H",npc="Grinslicer",npcid=81055,x=45.98,y=69.22},
-			{name="Breaker's Crown",faction="B",npc="Nisha",npcid=86492,x=45.87,y=54.94,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(35026) end},
+			{name="Breaker's Crown",faction="B",npc="Nisha",npcid=86492,x=45.87,y=54.94,quest=35026},
 			{name="Everbloom Wilds",faction="B",npc="Arcanist Windlebop",npcid=84714,x=57.01,y=45.88},
 			{name="Skysea Ridge",faction="B",npc="Faronn Dustwalker",npcid=85829,x=39.55,y=36.58},
 			{name="Iron Docks",faction="B",npc="Nisha",npcid=84700,x=43.04,y=20.21},
@@ -841,10 +843,10 @@ data.taxipoints = {
 		},
 
 		['Tanaan Jungle']={
-			{name="Lion's Watch",faction="A",npc="Skyguard Thann",npcid=90960,x=57.51,y=58.76,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(38445) end},
+			{name="Lion's Watch",faction="A",npc="Skyguard Thann",npcid=90960,x=57.51,y=58.76,quest=38445},
 			{name="The Iron Front",faction="A",npc="Skyguard Blann",npcid=91940,x=10.03,y=53.07},
 			{name="The Iron Front",faction="H",npc="Nasher",npcid=90552,x=9.27,y=55.86},
-			{name="Vol'mar",faction="H",npc="Gargash the Diver",npcid=90550,x=60.43,y=46.44,cond_fun=function() return ZGV.Parser.ConditionEnv.completedq(37935) end},
+			{name="Vol'mar",faction="H",npc="Gargash the Diver",npcid=90550,x=60.43,y=46.44,quest=37935},
 			{name="Aktar's Post",faction="B",npc="Skytalon Kariz",npcid=90560,x=26.14,y=38.88},
 			{name="Sha'naari Refuge",faction="B",npc="Rangari Sha'ana",npcid=92809,x=29.55,y=63.14},
 			{name="Malo's Lookout",faction="B",npc="Rocketmaster Malo",npcid=92808,x=43.40,y=42.24},
@@ -7141,23 +7143,34 @@ data.flightcost = {
 			nodeID = 2119,
 			name = "Sanctuary of the Devoted, Vol'dun",
 			neighbors = {
+				[2110] = 46, -- Shatterstone Harbor, Vol'dun
 				[2111] = 0, -- Vorrik's Sanctum, Vol'dun
+				[2114] = 57, -- Deadwood Cove, Vol'dun
 				[2144] = 0, -- Goldtusk Inn, Vol'dun
 				["347:439"] = 0, -- Deadwood Cove, Vol'dun
 			},
 		},
 		{
 			tag = "332:192",
+			nodeID = 2110,
 			name = "Shatterstone Harbor, Vol'dun",
 			neighbors = {
+				[2112] = 0, -- Crankchug's Overlook, Vol'dun
+				[2114] = 0, -- Deadwood Cove, Vol'dun
+				[2119] = 46, -- Sanctuary of the Devoted, Vol'dun
 				["416:209"] = 0, -- Crankchug's Overlook, Vol'dun
 			},
 		},
 		{
 			tag = "347:439",
+			nodeID = 2114,
 			name = "Deadwood Cove, Vol'dun",
 			neighbors = {
-				[2119] = 0, -- Devoted Sanctuary, Vol'dun
+				[2080] = 0, -- Grimwatt's Crash, Nazmir
+				[2110] = 0, -- Shatterstone Harbor, Vol'dun
+				[2112] = 0, -- Crankchug's Overlook, Vol'dun
+				[2119] = 57, -- Sanctuary of the Devoted, Vol'dun
+				[2148] = 0, -- Zuldazar - Alliance Hub (Sandscar Beach Outskirt)
 				["498:513"] = 0, -- Zuldazar - Alliance Hub (Sandscar Beach Outskirt)
 			},
 		},
@@ -7168,7 +7181,7 @@ data.flightcost = {
 			neighbors = {
 				[2111] = 0, -- Vorrik's Sanctum, Vol'dun
 				[2117] = 0, -- Vulpera Hideaway, Vol'dun
-				[2119] = 0, -- Devoted Sanctuary, Vol'dun
+				[2119] = 0, -- Sanctuary of the Devoted, Vol'dun
 				[2143] = 0, -- Scorched Sands Outpost, Vol'dun
 			},
 		},
@@ -7187,15 +7200,19 @@ data.flightcost = {
 			name = "Vorrik's Sanctum, Vol'dun",
 			neighbors = {
 				[2117] = 0, -- Vulpera Hideaway, Vol'dun
-				[2119] = 0, -- Devoted Sanctuary, Vol'dun
+				[2119] = 0, -- Sanctuary of the Devoted, Vol'dun
 				[2144] = 0, -- Goldtusk Inn, Vol'dun
 			},
 		},
 		{
 			tag = "416:209",
+			nodeID = 2112,
 			name = "Crankchug's Overlook, Vol'dun",
 			neighbors = {
 				[1965] = 0, -- Nesingwary's Gameland, Zuldazar
+				[2080] = 0, -- Grimwatt's Crash, Nazmir
+				[2110] = 0, -- Shatterstone Harbor, Vol'dun
+				[2114] = 0, -- Deadwood Cove, Vol'dun
 				[2120] = 0, -- Tortaka Refuge, Vol'dun
 				["332:192"] = 0, -- Shatterstone Harbor, Vol'dun
 			},
@@ -7228,6 +7245,8 @@ data.flightcost = {
 			name = "Tortaka Refuge, Vol'dun",
 			neighbors = {
 				[1954] = 0, -- Zo'bal Ruins, Nazmir
+				[2112] = 0, -- Crankchug's Overlook, Vol'dun
+				[2161] = 0, -- Redfield's Watch, Nazmir
 				["416:209"] = 0, -- Crankchug's Overlook, Vol'dun
 			},
 		},
@@ -7239,22 +7258,34 @@ data.flightcost = {
 			neighbors = {
 				[2075] = 0, -- Seeker's Outpost, Zuldazar
 				[2126] = 0, -- Scaletrader Post, Zuldazar
+				[2153] = 0, -- The Slough, Zuldazar
+				[2157] = 0, -- The Golden Road, Zuldazar
 				["498:513"] = 0, -- Zuldazar - Alliance Hub (Sandscar Beach Outskirt)
 				["619:639"] = 0, -- The Slough, Zuldazar
 			},
 		},
 		{
 			tag = "496:573",
+			nodeID = 2157,
 			name = "The Golden Road, Zuldazar",
 			neighbors = {
+				[2012] = 0, -- Xibala, Zuldazar
+				[2075] = 0, -- Seeker's Outpost, Zuldazar
+				[2145] = 0, -- Iron Hollow, Zuldazar
+				[2148] = 0, -- Zuldazar - Alliance Hub (Sandscar Beach Outskirt)
 				["565:499"] = 0, -- Iron Hollow, Zuldazar
 			},
 		},
 		{
 			tag = "498:513",
+			nodeID = 2148,
 			name = "Zuldazar - Alliance Hub (Sandscar Beach Outskirt)",
 			neighbors = {
 				[2012] = 0, -- Xibala, Zuldazar
+				[2080] = 0, -- Grimwatt's Crash, Nazmir
+				[2114] = 0, -- Deadwood Cove, Vol'dun
+				[2145] = 0, -- Iron Hollow, Zuldazar
+				[2157] = 0, -- The Golden Road, Zuldazar
 				["347:439"] = 0, -- Deadwood Cove, Vol'dun
 				["565:499"] = 0, -- Iron Hollow, Zuldazar
 			},
@@ -7277,6 +7308,19 @@ data.flightcost = {
 				[1959] = 0, -- The Great Seal
 				[2027] = 0, -- Temple of the Prophet, Zuldazar
 				[2045] = 0, -- Garden of the Loa, Zuldazar
+			},
+		},
+		{
+			tag = "518:353",
+			nodeID = 2080,
+			name = "Grimwatt's Crash, Nazmir",
+			neighbors = {
+				[2078] = 0, -- Fort Victory - Nazmir (Alliance)
+				[2112] = 0, -- Crankchug's Overlook, Vol'dun
+				[2114] = 0, -- Deadwood Cove, Vol'dun
+				[2145] = 0, -- Iron Hollow, Zuldazar
+				[2148] = 0, -- Zuldazar - Alliance Hub (Sandscar Beach Outskirt)
+				[2161] = 0, -- Redfield's Watch, Nazmir
 			},
 		},
 		{
@@ -7350,9 +7394,16 @@ data.flightcost = {
 		},
 		{
 			tag = "565:499",
+			nodeID = 2145,
 			name = "Iron Hollow, Zuldazar",
 			neighbors = {
+				[1965] = 0, -- Nesingwary's Gameland, Zuldazar
 				[2078] = 0, -- Fort Victory - Nazmir (Alliance)
+				[2080] = 0, -- Grimwatt's Crash, Nazmir
+				[2126] = 0, -- Scaletrader Post, Zuldazar
+				[2148] = 0, -- Zuldazar - Alliance Hub (Sandscar Beach Outskirt)
+				[2153] = 0, -- The Slough, Zuldazar
+				[2157] = 0, -- The Golden Road, Zuldazar
 				["496:573"] = 0, -- The Golden Road, Zuldazar
 				["498:513"] = 0, -- Zuldazar - Alliance Hub (Sandscar Beach Outskirt)
 				["619:639"] = 0, -- The Slough, Zuldazar
@@ -7412,10 +7463,14 @@ data.flightcost = {
 		},
 		{
 			tag = "619:639",
+			nodeID = 2153,
 			name = "The Slough, Zuldazar",
 			neighbors = {
 				[2012] = 0, -- Xibala, Zuldazar
+				[2075] = 0, -- Seeker's Outpost, Zuldazar
+				[2076] = 0, -- Atal'Gral, Zuldazar
 				[2126] = 0, -- Scaletrader Post, Zuldazar
+				[2145] = 0, -- Iron Hollow, Zuldazar
 				["565:499"] = 0, -- Iron Hollow, Zuldazar
 				["701:682"] = 0, -- Talanji's Rebuke, Zuldazar
 			},
@@ -7425,6 +7480,10 @@ data.flightcost = {
 			nodeID = 2078,
 			name = "Fort Victory - Nazmir (Alliance)",
 			neighbors = {
+				[1965] = 0, -- Nesingwary's Gameland, Zuldazar
+				[2080] = 0, -- Grimwatt's Crash, Nazmir
+				[2145] = 0, -- Iron Hollow, Zuldazar
+				[2161] = 0, -- Redfield's Watch, Nazmir
 				["565:499"] = 0, -- Iron Hollow, Zuldazar
 			},
 		},
@@ -7438,7 +7497,9 @@ data.flightcost = {
 				[1975] = 0, -- Zeb'ahari, Zuldazar
 				[2045] = 0, -- Garden of the Loa, Zuldazar
 				[2061] = 0, -- The Sliver, Zuldazar
+				[2078] = 0, -- Fort Victory - Nazmir (Alliance)
 				[2126] = 0, -- Scaletrader Post, Zuldazar
+				[2145] = 0, -- Iron Hollow, Zuldazar
 				["416:209"] = 0, -- Crankchug's Overlook, Vol'dun
 			},
 		},
@@ -7462,6 +7523,7 @@ data.flightcost = {
 			neighbors = {
 				[1953] = 0, -- Zul'jan, Nazmir
 				[1954] = 0, -- Zo'bal Ruins, Nazmir
+				[1956] = 0, -- Forlorn Ruins, Nazmir
 				[1965] = 0, -- Nesingwary's Gameland, Zuldazar
 				[1975] = 0, -- Zeb'ahari, Zuldazar
 			},
@@ -7475,6 +7537,9 @@ data.flightcost = {
 				[2012] = 0, -- Xibala, Zuldazar
 				[2066] = 0, -- Atal'Gral, Zuldazar
 				[2076] = 0, -- Atal'Gral, Zuldazar
+				[2147] = 0, -- Castaway Encampment, Zuldazar
+				[2153] = 0, -- The Slough, Zuldazar
+				[2157] = 0, -- The Golden Road, Zuldazar
 				[2165] = 0, -- Tusk Isle, Zuldazar
 			},
 		},
@@ -7491,6 +7556,8 @@ data.flightcost = {
 				[2061] = 0, -- The Sliver, Zuldazar
 				[2066] = 0, -- Atal'Gral, Zuldazar
 				[2076] = 0, -- Atal'Gral, Zuldazar
+				[2145] = 0, -- Iron Hollow, Zuldazar
+				[2153] = 0, -- The Slough, Zuldazar
 				["619:639"] = 0, -- The Slough, Zuldazar
 			},
 		},
@@ -7499,6 +7566,8 @@ data.flightcost = {
 			nodeID = 2147,
 			name = "Castaway Encampment, Zuldazar",
 			neighbors = {
+				[2075] = 0, -- Seeker's Outpost, Zuldazar
+				[2076] = 0, -- Atal'Gral, Zuldazar
 			},
 		},
 		{
@@ -7513,6 +7582,9 @@ data.flightcost = {
 			nodeID = 2161,
 			name = "Redfield's Watch, Nazmir",
 			neighbors = {
+				[2078] = 0, -- Fort Victory - Nazmir (Alliance)
+				[2080] = 0, -- Grimwatt's Crash, Nazmir
+				[2120] = 0, -- Tortaka Refuge, Vol'dun
 			},
 		},
 		{
@@ -7531,6 +7603,9 @@ data.flightcost = {
 			tag = "700:212",
 			nodeID = 1956,
 			name = "Forlorn Ruins, Nazmir",
+			neighbors = {
+				[1955] = 0, -- Gloom Hollow, Nazmir
+			},
 		},
 		{
 			tag = "701:682",
@@ -7559,6 +7634,8 @@ data.flightcost = {
 				[1975] = 0, -- Zeb'ahari, Zuldazar
 				[2075] = 0, -- Seeker's Outpost, Zuldazar
 				[2126] = 0, -- Scaletrader Post, Zuldazar
+				[2147] = 0, -- Castaway Encampment, Zuldazar
+				[2153] = 0, -- The Slough, Zuldazar
 			},
 		},
 	},
@@ -7570,7 +7647,10 @@ data.flightcost = {
 			neighbors = {
 				[2106] = 41, -- Arom's Stand, Drustvar
 				[2107] = 0, -- Watchman's Rise, Drustvar
+				[2108] = 0, -- Falconhurst, Drustvar
 				[2109] = 34, -- Whitegrove Chapel, Drustvar
+				[2135] = 0, -- Krazzlefrazz Outpost, Drustvar
+				[2274] = 0, -- Swiftwind Post, Drustvar
 			},
 		},
 		{
@@ -7581,12 +7661,20 @@ data.flightcost = {
 				[2087] = 55, -- Outrigger Post, Tiragarde Sound
 				[2107] = 0, -- Watchman's Rise, Drustvar
 				[2127] = 34, -- Anyport, Drustvar
+				[2135] = 0, -- Krazzlefrazz Outpost, Drustvar
+				[2273] = 0, -- Waning Glacier, Tiragarde Sound
 			},
 		},
 		{
 			tag = "289:783",
 			nodeID = 2108,
 			name = "Falconhurst, Drustvar",
+			neighbors = {
+				[2035] = 0, -- Fletcher's Hollow, Drustvar
+				[2106] = 36, -- Arom's Stand, Drustvar
+				[2107] = 0, -- Watchman's Rise, Drustvar
+				[2127] = 0, -- Anyport, Drustvar
+			},
 		},
 		{
 			tag = "311:598",
@@ -7596,8 +7684,20 @@ data.flightcost = {
 				[2033] = 0, -- Fallhaven, Drustvar
 				[2037] = 0, -- Barbthorn Ridge, Drustvar
 				[2106] = 0, -- Arom's Stand, Drustvar
+				[2108] = 0, -- Falconhurst, Drustvar
 				[2109] = 0, -- Whitegrove Chapel, Drustvar
 				[2127] = 0, -- Anyport, Drustvar
+			},
+		},
+		{
+			tag = "336:570",
+			nodeID = 2135,
+			name = "Krazzlefrazz Outpost, Drustvar",
+			neighbors = {
+				[2109] = 0, -- Whitegrove Chapel, Drustvar
+				[2127] = 0, -- Anyport, Drustvar
+				[2274] = 0, -- Swiftwind Post, Drustvar
+				[2275] = 0, -- Mudfisher Cove, Drustvar
 			},
 		},
 		{
@@ -7608,6 +7708,7 @@ data.flightcost = {
 				[2033] = 39, -- Fallhaven, Drustvar
 				[2035] = 0, -- Fletcher's Hollow, Drustvar
 				[2107] = 0, -- Watchman's Rise, Drustvar
+				[2108] = 36, -- Falconhurst, Drustvar
 				[2127] = 41, -- Anyport, Drustvar
 			},
 		},
@@ -7627,8 +7728,19 @@ data.flightcost = {
 			neighbors = {
 				[2034] = 0, -- Hangman's Point, Drustvar
 				[2037] = 31, -- Barbthorn Ridge, Drustvar
-				[2106] = 39, -- Arom's Stand, Drustvar
+				[2106] = 40, -- Arom's Stand, Drustvar
 				[2107] = 0, -- Watchman's Rise, Drustvar
+			},
+		},
+		{
+			tag = "424:448",
+			nodeID = 2273,
+			name = "Waning Glacier, Tiragarde Sound",
+			neighbors = {
+				[2062] = 0, -- Wolf's Den, Tiragarde Sound
+				[2091] = 0, -- Stonetusk Watch, Stormsong Valley
+				[2109] = 0, -- Whitegrove Chapel, Drustvar
+				[2275] = 0, -- Mudfisher Cove, Drustvar
 			},
 		},
 		{
@@ -7664,12 +7776,23 @@ data.flightcost = {
 			},
 		},
 		{
+			tag = "447:538",
+			nodeID = 2275,
+			name = "Mudfisher Cove, Drustvar",
+			neighbors = {
+				[2062] = 0, -- Wolf's Den, Tiragarde Sound
+				[2067] = 0, -- Timberfell Outpost, Tiragarde Sound
+				[2135] = 0, -- Krazzlefrazz Outpost, Drustvar
+				[2273] = 0, -- Waning Glacier, Tiragarde Sound
+			},
+		},
+		{
 			tag = "450:569",
 			nodeID = 2037,
 			name = "Barbthorn Ridge, Drustvar",
 			neighbors = {
-				[2033] = 31, -- Fallhaven, Drustvar
-				[2034] = 0, -- Hangman's Point, Drustvar
+				[2033] = 35, -- Fallhaven, Drustvar
+				[2034] = 28, -- Hangman's Point, Drustvar
 				[2084] = 0, -- Norwington Estate, Tiragarde Sound
 				[2102] = 34, -- Roughneck Camp, Tiragarde Sound
 				[2107] = 0, -- Watchman's Rise, Drustvar
@@ -7684,6 +7807,16 @@ data.flightcost = {
 				[2101] = 0, -- The Amber Waves, Stormsong Valley
 				[2102] = 0, -- Roughneck Camp, Tiragarde Sound
 				[2138] = 0, -- Fort Daelin, Stormsong Valley
+			},
+		},
+		{
+			tag = "467:725",
+			nodeID = 2274,
+			name = "Swiftwind Post, Drustvar",
+			neighbors = {
+				[2127] = 0, -- Anyport, Drustvar
+				[2135] = 0, -- Krazzlefrazz Outpost, Drustvar
+				[2279] = 0, -- Stonefist Watch, Tiragarde Sound
 			},
 		},
 		{
@@ -7711,9 +7844,10 @@ data.flightcost = {
 			nodeID = 2035,
 			name = "Fletcher's Hollow, Drustvar",
 			neighbors = {
-				[2034] = 30, -- Hangman's Point, Drustvar
-				[2042] = 0, -- Vigil Hill, Tiragarde Sound
+				[2034] = 26, -- Hangman's Point, Drustvar
+				[2042] = 26, -- Vigil Hill, Tiragarde Sound
 				[2106] = 0, -- Arom's Stand, Drustvar
+				[2108] = 0, -- Falconhurst, Drustvar
 			},
 		},
 		{
@@ -7723,11 +7857,22 @@ data.flightcost = {
 			neighbors = {
 				[2033] = 0, -- Fallhaven, Drustvar
 				[2035] = 30, -- Fletcher's Hollow, Drustvar
-				[2037] = 0, -- Barbthorn Ridge, Drustvar
+				[2037] = 28, -- Barbthorn Ridge, Drustvar
 				[2042] = 28, -- Vigil Hill, Tiragarde Sound
 				[2060] = 58, -- Hatherford, Tiragarde Sound
 				[2084] = 0, -- Norwington Estate, Tiragarde Sound
 				[2277] = 58, -- Proudmoore Keep, Tiragarde Sound
+			},
+		},
+		{
+			tag = "495:305",
+			nodeID = 2091,
+			name = "Stonetusk Watch, Stormsong Valley",
+			neighbors = {
+				[2089] = 0, -- Seekers Vista, Stormsong Valley
+				[2090] = 0, -- Hillcrest Pasture, Stormsong Valley
+				[2092] = 0, -- Diretusk Hollow, Stormsong Valley
+				[2273] = 0, -- Waning Glacier, Tiragarde Sound
 			},
 		},
 		{
@@ -7736,6 +7881,8 @@ data.flightcost = {
 			name = "Seekers Vista, Stormsong Valley",
 			neighbors = {
 				[2085] = 0, -- Tidecross, Stormsong Valley
+				[2091] = 0, -- Stonetusk Watch, Stormsong Valley
+				[2094] = 0, -- Warfang Hold, Stormsong Valley
 				[2138] = 0, -- Fort Daelin, Stormsong Valley
 			},
 		},
@@ -7750,6 +7897,16 @@ data.flightcost = {
 				[2074] = 58, -- Bridgeport, Tiragarde Sound
 				[2102] = 28, -- Roughneck Camp, Tiragarde Sound
 				[2277] = 0, -- Proudmoore Keep, Tiragarde Sound
+			},
+		},
+		{
+			tag = "502:703",
+			nodeID = 2279,
+			name = "Stonefist Watch, Tiragarde Sound",
+			neighbors = {
+				[2023] = 0, -- Freehold, Tiragarde Sound
+				[2067] = 0, -- Timberfell Outpost, Tiragarde Sound
+				[2274] = 0, -- Swiftwind Post, Drustvar
 			},
 		},
 		{
@@ -7779,8 +7936,9 @@ data.flightcost = {
 			nodeID = 2042,
 			name = "Vigil Hill, Tiragarde Sound",
 			neighbors = {
+				[2023] = 62, -- Freehold, Tiragarde Sound
 				[2034] = 28, -- Hangman's Point, Drustvar
-				[2035] = 0, -- Fletcher's Hollow, Drustvar
+				[2035] = 26, -- Fletcher's Hollow, Drustvar
 				[2060] = 0, -- Hatherford, Tiragarde Sound
 				[2074] = 53, -- Bridgeport, Tiragarde Sound
 				[2079] = 41, -- Kennings Lodge, Tiragarde Sound
@@ -7795,6 +7953,49 @@ data.flightcost = {
 				[2086] = 0, -- Brennadam, Stormsong Valley
 				[2097] = 0, -- Deadwash, Stormsong Valley
 				[2137] = 0, -- Millstone Hamlet, Stormsong Valley
+			},
+		},
+		{
+			tag = "551:160",
+			nodeID = 2094,
+			name = "Warfang Hold, Stormsong Valley",
+			neighbors = {
+				[2089] = 0, -- Seekers Vista, Stormsong Valley
+				[2092] = 0, -- Diretusk Hollow, Stormsong Valley
+				[2139] = 0, -- Windfall Cavern, Stormsong Valley
+			},
+		},
+		{
+			tag = "554:420",
+			nodeID = 2062,
+			name = "Wolf's Den, Tiragarde Sound",
+			neighbors = {
+				[2067] = 0, -- Timberfell Outpost, Tiragarde Sound
+				[2090] = 0, -- Hillcrest Pasture, Stormsong Valley
+				[2273] = 0, -- Waning Glacier, Tiragarde Sound
+				[2275] = 0, -- Mudfisher Cove, Drustvar
+			},
+		},
+		{
+			tag = "557:364",
+			nodeID = 2090,
+			name = "Hillcrest Pasture, Stormsong Valley",
+			neighbors = {
+				[2062] = 0, -- Wolf's Den, Tiragarde Sound
+				[2091] = 0, -- Stonetusk Watch, Stormsong Valley
+				[2092] = 0, -- Diretusk Hollow, Stormsong Valley
+				[2093] = 0, -- Ironmaul Overlook, Stormsong Valley
+			},
+		},
+		{
+			tag = "564:228",
+			nodeID = 2092,
+			name = "Diretusk Hollow, Stormsong Valley",
+			neighbors = {
+				[2090] = 0, -- Hillcrest Pasture, Stormsong Valley
+				[2091] = 0, -- Stonetusk Watch, Stormsong Valley
+				[2093] = 0, -- Ironmaul Overlook, Stormsong Valley
+				[2094] = 0, -- Warfang Hold, Stormsong Valley
 			},
 		},
 		{
@@ -7842,6 +8043,15 @@ data.flightcost = {
 			},
 		},
 		{
+			tag = "593:132",
+			nodeID = 2139,
+			name = "Windfall Cavern, Stormsong Valley",
+			neighbors = {
+				[2094] = 0, -- Warfang Hold, Stormsong Valley
+				[2095] = 0, -- Shrine of the Storm, Stormsong Valley
+			},
+		},
+		{
 			tag = "594:545",
 			nodeID = 2277,
 			name = "Proudmoore Keep, Tiragarde Sound",
@@ -7853,6 +8063,19 @@ data.flightcost = {
 				[2083] = 0, -- Tradewinds Market, Tiragarde Sound
 				[2084] = 0, -- Norwington Estate, Tiragarde Sound
 				[2278] = 0, -- Mariner's Row, Tiragarde Sound
+			},
+		},
+		{
+			tag = "613:639",
+			nodeID = 2067,
+			name = "Timberfell Outpost, Tiragarde Sound",
+			neighbors = {
+				[2023] = 0, -- Freehold, Tiragarde Sound
+				[2062] = 0, -- Wolf's Den, Tiragarde Sound
+				[2077] = 0, -- Castaway Point, Tiragarde Sound
+				[2140] = 36, -- Plunder Harbor, Tiragarde Sound
+				[2275] = 0, -- Mudfisher Cove, Drustvar
+				[2279] = 0, -- Stonefist Watch, Tiragarde Sound
 			},
 		},
 		{
@@ -7913,7 +8136,7 @@ data.flightcost = {
 			name = "Bridgeport, Tiragarde Sound",
 			neighbors = {
 				[2042] = 53, -- Vigil Hill, Tiragarde Sound
-				[2079] = 30, -- Kennings Lodge, Tiragarde Sound
+				[2079] = 28, -- Kennings Lodge, Tiragarde Sound
 				[2083] = 39, -- Tradewinds Market, Tiragarde Sound
 				[2084] = 58, -- Norwington Estate, Tiragarde Sound
 				[2277] = 0, -- Proudmoore Keep, Tiragarde Sound
@@ -7935,14 +8158,42 @@ data.flightcost = {
 			nodeID = 2079,
 			name = "Kennings Lodge, Tiragarde Sound",
 			neighbors = {
+				[2023] = 0, -- Freehold, Tiragarde Sound
 				[2042] = 41, -- Vigil Hill, Tiragarde Sound
 				[2074] = 30, -- Bridgeport, Tiragarde Sound
+				[2077] = 32, -- Castaway Point, Tiragarde Sound
 			},
 		},
 		{
 			tag = "642:815",
 			nodeID = 2023,
 			name = "Freehold, Tiragarde Sound",
+			neighbors = {
+				[2042] = 62, -- Vigil Hill, Tiragarde Sound
+				[2067] = 0, -- Timberfell Outpost, Tiragarde Sound
+				[2077] = 34, -- Castaway Point, Tiragarde Sound
+				[2079] = 0, -- Kennings Lodge, Tiragarde Sound
+				[2279] = 0, -- Stonefist Watch, Tiragarde Sound
+			},
+		},
+		{
+			tag = "660:293",
+			nodeID = 2093,
+			name = "Ironmaul Overlook, Stormsong Valley",
+			neighbors = {
+				[2090] = 0, -- Hillcrest Pasture, Stormsong Valley
+				[2092] = 0, -- Diretusk Hollow, Stormsong Valley
+				[2095] = 0, -- Shrine of the Storm, Stormsong Valley
+			},
+		},
+		{
+			tag = "669:118",
+			nodeID = 2095,
+			name = "Shrine of the Storm, Stormsong Valley",
+			neighbors = {
+				[2093] = 0, -- Ironmaul Overlook, Stormsong Valley
+				[2139] = 0, -- Windfall Cavern, Stormsong Valley
+			},
 		},
 		{
 			tag = "670:139",
@@ -7956,6 +8207,26 @@ data.flightcost = {
 			tag = "696:804",
 			nodeID = 2077,
 			name = "Castaway Point, Tiragarde Sound",
+			neighbors = {
+				[2023] = 34, -- Freehold, Tiragarde Sound
+				[2067] = 0, -- Timberfell Outpost, Tiragarde Sound
+				[2079] = 32, -- Kennings Lodge, Tiragarde Sound
+				[2140] = 48, -- Plunder Harbor, Tiragarde Sound
+			},
+		},
+		{
+			tag = "701:631",
+			nodeID = 2140,
+			name = "Plunder Harbor, Tiragarde Sound",
+			neighbors = {
+				[2067] = 36, -- Timberfell Outpost, Tiragarde Sound
+				[2077] = 48, -- Castaway Point, Tiragarde Sound
+			},
+		},
+		{
+			tag = "784:593",
+			nodeID = 2276,
+			name = "Tol Dagor, Tiragarde Sound",
 		},
 		{
 			tag = "793:618",
@@ -7963,4 +8234,8 @@ data.flightcost = {
 			name = "Tol Dagor, Tiragarde Sound",
 		},
 	},
+
+
+
+
 }

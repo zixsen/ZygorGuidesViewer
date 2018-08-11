@@ -679,7 +679,7 @@ data.basenodes.inns = {
 			{name="Goldtusk Inn",faction="H",npc="Rhan'ka",npcid=129354,f=0,x=43.51,y=60.21,quest=48320},
 
 		-- Sanctuary of the Devoted
-			{name="Sanctuary of the Devoted",faction="B",npc="Issik",npcid=128693,f=0,x=26.88,y=52.23},
+			{name="Sanctuary of the Devoted",faction="B",npc="Issik",npcid=128693,f=0,x=26.87,y=52.22},
 
 		-- Vulpera Hideaway
 			{name="Vulpera Hideaway",faction="H",npc="Hagashi",npcid=124108,f=0,x=56.78,y=49.81}, --quest=?????

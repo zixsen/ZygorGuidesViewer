@@ -259,29 +259,29 @@ end
 Pointer.iconScale = 1  -- updated by :RescaleMarkers
 Pointer.iconScaleBase = 0.8
 Pointer.Icons = {
-	greendot = { tex=ZGV.DIR.."\\Skins\\minimaparrow-green-dot", size=30, minisize=25, rotates=false, edgetex=ZGV.DIR.."\\Skins\\minimaparrow-green-edge", edgesize=60, spinner=true, onminimap="always" },
-	graydot = { tex=ZGV.DIR.."\\Skins\\minimaparrow-green-dot", size=30, minisize=25, rotates=false, edgetex=ZGV.DIR.."\\Skins\\minimaparrow-green-edge", edgesize=60, spinner=true, desat=1, onminimap="always" },
-	arrow = { tex=ZGV.DIR.."\\Skins\\minimaparrow-path", size=50, minisize=40, rotates=true, edgetex=ZGV.DIR.."\\Skins\\minimaparrow-path", edgesize=50 },
+	greendot = { tex={file="mapicons",coords={0.5,1,0,0.5},r=1,g=1,b=1}, size=30, minisize=25, rotates=false, edgetex={file="mapicons",coords={0,0.5,0.5,1},r=1,g=1,b=1}, edgesize=25, spinner=true, onminimap="always" },
+	graydot = { tex={file="mapicons",coords={0.5,1,0,0.5},r=0.7,g=0.7,b=0.7}, size=30, minisize=25, rotates=false, edgetex={file="mapicons",coords={0,0.5,0.5,1},r=1,g=1,b=1}, edgesize=25, spinner=true, desat=1, onminimap="always" },
+	arrow = { tex={file="mapicons",coords={0.5,1,0.5,1},r=1,g=1,b=1}, size=35, minisize=30, rotates=true, edgetex={file="mapicons",coords={0,0.5,0.5,1},r=1,g=1,b=1}, edgesize=25 },
 	
-	ant =	     { tex=ZGV.DIR.."\\Skins\\minimaparrow-ant", alpha=0.8, size=30, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
-	ant_taxi =   { tex=ZGV.DIR.."\\Skins\\minimaparrow-ant", r=0.4, g=1,   b=0, alpha=0.8, size=30, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
-	ant_ship =   { tex=ZGV.DIR.."\\Skins\\minimaparrow-ant", r=0,   g=0.7, b=1, alpha=0.8, size=30, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
-	ant_portal = { tex=ZGV.DIR.."\\Skins\\minimaparrow-ant", r=0.8, g=0.3, b=1, alpha=0.8, size=30, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
-	ant_flying = { tex=ZGV.DIR.."\\Skins\\minimaparrow-ant", r=1,   g=0.8, b=0, alpha=0.8, size=30, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	ant =	     { tex={file="mapicons",coords={0,0.5,0,0.5},r=1,g=1,b=1},     alpha=0.8, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	ant_taxi =   { tex={file="mapicons",coords={0,0.5,0,0.5},r=0.4,g=1,b=0},   alpha=0.8, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	ant_ship =   { tex={file="mapicons",coords={0,0.5,0,0.5},r=0,g=0.7,b=1},   alpha=0.8, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	ant_portal = { tex={file="mapicons",coords={0,0.5,0,0.5},r=0.8,g=0.3,b=1}, alpha=0.8, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	ant_flying = { tex={file="mapicons",coords={0,0.5,0,0.5},r=1,g=0.8,b=0},   alpha=0.8, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
 
 	-- Dynamic values are handled in RefreshDynamicValues()
-	treasure    = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,				coords={0,   1/8, 0,   1/2} },
-	treasure_on = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,				coords={0,   1/8, 1/2, 1  } },
-	rare    = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, minimap_alpha=0.5, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,		coords={1/8, 2/8, 0,   1/2} },
-	rare_on = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, minimap_alpha=0.5, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,		coords={1/8, 2/8, 1/2, 1  } },
-	battlepet    = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,				coords={2/8, 3/8, 0,   1/2} },
-	battlepet_on = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,				coords={2/8, 3/8, 1/2, 1  } },
-	achievement    = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, minimap_alpha=0.5, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,		coords={3/8, 4/8, 0,   1/2} },
-	achievement_on = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, minimap_alpha=0.5, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,		coords={3/8, 4/8, 1/2, 1  } },
-	questobjective    = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, minimap_alpha=0.5, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,	coords={4/8, 5/8, 0,   1/2} },
-	questobjective_on = { tex=ZGV.DIR.."\\Skins\\poi_icons", alpha=1, minimap_alpha=0.5, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1,	coords={4/8, 5/8, 1/2, 1  } },
+	treasure          = { tex={file="poi_icons",coords={0,   1/8, 0,   1/2} }, alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1},
+	treasure_on       = { tex={file="poi_icons",coords={0,   1/8, 1/2, 1  } }, alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1},
+	rare              = { tex={file="poi_icons",coords={1/8, 2/8, 0,   1/2} }, alpha=1, size=20, minimap_alpha=0.5, minisize=20, rotates=false, edgetex=nil, edgesize=1},
+	rare_on           = { tex={file="poi_icons",coords={1/8, 2/8, 1/2, 1  } }, alpha=1, size=20, minimap_alpha=0.5, minisize=20, rotates=false, edgetex=nil, edgesize=1},
+	battlepet         = { tex={file="poi_icons",coords={2/8, 3/8, 0,   1/2} }, alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	battlepet_on      = { tex={file="poi_icons",coords={2/8, 3/8, 1/2, 1  } }, alpha=1, size=20, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	achievement       = { tex={file="poi_icons",coords={3/8, 4/8, 0,   1/2} }, alpha=1, size=20, minimap_alpha=0.5, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	achievement_on    = { tex={file="poi_icons",coords={3/8, 4/8, 1/2, 1  } }, alpha=1, size=20, minimap_alpha=0.5, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	questobjective    = { tex={file="poi_icons",coords={4/8, 5/8, 0,   1/2} }, alpha=1, size=20, minimap_alpha=0.5, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
+	questobjective_on = { tex={file="poi_icons",coords={4/8, 5/8, 1/2, 1  } }, alpha=1, size=20, minimap_alpha=0.5, minisize=20, rotates=false, edgetex=nil, edgesize=1 },
 
-	none = { tex="", alpha=0.0, size=1, minisize=1, rotates=false, edgetex=nil, edgesize=1 },
+	none = { tex={file=""}, alpha=0.0, size=1, minisize=1, rotates=false, edgetex=nil, edgesize=1 },
 
 	-- placeholder values to grab defaults from. NOT real icons.
 	ant_walk_default   = { r=1,   g=1,   b=1, alpha=0.8 },
@@ -289,12 +289,12 @@ Pointer.Icons = {
 	ant_ship_default   = { r=0,   g=0.7, b=1, alpha=0.8 },
 	ant_portal_default = { r=0.8, g=0.3, b=1, alpha=0.8 },
 	ant_flying_default = { r=1,   g=0.8, b=0, alpha=0.8 },
-	ant_default = {r=0.03, g=1, b=0.06, alpha=0.8 }, -- { r=1, g=1, b=1, alpha=0.8 }  -- Options.lua uses this as default color!
+	ant_default = {r=0.8, g=0.8, b=.8, alpha=0.8 }, -- { r=1, g=1, b=1, alpha=0.8 }  -- Options.lua uses this as default color!
 
 	SetAntColorsFromOptions = function(self)
-		local function setrgb(colortable,savedcolors)
-			if not colortable then return end
-			colortable.r,colortable.g,colortable.b,colortable.alpha = savedcolors.r,savedcolors.g,savedcolors.b,savedcolors.alpha or savedcolors.a  -- we use alpha, options use a
+		local function setrgb(icon,savedcolors)
+			if not icon then return end
+			icon.tex.r,icon.tex.g,icon.tex.b,icon.alpha = savedcolors.r,savedcolors.g,savedcolors.b,savedcolors.alpha or savedcolors.a  -- we use alpha, options use a
 		end
 
 		if ZGV.db.profile.multicolorants then
@@ -304,16 +304,19 @@ Pointer.Icons = {
 			setrgb(self.ant_flying, ZGV.db.profile.colorantsfly)
 			setrgb(self.ant,        ZGV.db.profile.colorantsother)
 		else
-			setrgb(self.ant_taxi,   ZGV.db.profile.singlecolorantscolor)
-			setrgb(self.ant_ship,   ZGV.db.profile.singlecolorantscolor)
-			setrgb(self.ant_portal, ZGV.db.profile.singlecolorantscolor)
-			setrgb(self.ant_flying, ZGV.db.profile.singlecolorantscolor)
-			setrgb(self.ant,        ZGV.db.profile.singlecolorantscolor)
+			setrgb(self.ant_taxi,   ZGV.db.profile.colorantssingle)
+			setrgb(self.ant_ship,   ZGV.db.profile.colorantssingle)
+			setrgb(self.ant_portal, ZGV.db.profile.colorantssingle)
+			setrgb(self.ant_flying, ZGV.db.profile.colorantssingle)
+			setrgb(self.ant,        ZGV.db.profile.colorantssingle)
 		end
 	end
 }
 setmetatable(Pointer.Icons,{__index=function(k) return Pointer.Icons.greendot end})
 for k,v in pairs(Pointer.Icons) do if type(v)=="table" then __CLASS[v]="PointerIcon_"..k end end
+
+local full_coords={0,1,0,1}
+
 
 function Pointer:RefreshDynamicValues()
 	Pointer.Icons.treasure.alpha = ZGV.db.profile.poialpha
@@ -445,7 +448,8 @@ setmetatable(waypoints_ants,{__index=function(t,i)
 	waypoint.frame_minimap.icon:SetSize(icon.minisize,icon.minisize)
 	waypoint.frame_minimap.icon:SetDesaturated(icon.desat)
 	waypoint.frame_minimap.icon:SetAlpha(icon.minimap_alpha or icon.alpha or 1)
-	waypoint.frame_minimap.arrow:SetTexture(icon.edgetex)
+	waypoint.frame_minimap.arrow:SetTexture(icon.edgetex and ZGV.SkinDir..icon.edgetex.file)
+	waypoint.frame_minimap.arrow:SetTexCoord(unpack(icon.edgetex and icon.edgetex.coords or full_coords))
 	waypoint.frame_minimap.arrow:SetSize(1,1) --hide?
 	--waypoint.frame_worldmap.icon:SetRotation(icon.rotates and data.angle or 0)
 	waypoint.frame_worldmap:SetSize(icon.size*Pointer.iconScale*Pointer.iconScaleBase,icon.size*Pointer.iconScale*Pointer.iconScaleBase)
@@ -498,13 +502,13 @@ function Pointer:SetWaypoint_ant (m,x,y,num,icon, ant)  -- ant is here for one-t
 
 	if not icon then icon=icons.ant end
 	if waypoint.icon~=icon then
-		waypoint.frame_minimap.icon:SetTexture(icon.tex)
-		waypoint.frame_worldmap.icon:SetTexture(icon.tex)
-		waypoint.frame_taximap.icon:SetTexture(icon.tex)
+		waypoint.frame_minimap.icon:SetTexture(ZGV.SkinDir..icon.tex.file)
+		waypoint.frame_worldmap.icon:SetTexture(ZGV.SkinDir..icon.tex.file)
+		waypoint.frame_taximap.icon:SetTexture(ZGV.SkinDir..icon.tex.file)
 		waypoint.icon=icon
 	end
 
-	local r,g,b = icon.r or 1,icon.g or 1,icon.b or 1
+	local r,g,b = icon.tex.r or 1,icon.tex.g or 1,icon.tex.b or 1
 	waypoint.frame_minimap.icon:SetVertexColor(r,g,b)
 	waypoint.frame_worldmap.icon:SetVertexColor(r,g,b)
 	-- bobbly ants
@@ -932,19 +936,16 @@ function markerproto:SetIcon(icon)  -- leave icon empty to just reset the curren
 
 	self.showonedge=(icon.edgesize~=1)
 
-	self.frame_minimap.icon:SetTexture(icon.tex)
-	if icon.coords then
-		self.frame_minimap.icon:SetTexCoord(unpack(icon.coords))
-	else
-		self.frame_minimap.icon:SetTexCoord(0,1,0,1)
-	end
+	self.frame_minimap.icon:SetTexture(ZGV.SkinDir..icon.tex.file)
+	self.frame_minimap.icon:SetTexCoord(unpack(icon.tex.coords or full_coords))
 	self.frame_minimap.icon:SetRotation(icon.rotates and self.angle or 0)
 	local size = self.minisize or self.size or icon.minisize or 30
 	self.frame_minimap.icon:SetSize(size,size)
 	self.frame_minimap.icon:SetDesaturated(icon.desat)
-	self.frame_minimap.icon:SetVertexColor(icon.r or 1,icon.g or 1,icon.b or 1)
+	self.frame_minimap.icon:SetVertexColor(icon.tex.r or 1,icon.tex.g or 1,icon.tex.b or 1)
 	self.frame_minimap.icon:SetAlpha(icon.minimap_alpha or newalpha)
-	self.frame_minimap.arrow:SetTexture(icon.edgetex or icon.tex)
+	self.frame_minimap.arrow:SetTexture(ZGV.SkinDir..(icon.edgetex and icon.edgetex.file or icon.tex.file or ""))
+	self.frame_minimap.arrow:SetTexCoord(unpack(icon.edgetex and icon.edgetex.coords or full_coords))
 	self.frame_minimap.arrow:SetSize(icon.edgesize or size,icon.edgesize or size)
 	self.frame_minimap.arrow:SetDesaturated(icon.desat)
 	
@@ -961,24 +962,19 @@ function markerproto:SetIcon(icon)  -- leave icon empty to just reset the curren
 	self.frame_worldmap:SetSize(sized/2,sized/2)
 	self.frame_worldmap:SetFrameLevel(self.type=="ant" and 3000 or 3001)	-- self:GetMap():GetPinFrameLevelsManager():GetValidFrameLevel(self.pinFrameLevelType, self.pinFrameLevelIndex);
 	self.frame_worldmap.icon:SetSize(sized,sized)
-	self.frame_worldmap.icon:SetTexture(self.customs and self.customs.icon or icon.tex)
-	if icon.coords and not (self.customs and self.customs.icon) then
-		self.frame_worldmap.icon:SetTexCoord(unpack(icon.coords))
-	elseif self.customs and self.customs.coords then
-		self.frame_worldmap.icon:SetTexCoord(unpack(self.customs.coords))
-	else
-		self.frame_worldmap.icon:SetTexCoord(0,1,0,1)
-	end
+	self.frame_worldmap.icon:SetTexture(ZGV.SkinDir..(self.customs and self.customs.icon and self.customs.icon.tex.file or icon.tex.file))
+	self.frame_worldmap.icon:SetTexCoord(unpack(self.customs and self.customs.icon and self.customs.icon.tex.coords or icon.tex.coords or full_coords))
 	self.frame_worldmap.icon:SetRotation(icon.rotates and self.angle or 0)
 	self.frame_worldmap.icon:SetDesaturated(icon.desat)
-	self.frame_worldmap.icon:SetVertexColor(icon.r or 1,icon.g or 1,icon.b or 1)
+	self.frame_worldmap.icon:SetVertexColor(icon.tex.r or 1,icon.tex.g or 1,icon.tex.b or 1)
 	self.frame_worldmap.icon:SetAlpha(newalpha)
 	if self.frame_worldmap.spinner then self.frame_worldmap.spinner:Hide() end
 
-	self.frame_taximap.icon:SetTexture(icon.tex)
+	self.frame_taximap.icon:SetTexture(ZGV.SkinDir..icon.tex.file)
+	self.frame_taximap.icon:SetTexCoord(unpack(icon.tex.coords or full_coords))
 	self.frame_taximap.icon:SetRotation(icon.rotates and self.angle or 0)
 	self.frame_taximap.icon:SetSize(size/2,size/2)
-	self.frame_taximap.icon:SetVertexColor(icon.r or 1,icon.g or 1,icon.b or 1)
+	self.frame_taximap.icon:SetVertexColor(icon.tex.r or 1,icon.tex.g or 1,icon.tex.b or 1)
 	self.frame_taximap.icon:SetAlpha(newalpha)
 	--if icon.spinner then self.frame_worldmap.spinner:Show() else self.frame_worldmap.spinner:Hide() end
 	self.icon = icon
@@ -1428,7 +1424,7 @@ function Pointer.frame_minimap_functions.OnLeave(self)
 		ZGV.Poi.ModelTooltip:Hide()
 	end
 	self.hastooltip=false
-	if ZGV.DEV then self.icon:SetVertexColor(self.waypoint.icon.r or 1,self.waypoint.icon.g or 1,self.waypoint.icon.b or 1) end
+	if ZGV.DEV then self.icon:SetVertexColor(self.waypoint.icon.tex.r or 1,self.waypoint.icon.tex.g or 1,self.waypoint.icon.tex.b or 1) end
 
 	Pointer:UpdateMapLines()
 end
@@ -1664,7 +1660,7 @@ function Pointer.frame_worldmap_functions.OnLeave(self)
 
 	--WorldMapPOIFrame.allowBlobTooltip = WorldMapPOIFrame.old_allowBlobTooltip  -- TODO: reimplement? whatever this was?
 	--WorldMapPOIFrame.old_allowBlobTooltip = nil
-	if ZGV.DEV then self.icon:SetVertexColor(self.waypoint.icon.r or 1,self.waypoint.icon.g or 1,self.waypoint.icon.b or 1) end
+	if ZGV.DEV then self.icon:SetVertexColor(self.waypoint.icon.tex.r or 1,self.waypoint.icon.tex.g or 1,self.waypoint.icon.tex.b or 1) end
 end
 
 Pointer.frame_worldmap_functions.OnClick = Pointer.frame_minimap_functions.OnClick
@@ -1875,76 +1871,13 @@ local function TableFind2(table,val1,val2)
 	return k1 or -1,k2 or -1
 end
 
--- Floor orderings:
--- 1 = "floors" (higher number is above lower)
--- -1 = "dungeons" (higher number is below lower)
--- 0 = same floor always, no message, disable upstairs/downstairs messages
--- table - order your floors from TOP to BOTTOM.
-
-local FloorUpDowns = {  -- these are C_Map.GetMapGroupID(id)s.
-	[153] = 1, --Blackrock Spire
-	[142] = -1, --Orgrimmar
-	[170] = -1, --Dalaran
-	[151] = -1, --Gnomeregan
-	['85-86'] = -1 -- Orgrimmar again, as an example
-}
--- For very specific crossing descriptions, see Localization/Core_enUS.lua, entries "pointer_floors_29_14_16" etc.
-
--- return: >0=upstairs  <0=downstairs  0=same
-local function FloorOrder(map_a,map_b)
-	if map_a==map_b then return 0 end
-	local group_a=C_Map.GetMapGroupID(map_a)
-	local group_b=C_Map.GetMapGroupID(map_b)
-	if group_a~=group_b then return nil end
-
-	local order = FloorUpDowns[map_a.."-"..map_b] or FloorUpDowns[group_a]
-	if type(order)=="function" then order=order(map_a,map_b) end
-	order = order or -1
-	if type(order)=="number" then
-		local floor_a = LibRover:GetFloorByMapID(map_a)
-		local floor_b = LibRover:GetFloorByMapID(map_b)
-		return order*(floor_b-floor_a)
-	elseif type(order)=="table" then
-		local floor_a = LibRover:GetFloorByMapID(map_a)
-		local floor_b = LibRover:GetFloorByMapID(map_b)
-		if order[1] then
-			-- plain ordering
-			local a,b=TableFind2(order,floor_a,floor_b)
-			return a-b
-		end
-	end
-end
-Pointer.FloorOrder=FloorOrder
-
 local function L_or_nil(id)
 	local l = L[id]
 	if l==id then return nil else return l end
 end
 
-local function GetPreciseFloorCrossingText(map_from,map_to)
-	-- try explicit first
-	local explicit_text = L_or_nil('pointer_floors_'..map_from..'_'..map_to)
-					or L_or_nil('pointer_floors_'..map_from)
-					or L_or_nil('pointer_floors_'..map_to)
-	if explicit_text and explicit_text:sub(1,1)=="*" then -- *something - look up in pointer_floors_something
-		explicit_text = L_or_nil('pointer_floors_'..explicit_text:sub(2))
-	end
-	if explicit_text then return explicit_text end
-
-	-- assume outdoors are caves (for now)
-	-- NOT ANYMORE. We have cave entrances; use those.
-	--[[
-	if ZoneIsOutdoor(map) then -- overworld, assuming we're in/out of a cave or mine.
-		if f_from==0 then return L['pointer_floors_downstairs'] end
-		if f_to==0 then return L['pointer_floors_upstairs'] end
-	end
-	--]]
-
-	-- use floor ordering, perhaps?
-	local floororder=FloorOrder(map_from,map_to)
-	if floororder then return (floororder>0 and L['pointer_floors_up']) or (floororder<0 and L['pointer_floors_down']) or nil end
-end
-Pointer.GetPreciseFloorCrossingText=GetPreciseFloorCrossingText
+--local function GetPreciseFloorCrossingText(map_from,map_to)
+-- removed in rev.18382
 
 local cache_throttle=0
 local were_in_unknown_location
@@ -2338,9 +2271,10 @@ function Pointer.ArrowFrame_OnUpdate_Common(self,elapsed)
 		-- same map, or at least same (sane) continent.
 		-- can point, but might be wrong map or floor.
 		if ZGV_MapsOnDifferentFloors(cm,waypoint.m)
+		and not ZGV.db.profile.pathfinding
 		and not (waypoint.pathnode and waypoint.pathnode.flooring)  -- don't show "upstairs" lines for hardwired cave entries.
 		then
-			errortxt = GetPreciseFloorCrossingText(cm,waypoint.m)
+			errortxt = "|cffffbbaa"..L['pointer_floors_default'].."|r"
 			show_stairs = nil --We are trying to enter a cave, point to the location inside the cave
 
 			--TODO show_stairs should show the special arrow for going up and down between floors,
@@ -3128,10 +3062,12 @@ function Pointer.ArrowFrame_ShowMenu()
 			local points = route.coords or route.points
 			local n=1 --ugly second counter >_<
 			local start=2
-			if ZGV.DEV then n=0 start=1 end
+			if ZGV.db.profile.debug_display then n=0 start=1 end
+			local prevnode
 			for i=start,#points do
 				local node=points[i].pathnode
-				if node and not (node.is_arrival and LibRover.cfg.strip_arrivals and not ZGV.DEV) then
+				if node and not (node.is_arrival and LibRover.cfg.strip_arrivals and not ZGV.db.profile.debug_display)
+				and not (prevnode and node.text==prevnode.text and node.border==prevnode and not ZGV.db.profile.debug_display)  then
 					local text = (node.text or "?"):gsub("\n","; ")
 					tinsert(list,{
 						text = L['pointer_arrowmenu_route_node'..(n==1 and '1' or '')]:format(n,text),
@@ -3146,6 +3082,7 @@ function Pointer.ArrowFrame_ShowMenu()
 
 					n=n+1
 				end
+				prevnode=node
 
 				if i==start and ZGV.db.profile.debug_display and next(LibRover.RESULTS_SKIPPED_START or {}) then
 					for ni,nn in ipairs(LibRover.RESULTS_SKIPPED_START) do
@@ -3422,8 +3359,9 @@ function Pointer:RescaleMarkers()
 	local zoomlevels = container.zoomLevels
 	if not zoomlevels then return end
 	local basezoom=container.zoomLevels[1].scale
-	local wmdf_scale = canvas:GetWidth() / container:GetWidth() * basezoom / canvas:GetScale()
-	Pointer.iconScale = wmdf_scale
+	local zoomed=basezoom / canvas:GetScale()
+	local wmdf_scale = canvas:GetWidth() / container:GetWidth() * zoomed
+	Pointer.iconScale = wmdf_scale / zoomed^0.35
 	for wi,way in ipairs(Pointer.waypoints) do way:SetIcon() end
 	for wi,way in ipairs(Pointer.waypoints_ants) do way:SetIcon() end
 end

@@ -187,6 +187,7 @@ function Guide:GetCompletion(mode)
 		or (self.type=="DAILIES" and "quests")
 		or (self.type=="ACHIEVEMENTS" and self.headerdata and self.headerdata.achieveid and "achievement")
 		or (self.title:match("\\Hunter Pets\\") and "none") -- hunter pets, there is nothing to complete in them
+		or (self.type=="DUNGEONS" and "none")
 		or (self.headerdata and self.headerdata.mounts and "mounts")
 		or (self.headerdata and self.headerdata.pet and "battlepet")
 		or (type(self.condition_end)=="function" and "function_end")
@@ -560,7 +561,7 @@ function Guide:AdvertiseWithPopup(nodelay,force)
 				self=nil 
 			end
 			--]]
-			ZGV.db.char.forceCleanUp = true
+			-- ZGV.db.char.forceCleanUp = true
 		end
 		dialog.accept_tooltip = "Load the suggested guide."
 
@@ -714,6 +715,9 @@ function GuideFuncs:SuggestDungeonGuide(dungeonguide)
 				ZGV.db.profile.previousguide.type = ZGV.CurrentGuide.type
 				ZGV.db.profile.previousguide.step = ZGV.CurrentStepNum
 			end
+			
+			local tab = ZGV.Tabs:GetTabFromPool()
+			tab:SetAsCurrent()
 			ZGV:SetGuide(self.guide)
 		end
 
@@ -754,6 +758,16 @@ function GuideFuncs:SuggestPreviousGuide(prevguide)
 
 	if not ZGV.db.profile.previousguide.title then return end
 
+	local tab = ZGV.Tabs:DoesTabExist(ZGV.db.profile.previousguide.title)
+	if tab then
+		ZGV:Debug("Returning to previous guide after dungeon")
+		tab:SetAsCurrent()
+	else
+		ZGV:Debug("Switching dungeon guide to previous one")
+		ZGV:SetGuide(ZGV.db.profile.previousguide.title,ZGV.db.profile.previousguide.type)
+	end
+
+	--[[	
 	ZGV:Debug("Suggesting previous guide after dungeon")
 
 	if not self.DungPrevPopup then
@@ -789,6 +803,7 @@ function GuideFuncs:SuggestPreviousGuide(prevguide)
 	self.DungPrevPopup.guide=prevguide
 
 	self.DungPrevPopup:Show()
+	--]]
 end
 
 function GuideFuncs:IsDungeon()
@@ -806,16 +821,25 @@ function GuideFuncs:IsDungeon()
 	local day=date():gsub("%s.*","") --Returns a string with date in 00/00/00 format.
 	local time=GetTime()
 
-	if not dung or --have not been to this dungeon yet.
-	  dung.allow and (dung.lastdate~=day or (time-dung.lasttime)>3600) then--Is it the same day and been more than an hour?
-		for i,guide in ipairs(ZGV.registeredguides) do
-			if guide.type == "DUNGEONS" and guide.mapid and guide.mapid == map and
-			(not guide.dungeondifficulty or guide.dungeondifficulty==GetDungeonDifficultyID()) then
-				if ZGV.CurrentGuide and ZGV.CurrentGuide.title==guide.title then break end --If they already have the guide loaded.
-				GuideFuncs:SuggestDungeonGuide(guide)
-				break
+	local found_guide
+	for i,guide in ipairs(ZGV.registeredguides) do
+		if guide.type == "DUNGEONS" and guide.mapid and guide.mapid == map and
+		(not guide.dungeondifficulty or guide.dungeondifficulty==GetDungeonDifficultyID()) then
+			local tab = ZGV.Tabs:DoesTabExist(guide.title)
+			if tab then  --If they already have the guide loaded.
+				tab:ActivateGuide()
+				return
 			end
+
+			found_guide = guide
+			break
 		end
+	end
+
+
+	if found_guide and (not dung or --have not been to this dungeon yet.
+		dung.allow and (dung.lastdate~=day or (time-dung.lasttime)>3600)) then--Is it the same day and been more than an hour?
+		GuideFuncs:SuggestDungeonGuide(found_guide)
 	end
 end
 

@@ -55,11 +55,11 @@ end
 function ZGV:SetSkin(skin,style)
 	-- With removal of midnight/stealth we have no need for skin selection. Enforcing default skin in case someone was using other ones
 
-	skin = "default"
-	style = "stealth"
-	
+	skin = skin or "default"
 	local skindata = self.Skins[skin]
-	local styledata=skindata.styles[style]
+
+	style = (style and skindata.styles[style] and style) or skindata.preferredstyle.id or "stealth"
+	local styledata = skindata.styles[style]
 		
 	self.db.profile.skin = skin
 	self.db.profile.skinstyle = style

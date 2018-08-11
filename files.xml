@@ -1,8 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/FrameXML/UI.xsd">
 
 	<Script>
-	UIParent:UnregisterEvent("LUA_WARNING")
-
 	___ZGV_LOAD_TIME = debugprofilestop()
 	collectgarbage()
 	___ZGV_LOAD_MEM = collectgarbage("count")
@@ -16,10 +14,8 @@
 	<Script file="Functions.lua"/>
 	<Include file="UiWidgets\files.xml" />
 
-	<Include file="DEV\DEV.xml" />
 
 	<!--
-	<Include file="ZygorTalentAdvisor\ZygorTalentAdvisorFiles.xml" />
 	-->
 
 	<Script file="TalentAdvisor.lua"/>
@@ -57,7 +53,6 @@
 	<Script file="PetBattle.lua"/>
 
 	<Script file="Config.lua"/>
-	<!--<Script file="ConfigNew.lua"/>-->
 	<Script file="Tutorial.lua"/>
 	
 	<Script file="Achievement.lua"/>
@@ -76,7 +71,6 @@
 	<Script file="Foglight.lua"/>
 
 	<!-- bfa alpha change
-	<Script file="Dev.lua"/>
 	-->
 
 	<Include file="MasterFrame.xml"/>
@@ -85,18 +79,16 @@
 	<Include file="Skins.lua"/>
 	<Include file="Skins\Skins.xml"/>
 
-	<Include file="MapSpotMarkerTemplates.xml" />
-	<Script file="MapSpot.lua" />
-	<Script file="MapSpotSet.lua" />
-	<!-- <Script file="MapSpotsDetector.lua" /> -->
+	<!-- 
+	-->
 
 	<!-- <Script file="ZygorGuidesViewerOptions.lua"/> -->
 	<Include file="ZygorMapIcon.xml" />
-	<!-- <Include file="ZygorGuidesViewerMiniFrame.xml"/> -->
-	<!-- <Include file="GuideMenu.lua" /> -->	
 	<Include file="GuideMenuNew.lua" />
 	<Include file="GuideMenuNew-View.lua" />
 	<Include file="GuideMenuNew-Home.lua" />
+
+	<Script file="Tabs.lua"/>
 
 	<Include file="Templates.xml" />
 
@@ -140,10 +132,8 @@
 	<Script file="InventoryManager-ReminderPopup.lua"/>
 	
 	<!-- disabled, we might not be using -->
-	<!-- <Script file="GG__\TownDatabase.lua"/> -->
 	
 	<!-- bfa alpha change
-	<Script file="ServerPricesDump.lua"/>
 	-->
 
 	<Script file="InitialFlightPaths.lua" />
@@ -157,7 +147,6 @@
 	<Script file="Sync.lua"/>
 
 	<!-- bfa alpha change
-	<Script file="Data/Gold/HourlyScan.lua" />
 	-->
 	
 	<Script>

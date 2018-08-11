@@ -4,7 +4,7 @@ addon.LibRoverData = addon.LibRoverData or {}
 local data=addon.LibRoverData
 
 data.version={
-	nodes_version = 169,  -- Increase this when working on the nodes. Bake the connections using the Debug menu when you're done.
+	nodes_version = 183,  -- Increase this when working on the nodes. Bake the connections using the Debug menu when you're done.
 }
 
 -- These are kept strictly unique. Make up bogus names if you need to.
@@ -42,7 +42,7 @@ data.MapIDsByName = {
 
 --Zandalar
 ["Nazmir"] = {[0]=863},
-["Vol'dun"] = {[0]=864},
+["Vol'dun"] = {[0]=864,[1]=1009},
 ["Zandalar"] = {[0]=1011},
 ["Zuldazar"] = {[0]=862, [1]=1173, [2]=1174, [3]=1176, [4]=1177},
 ["Dazar'alor"] = {[0]=1165, [1]=1163, [2]=1164, [3]=1166, [4]=1167},
@@ -808,6 +808,8 @@ data.walls = {
 		{ 53.62,23.21, 56.12,11.49, },
 
 		{ 46.53,61.06, 53.53,61.10 },
+
+		{ 47.50,44.47, 47.83,42.23, 52.10,42.23, 52.37,44.47 }, -- lower/upper terrace separation
 	},
 	["Zuldazar"] = {
 		{ 56.12,28.53, 57.21,60.00 }, -- no running across Dazar

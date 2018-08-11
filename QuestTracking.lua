@@ -555,26 +555,6 @@ end
 
 ---- abandoning
 
-StaticPopupDialogs['ZYGORGUIDESVIEWER_ABANDONQUESTS'] = {
-	text = L['static_caption']..L['static_abandonquests'],
-	button1 = L['static_abandonquests_butabandon'],
-	--button2 = L['static_abandonquests_butreturn'],
-	button2 = L['static_abandonquests_butignore'],
-	hideOnEscape = 1,
-	timeout = 0,
-	whileDead = 1,
-	OnAccept = function(self) ZGV:AbandonUselessQuests() end,
-}
-
-StaticPopupDialogs["ZYGORGUIDESVIEWER_ABANDONQUESTS_NONE"] = {
-	text = L['static_caption']..L['static_abandonquests_none'],
-	button1 = OKAY,
-	hideOnEscape = 1,
-	timeout = 0,
-	whileDead = 1,
-}
-
-
 function ZGV:MarkUselessQuests()
 	local guidequests = self.CurrentGuide:GetQuests()
 	local strings = ""
@@ -600,9 +580,19 @@ function ZGV:ShowQuestCleanup(automated)
 	if not self.CurrentGuide then return end
 
 	local quests = self:MarkUselessQuests()
-	if #quests>0 then
-		StaticPopup_Show('ZYGORGUIDESVIEWER_ABANDONQUESTS',quests)
-	elseif not automated then
-		StaticPopup_Show('ZYGORGUIDESVIEWER_ABANDONQUESTS_NONE')
+
+	if not self.CleanupPopup then
+		self.CleanupPopup = ZGV.PopupHandler:NewPopup("ZygorSyncInitiate","default")
+
+		self.CleanupPopup.acceptbutton:SetText(L['static_abandonquests_butabandon'])
+		self.CleanupPopup.declinebutton:SetText(L['static_abandonquests_butignore'])
+		self.CleanupPopup.OnAccept = function(self) ZGV:AbandonUselessQuests() end
 	end
+
+	if #quests>0 then
+		self.CleanupPopup:SetText((L['static_abandonquests']):format(quests))
+	else
+		self.CleanupPopup:SetText(L['static_abandonquests_none'])
+	end
+	self.CleanupPopup:Show()
 end

@@ -7,8 +7,12 @@ data.basenodes.FloorCrossings = {
 		
 	-- BATTLE FOR AZEROTH
 		["Tiragarde Sound"] = {
-			"Tiragarde Sound/0 62.88,27.37 -x- Tiragarde Sound/1 44.28,88.13 {template:cave}", -- Gol Thovas, Cave Entrance
-			"Tiragarde Sound/1 50.95,47.91 -x- Tiragarde Sound/2 36.75,55.63 {title_atob:Follow the path up} {title_btoa:Follow the path down}", -- Gol Thovas, Indoor Floor Cross
+
+			-- Gol Thovas, Cave Entrance
+				"Tiragarde Sound/0 62.88,27.37 -x- Tiragarde Sound/1 44.28,88.13 {template:cave}",
+	
+			-- Gol Thovas, Indoor Floor Cross
+				"Tiragarde Sound/1 50.95,47.91 -x- Tiragarde Sound/2 36.75,55.63 {title_atob:Follow the path up} {title_btoa:Follow the path down}",
 		},
 		
 		["Stormsong Valley"] = {
@@ -33,10 +37,10 @@ data.basenodes.FloorCrossings = {
 				"Dazar'alor/0 49.94,41.85 <radius:5> -x- Dazar'alor/1 48.51,28.89 <radius:5> {fac:H} {template:building}",
 
 			-- Top Floor Entrance to The Great Seal #1
-				"Dazar'alor/0 51.21,44.97 <radius:3> -x- Dazar'alor/2 68.40,66.33 <radius:5> {fac:H} {template:building}",
+				"Dazar'alor/0 51.21,44.97 <radius:3> -x- Dazar'alor/2 74.92,71.79 <radius:5> {fac:H} {title_atob:Enter the Building and Take the Elevator Down} {title_btoa:Take the Elevator Up and Leave the Building}",
 
 			-- Top Floor Entrance to The Great Seal #2
-				"Dazar'alor/0 48.71,44.91 <radius:3> -x- Dazar'alor/2 29.10,67.76 <radius:5> {fac:H} {template:building}",
+				"Dazar'alor/0 48.71,44.91 <radius:3> -x- Dazar'alor/2 22.81,72.00 <radius:5> {fac:H} {title_atob:Enter the Building and Take the Elevator Down} {title_btoa:Take the Elevator Up and Leave the Building}",
 
 			-- The Great Seal Bottom Floor Stairs #1
 				"Dazar'alor/2 40.24,82.53 <radius:5> -x- Dazar'alor/1 46.81,82.42 <radius:5> {fac:H} {title_atob:Run down the stairs} {title_btoa:Run up the stairs}",
@@ -55,12 +59,6 @@ data.basenodes.FloorCrossings = {
 
 			-- The Great Seal Bottom Floor Stairs #6
 				"Dazar'alor/2 20.85,41.86 <radius:5> -x- Dazar'alor/1 21.00,30.58 <radius:5> {fac:H} {title_atob:Run down the stairs} {title_btoa:Run up the stairs}",
-
-			-- The Great Seal Elevator #1
-				"Dazar'alor/2 74.85,71.97 <radius:5> -x- Dazar'alor/2 74.85,71.97 <radius:5> {fac:H} {title_atob:Ride the Elevator Down} {title_btoa:Ride the Elevator Up}",
-
-			-- The Great Seal Elevator #2
-				"Dazar'alor/2 22.72,72.13 <radius:5> -x- Dazar'alor/2 22.72,72.13 <radius:5> {fac:H} {title_atob:Ride the Elevator Down} {title_btoa:Ride the Elevator Up}",
 				
 			-- Zanchul Bottom Floor Entrance
 				"Dazar'alor/0 40.95,11.28 <radius:5> -x- Dazar'alor/4 39.25,58.20 <radius:5> {fac:H} {template:building}",
@@ -84,6 +82,11 @@ data.basenodes.FloorCrossings = {
 
 			-- Breath of Pa'ku Ship Middle Floor to Bottom Floor
 				"Zuldazar/3 68.32,64.03 <radius:3> -x- Zuldazar/4 71.98,67.55 <radius:3> {title_atob:Run down the stairs} {title_btoa:Run up the stairs}",
+		},
+
+		["Vol'dun"] = {
+			-- Atul'Aman Cave Entrance
+				"Vol'dun/0 43.07,68.05 <radius:5> -x- Vol'dun/1 31.10,81.42 <radius:3> {template:cave}",
 		},
 
 	-- Old Dalaran

@@ -31,6 +31,7 @@ local FOOTER_HEIGHT=25
 local SCROLL_WIDTH=15
 local CONTENT_HEIGHT=462
 local HEADER_MENU_HEIGHT = 31
+local HEADER_FONT_SIZE = 16
 
 local DROPDOWN_STYLE=2
 
@@ -74,7 +75,7 @@ local FARMING_COLUMNS = {
 	{ title="TIME", width=60, titlej="RIGHT", textj="RIGHT", name="disptime", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="EST. GOLD", width=110, titlej="RIGHT", textj="RIGHT", name="dispgold", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="", width=23, titlej="RIGHT", textj="RIGHT", name="loadbutton", type="button", iconheight=18, iconwidth=18,padding=15,
-		texture=SkinData("TitleButtons"), 
+		texture=function() return SkinData("TitleButtons") end,
 		textureoffset={10/32,11/32,0,1/4},
 	}
 }
@@ -107,7 +108,7 @@ local GATHERING_COLUMNS = {
 	{ title="TIME", width=60, titlej="RIGHT", textj="RIGHT", name="disptime", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="EST. GOLD", width=110, titlej="RIGHT", textj="RIGHT", name="dispgold", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="", width=23, titlej="RIGHT", textj="RIGHT", name="loadbutton", type="button", iconheight=18, iconwidth=18,padding=15,
-		texture=SkinData("TitleButtons"), 
+		texture=function() return SkinData("TitleButtons") end,
 		textureoffset={10/32,11/32,0,1/4},
 	}
 }
@@ -138,7 +139,7 @@ local CRAFTING_COLUMNS = {
 	{ title="MATERIALS", width=110, titlej="RIGHT", textj="RIGHT", name="materials", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="PROFIT", width=110, titlej="RIGHT", textj="RIGHT", name="profit", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="", width=23, titlej="RIGHT", textj="RIGHT", name="loadbutton", type="button", iconheight=18, iconwidth=18,padding=15,
-		texture=SkinData("TitleButtons"), 
+		texture=function() return SkinData("TitleButtons") end,
 		textureoffset={10/32,11/32,0,1/4},
 	}
 }
@@ -169,7 +170,7 @@ local AUCTION_COLUMNS = {
 	{ title="PROFIT", width=105, titlej="RIGHT", textj="RIGHT", name="profit", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="GAIN", width=60, titlej="RIGHT", textj="RIGHT", name="gain", sortable=true, sortfunction=Goldguide.UpdateSorting },
 	{ title="", width=23, titlej="RIGHT", textj="RIGHT", name="loadbutton", type="button", iconheight=18, iconwidth=18,padding=15,
-		texture=SkinData("TitleButtons"), 
+		texture=function() return SkinData("TitleButtons") end,
 		textureoffset={10/32,11/32,0,1/4},
 	}
 }
@@ -220,18 +221,31 @@ local function MakeImgButton(name,texture,x,w,y,h,caption)
 		--:SetSize(200,20) 
 		:SetPoint("LEFT",but.texture,"RIGHT",5,0) 
 		:SetTextColor(1,1,1,1)
-		:SetFont(FONT,15) 
+		:SetFont(FONT,HEADER_FONT_SIZE) 
 	.__END	
 	function but:SetText(text)	but.caption:SetText(text)	end
 
 	return but
 end
 
+function Goldguide:ApplySkin()
+	local MF = Goldguide.MainFrame
+	if not MF then return end
+
+	MF:SetBackdropColor(unpack(SkinData("MainBackdropColor")))
+	MF:SetBackdropBorderColor(unpack(SkinData("MainBackdropBorderColor")))
+
+	MF.HeaderFrame:SetBackdropColor(unpack(SkinData("GuideMenuHeaderFooterBackground")))
+	MF.HeaderFrame:SetBackdropBorderColor(unpack(SkinData("GuideMenuHeaderFooterBorder")))
+
+	MF.FooterFrame:SetBackdropColor(unpack(SkinData("GuideMenuHeaderFooterBackground")))
+	MF.FooterFrame:SetBackdropBorderColor(unpack(SkinData("GuideMenuHeaderFooterBorder")))
+end
+
 function Goldguide:CreateMainFrame()
 	self.MainFrame = CHAIN(ui:Create("Frame",UIParent,"ZygorGoldguide"))
 		:SetFrameStrata("HIGH")
 		:SetToplevel(enable)
-		:SetBackdropColor(ZGV.F.HTMLColor("#222222ff"))
 		:SetSize(820,560)
 		:SetPoint("TOPLEFT",UIParent,"TOPLEFT",20,-100)
 		:SetFrameLevel(10)
@@ -249,7 +263,6 @@ function Goldguide:CreateMainFrame()
 		:SetHeight(HEADER_HEIGHT)
 		:SetFrameStrata("HIGH")
 		:SetFrameLevel(MF:GetFrameLevel()+2)
-		:SetBackdropColor(0,0,0,1)
 		:SetBackdropBorderColor(0,0,0,0)
 		:SetToplevel(enable)
 		.__END
@@ -395,7 +408,6 @@ function Goldguide:CreateMainFrame()
 		:SetHeight(FOOTER_HEIGHT)
 		:SetFrameStrata("HIGH")
 		:SetFrameLevel(MF:GetFrameLevel()+1)
-		:SetBackdropColor(0,0,0,1)
 		:SetBackdropBorderColor(0,0,0,0)
 		:SetToplevel(enable)
 		.__END
@@ -452,7 +464,8 @@ function Goldguide:CreateMainFrame()
 	Goldguide.AuctionTooltip = Goldguide:MakeTooltip("Auctions",AUCTION_TOOLTIP)
 
 	Goldguide:MakeInfoPages()
-
+	
+	Goldguide:ApplySkin()
 	MF:Hide()
 end
 
@@ -724,11 +737,13 @@ function Goldguide:SetCurrentTab(title)
 
 	for i,tabobj in ipairs(Goldguide.MainFrame.HeaderFrame.Tabs) do
 		if tabobj.tabname == title then
-			tabobj.caption:SetTextColor(unpack(SkinData("TabSelectedColor")))
+			tabobj.caption:SetFont(FONTBOLD,HEADER_FONT_SIZE)
+			tabobj.caption:SetTextColor(1,1,1,1)
 			tabobj.texture:SetAlpha(1)
 			Goldguide[tabobj.tabname.."_Frame"]:Show()
 		else
-			tabobj.caption:SetTextColor(unpack(SkinData("TabDefaultColor")))
+			tabobj.caption:SetFont(FONT,HEADER_FONT_SIZE)
+			tabobj.caption:SetTextColor(0.7,0.7,0.7,1)
 			tabobj.texture:SetAlpha(.4)
 			Goldguide[tabobj.tabname.."_Frame"]:Hide()
 		end
@@ -759,7 +774,7 @@ StaticPopupDialogs["ZYGOR_GOLD_WARNED_LEGION_CRAP"] = {
 
 function Goldguide:ShowWindow()
 	if not Goldguide.MainFrame then Goldguide:CreateMainFrame() end
-	Goldguide.MainFrame:Show()
+	Goldguide.MainFrame:DoFadeIn()
 
 	ZGV.db.profile.gold_farming_mode = ZGV.db.profile.gold_farming_mode or DEFAULT_MODES[1][2]
 	ZGV.db.profile.gold_farming_type = ZGV.db.profile.gold_farming_type or FARMING_TYPES[1][2]
@@ -787,7 +802,7 @@ end
 
 function Goldguide:HideWindow()
 	if self.MainFrame then
-		self.MainFrame:Hide()
+		self.MainFrame:DoFadeOut()
 	end
 end
 

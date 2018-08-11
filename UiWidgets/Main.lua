@@ -44,9 +44,10 @@ end
 --]]
 
 function UI.SkinData(property)
-	local skin = "stealth"
+	local skin = ZGV.db.profile.skin or "default"
+	local skinstyle = ZGV.db.profile.skinstyle or "stealth"
 
-	local r=ZGV.Skins.default.styles[skin][property] or ZGV.Skins.default.styles[skin].skin.defaultstyle[property]
+	local r=ZGV.Skins[skin].styles[skinstyle][property] or ZGV.Skins[skin].styles[skinstyle].skin.defaultstyle[property]
 	if r then
 		if type(r)=="function" then -- if it's a function, call it.
 			return r(self)

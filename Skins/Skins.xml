@@ -5,5 +5,8 @@
 
 	<!-- skins -->
 	<Include file="Default\Skin.xml"/>
+	<!--
+	<Include file="Glass\Skin.xml"/>
+	-->
 
 </Ui>

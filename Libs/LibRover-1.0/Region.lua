@@ -46,7 +46,7 @@ function Region:New(data)
 		end
 	end
 
-	if type(self.mapzone)=="string" then self.mapzone = LibRover.data.MapIDsByName[self.mapzone] end
+	if type(self.mapzone)=="string" then self.mapzone = LibRover:GetMapByNameFloor(self.mapzone) end
 
 	return region
 end

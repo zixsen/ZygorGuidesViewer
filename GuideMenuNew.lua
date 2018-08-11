@@ -18,9 +18,8 @@ local SkinData = ui.SkinData
 local ICON_GUIDE={1/2,1,0,1/2}
 local ICON_FOLDER={0,1/2,0,1/2}
 local ICONS_TYPE=ZGV.DIR.."\\Skins\\guideicons-big"
-local ICONS_CLASS=ZGV.DIR.."\\Skins\\Default\\Stealth\\guideicons-small"
 
-GuideMenu.GUIDE_DISPLAY = {
+GuideMenu.GUIDE_DISPLAY = { -- also used by guide tabs
 	-- name = {row,column,"display name"}
 	LEVELING =	{1,1,"Leveling"},
 	EVENTS =	{2,1,"Events"},
@@ -340,7 +339,7 @@ function GuideMenu:Update()
 				row.group=nil
 
 				-- Reset row to defaults
-				row.icon:SetTexture(ICONS_CLASS)
+				row.icon:SetTexture(SkinData("GuideMenuSmallIcons"))
 				row.icon:SetVertexColor(1,1,1,1)
 				row:SetNormalBackdropColor(0,0,0,0) 
 				row.title:SetFont(FONT,12)
@@ -458,8 +457,21 @@ function GuideMenu:SetFocusedRow(row)
 end
 
 function GuideMenu:ActivateGuide(guide)
+	if not guide then return end
+	-- depending on mode, either add new tab or replace active one
+	if not GuideMenu.UseTab then 
+		local tab = ZGV.Tabs:GetTabFromPool()
+		tab:SetAsCurrent()
+		GuideMenu.UseTab = tab
+	end
+
+	if GuideMenu.UseTab.isActive then
+		ZGV:SetGuide(guide.title,guide.CurrentStepNum or 1)
+	else
+		GuideMenu.UseTab:AssignGuide(guide.title,guide.CurrentStepNum or 1)
+	end
+
 	GuideMenu:SetFocusedRow()
-	ZGV:SetGuide(guide.title,guide.CurrentStepNum or 1)
 	GuideMenu:Hide()
 end
 
@@ -513,11 +525,11 @@ function GuideMenu:ShowGuideDetails(guide)
 	if type(complete)~="string" then
 		complete = complete or 0
 		complete=math.round(complete*100)/100
-		right.GuideProgressBar.tex:SetWidth(complete*208)
-		right.GuideProgressValue:SetText((complete*100).."%")
-		right.GuideProgressValue:Show()
+		
+		right.GuideProgress:SetPercent(complete*100)
+		right.GuideProgress:SetText((complete*100).."%")
 		right.GuideProgressLabel:Show()
-		right.GuideProgressBar:Show()
+		right.GuideProgress:Show()
 	end
 
 	right.GuideTitle:Show()
@@ -538,8 +550,7 @@ function GuideMenu:HideGuideMouseOver(row)
 
 	right.GuideTitle:Hide()
 	right.GuideDesc:Hide()
-	right.GuideProgressValue:Hide()
 	right.GuideProgressLabel:Hide()
-	right.GuideProgressBar:Hide()
+	right.GuideProgress:Hide()
 	right.GuideModel:Hide()
 end

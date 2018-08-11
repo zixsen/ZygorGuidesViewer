@@ -114,7 +114,15 @@ ZGVP.tradeskills = {
 		[74] = "Northrend Cooking",
 		[73] = "Outland Cooking",
 	}},
-	[356] = {name="Fishing",subs={}},
+	[356] = {name="Fishing",subs={
+		[1102] = "Outland Fishing",
+		[1104] = "Northrend Fishing",
+		[1106] = "Cataclysm Fishing",
+		[1108] = "Pandaria Fishing",
+		[1110] = "Draenor Fishing",
+		[1112] = "Legion Fishing",
+		[1114] = "Zandalari Fishing",
+	}},
 	[762] = {name="Riding",subs={}}
 }
 
@@ -166,6 +174,8 @@ function ZGV:CacheSkills_Queued()
 	local current_time = debugprofilestop()
 	if (current_time - (ZGV.last_cached_skills or 0)) < 1000 then return end
 
+	local faction = UnitFactionGroup("player")
+
 	ZGV.last_cached_skills = current_time	
 
 	-- reset goldguide crafting skill knowledge
@@ -199,6 +209,10 @@ function ZGV:CacheSkills_Queued()
 
 		-- subskills
 		for subid,subname in pairs(ZGVP.tradeskills[skillline].subs) do
+			if faction=="Alliance" then
+				subname = subname:gsub("Zandalari ","Kul Tiran ")
+			end
+
 			local cat = C_TradeSkillUI.GetCategoryInfo(subid)
 			if cat then
 				ZGVP.SkillsKnown[subname] = ZGVP.SkillsKnown[subname] or {}
@@ -299,9 +313,7 @@ function ZGV:CacheRecipes_Queued(profs)
 end
 
 function ZGVP:GetSkill(name)
-	local skillid = ZGVP.tradeskillsIdByName[name]
-
-	if not skillid then return ZGV.db.char.SkillsKnown[""] end
+	if not name then return ZGV.db.char.SkillsKnown[""] end
 
 	if ZGV.db.profile.fakeskills[name] then
 		return ZGV.db.profile.fakeskills[name] -- faked value
@@ -382,11 +394,23 @@ function ZGVP:KnowsRecipe(spellid)
 	end
 end
 
+local pattern = "Skill (%d+) increased from (%d+) to (%d+)"
+local function UpdateSkillConsole(_,_,msg)
+	local id,from,to = msg:match(pattern)
+	for name,skill in pairs(ZGV.db.char.SkillsKnown) do
+		if skill.skillID==id then
+			skill.level = to
+			return
+		end
+	end
+end
+
 
 tinsert(ZGV.startups,{"Professions setup",function(self)
 	--self:AddEventHandler("PLAYER_ENTERING_WORLD","CacheSkills") don't cache at start, load saved instead
 	self:AddEventHandler("SKILL_LINES_CHANGED","CacheSkills")
-	self:AddEventHandler("CHAT_MSG_SKILL","CacheSkills")
+	--self:AddEventHandler("CHAT_MSG_SKILL","CacheSkills")
+	self:AddEventHandler("CONSOLE_MESSAGE",UpdateSkillConsole) -- replaces CHAT_MSG_SKILL for our needs
 	self:AddEventHandler("TRADE_SKILL_SHOW","CacheSkills")
 	self:AddEventHandler("TRADE_SKILL_DATA_SOURCE_CHANGED","CacheSkills")
 

@@ -101,9 +101,9 @@ local BUY_SEARCH_COLUMNS = {
 	{ title="", width=15, headerwidth=15, titlej="LEFT", textj="LEFT", name="icon", type="icon", onentertooltip=function(row) Appraiser:ShowItemTooltip(row.item) end},
 	{ title="ITEM NAME", width=375, titlej="LEFT", textj="LEFT", name="name" },
 	{ title="", width=12, titlej="RIGHT", textj="RIGHT", name="action", type="button", 
-		texture=ZGV.DIR.."\\Skins\\goldpricestatusicons", 
+		texture=function() return SkinData("AuctionToolsPriceIcons") end, 
 		textureoffset={11/16,12/16,0,1},
-		texturecolor=SkinData("ButtonColor2"),
+		texturecolor=function() return SkinData("ButtonColor2") end,
 	},
 }
 
@@ -118,12 +118,35 @@ local BUY_SEARCH_DATA = {
 
 local DROPDOWN_STYLE=2
 
+function Appraiser:ApplySkin()
+	local MF = self.MainFrame 
+	if not MF then return end
+
+	MF:ClearAllPoints()
+	MF:SetPoint("TOPLEFT",AuctionFrame,"TOPLEFT",1,1)
+	MF:SetPoint("BOTTOMRIGHT",AuctionFrame,"BOTTOMRIGHT",1+2*SkinData("AuctionToolsMargin"),11)
+	MF:SetBackdropColor(unpack(SkinData("MainBackdropColor")))
+
+	MF.HeaderFrame:SetBackdropColor(unpack(SkinData("AuctionToolsHeaderFooterBackground")))
+	MF.HeaderFrame:SetBackdropBorderColor(0,0,0,0)
+
+
+	MF.FooterFrame:SetBackdropColor(unpack(SkinData("AuctionToolsHeaderFooterBackground")))
+	MF.FooterFrame:SetBackdropBorderColor(0,0,0,0)
+
+	MF.ContentFrame:SetBackdropColor(ZGV.F.HTMLColor("#222222ff"))
+	MF.ContentFrame:SetPoint("LEFT",MF,"LEFT",SkinData("AuctionToolsMargin"),0)
+	MF.ContentFrame:SetPoint("RIGHT",MF,"RIGHT",-SkinData("AuctionToolsMargin"),0)
+
+	MF.progressFrame:SetTexture(SkinData("ProgressBarTextureFile"))
+	MF.progressFrame:SetDecor(SkinData("ProgressBarDecorUse"))
+end
+
 function Appraiser:CreateMainFrame()
 	self.MainFrame = CHAIN(ui:Create("Frame",UIParent,"ZygorAppraiser"))
 		:SetFrameStrata("HIGH")
 		:SetFrameLevel(AuctionFrame:GetFrameLevel()+1)
 		:SetToplevel(enable)
-		:SetBackdropColor(ZGV.F.HTMLColor("#222222ff"))
 		.__END
 
 
@@ -133,14 +156,12 @@ function Appraiser:CreateMainFrame()
 	MF:SetPoint("BOTTOMRIGHT",AuctionFrame,"BOTTOMRIGHT",1,11)
 
 	-- Header
-	MF.HeaderFrame = CHAIN(ui:Create("Frame",MF,"ZygorAppraiserHeader"))
+	MF.HeaderFrame = CHAIN(ui:Create("Frame",MF))
 		:SetPoint("TOPLEFT",1,-1)
 		:SetPoint("TOPRIGHT",-1,-1)
 		:SetHeight(HEADER_HEIGHT)
 		:SetFrameStrata("HIGH")
 		:SetFrameLevel(MF:GetFrameLevel()+2)
-		:SetBackdropColor(0,0,0,1)
-		:SetBackdropBorderColor(0,0,0,0)
 		:SetToplevel(enable)
 		.__END
 
@@ -191,9 +212,9 @@ function Appraiser:CreateMainFrame()
 		ZGV.F.AssignButtonTexture(MF.HeaderFrame.goldguide,(SkinData("TitleButtons")),22,32)
 
 
-	MF.ContentFrame = CHAIN(CreateFrame("Frame", "ZygorAppraiserContent", MF))
-		:SetPoint("TOPLEFT",MF.HeaderFrame,"BOTTOMLEFT")
-		:SetPoint("TOPRIGHT",MF.HeaderFrame,"BOTTOMRIGHT")
+	MF.ContentFrame = CHAIN(ui:Create("Frame", MF))
+		:SetPoint("LEFT",MF,"LEFT")
+		:SetPoint("RIGHT",MF,"RIGHT")
 		:SetHeight(380)
 		:Show()
 	.__END
@@ -205,8 +226,6 @@ function Appraiser:CreateMainFrame()
 		:SetHeight(FOOTER_HEIGHT)
 		:SetFrameStrata("HIGH")
 		:SetFrameLevel(MF:GetFrameLevel()+1)
-		:SetBackdropColor(0,0,0,1)
-		:SetBackdropBorderColor(0,0,0,0)
 		:SetToplevel(enable)
 		.__END
 		MF.FooterUpdated = CHAIN(MF.FooterFrame:CreateFontString())
@@ -228,46 +247,15 @@ function Appraiser:CreateMainFrame()
 		.__END
 		ZGV.F.AssignButtonTexture(MF.FooterSettingsButton,(SkinData("TitleButtons")),5,32)
 
-		MF.progressFrame = CHAIN(CreateFrame("Frame","progressFrame",MF.FooterFrame))
-			:SetBackdrop(SkinData("ProgressBarBackdrop"))
-			:SetBackdropColor(unpack(SkinData("ProgressBarBackdropColor")))
-			:SetBackdropBorderColor(unpack(SkinData("ProgressBarBackdropBorderColor")))
+		MF.progressFrame = CHAIN(ui:Create("ProgressBar",MF.FooterFrame))
 			:SetSize(MF:GetWidth(),7)
-			:SetHeight(SkinData("ProgressBarHeight"))
 			:SetFrameStrata("HIGH")
 			:SetFrameLevel(self.MainFrame:GetFrameLevel()+3)
 			:SetPoint("TOP",MF.FooterFrame,"BOTTOM",0,-1)
-			:Hide()
+			:SetDecor(SkinData("ProgressBarDecorUse"))
+			:SetAnim(true)
 		.__END
-		
-		MF.progressFrame.tex = CHAIN(MF.progressFrame:CreateTexture())
-			:SetHeight(SkinData("ProgressBarHeight")-2)
-			:SetPoint("TOPLEFT",MF.progressFrame,"TOPLEFT",1,-1)
-			:SetColorTexture(unpack(SkinData("ProgressBarTexture")))
-			:SetVertexColor(unpack(ZGV.CurrentSkinStyle:SkinData("ProgressBarColor") or {0,1,0,1}))
-		.__END 
-		
-		MF.progressFrame.SetPercent = function(self, percent)
-			self.targetpercent = percent
-			if not self:IsShown() then self.percent=0 end
-			self:SetShown(percent>0)
-		end
-		MF.progressFrame.percent = 0
-		MF.progressFrame.targetpercent = 0
-		local speed=0.2
-		local throt=1/50
-		local thr=0
-		MF.progressFrame:SetScript("OnUpdate",function (self,elapsed)
-			thr=thr+elapsed
-			while thr>throt do
-				thr=thr-throt
-				local dif = self.targetpercent-self.percent
-				self.percent = math.floor(self.percent + dif * speed)
-				if self.percent>100 then self.percent=100 elseif self.percent<0 then self.percent=0 end
-				self.tex:SetWidth((self.percent / 100)*(self:GetWidth()-2))
-				if self.percent==0 then self:Hide() end
-			end
-		end)
+
 
 	Appraiser.Inventory_Frame = self:MakeInventoryTable()
 	Appraiser.Buy_Frame = self:MakeBuyTable()
@@ -316,6 +304,7 @@ function Appraiser:CreateMainFrame()
 	MF.HelpPageContent:SetPoint("TOPLEFT",10,-10)
 
 	MF:Hide()
+	Appraiser:ApplySkin()
 end
 	
 function Appraiser:MakeInventoryTable()	
@@ -1574,16 +1563,16 @@ function Appraiser:UpdateProgressBar()
 		if self.manualScanning then
 			if Scan.state=="SS_IDLE" then scanprogress=0.9 end  -- SS_IDLE happens AFTER a scan, not before
 			if pages>1 and pages<1000 then scanprogress = (((page-2)/pages) + (1/pages))*scanprogress end
-			pf:SetPercent(((self.manualScanningDone-1+scanprogress)/self.manualScanningTotal) * 100)
+			pf:SetPercent(((self.manualScanningDone-1+scanprogress)/self.manualScanningTotal) * 100,"nozero")
 		elseif self.manualBuyScanning then
 			if Scan.state=="SS_IDLE" then scanprogress=0.9 end
 			if pages>1 and pages<1000 then scanprogress = (((page-2)/pages) + (1/pages))*scanprogress end
-			pf:SetPercent(((self.manualBuyScanningDone-1+scanprogress)/self.manualBuyScanningTotal) * 100)
+			pf:SetPercent(((self.manualBuyScanningDone-1+scanprogress)/self.manualBuyScanningTotal) * 100,"nozero")
 		elseif pages>1 and pages<1000 and (Scan.state=="SS_QUERYING" or Scan.state=="SS_NEEDTOQUERY" or Scan.state=="SS_RECEIVING" or Scan.state=="SS_SCANNING" or Scan.state=="SS_ANALYZING") then
 			scanprogress = (((page-2)/pages) + (1/pages))
-			pf:SetPercent(scanprogress*100)
+			pf:SetPercent(scanprogress*100,"nozero")
 		else
-			pf:SetPercent(scanprogress*100)
+			pf:SetPercent(scanprogress*100,"nozero")
 		end
 	--else
 --		pf:SetPercent(0)

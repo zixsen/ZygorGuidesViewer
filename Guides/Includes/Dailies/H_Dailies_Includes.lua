@@ -8309,16 +8309,37 @@ ZygorGuidesViewer:RegisterInclude("Legion_World_Quest_Emissaries",[[
 ]])
 
 ZygorGuidesViewer:RegisterInclude("BFA_World_Quest_Emissaries",[[
+		Choose a World Quest to Complete |confirm
+		|tip With the "World Quests" guide loaded, open your world map.
+		|tip Left-click on a world quest icon to select that world quest.
+		|tip The guide will automatically load the steps for that world quest.
+		'|confirm |next "Tortollan_Seekers_WQ" |condition ZGV.questsbyid[50604] and (ZGV.questsbyid[50604].complete and ZGV.questsbyid[50604].inlog)
+		'|confirm |next "Horde_War_Effort_WQ" |condition ZGV.questsbyid[50606] and (ZGV.questsbyid[50606].complete and ZGV.questsbyid[50606].inlog)
+		'|confirm |next "Talanji's_Expedition_WQ" |condition ZGV.questsbyid[50602] and (ZGV.questsbyid[50602].complete and ZGV.questsbyid[50602].inlog)
+		'|confirm |next "Zandalari_Empire_WQ" |condition ZGV.questsbyid[50598] and (ZGV.questsbyid[50598].complete and ZGV.questsbyid[50598].inlog)
+		'|confirm |next "Voldunai_WQ" |condition ZGV.questsbyid[50603] and (ZGV.questsbyid[50603].complete and ZGV.questsbyid[50603].inlog)
+		'|confirm |next "Champions_of_Azeroth_WQ" |condition ZGV.questsbyid[50562] and (ZGV.questsbyid[50562].complete and ZGV.questsbyid[50562].inlog)
+	step
+	label "Tortollan_Seekers_WQ"
+		Follow the path |goto Zuldazar/0 71.38,29.83 < 7 |only if walking and ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
+		Run up the stairs |goto 71.50,30.14 < 5 |only if walking and ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
 		talk Collector Kojo##134345 |only if ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
 		turnin Tortollan Seekers##50604 |goto Zuldazar/0 71.50,30.34 |only if ZGV.questsbyid[50604] and ZGV.questsbyid[50604].complete
 		|next "Horde_War_Effort_WQ"
 	step
 	label "Horde_War_Effort_WQ"
-		talk Natal'hakata##131287 |only if ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
-		turnin Horde War Effort##50606 |goto Zuldazar/0 58.35,44.40 |only if ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		Follow the path |goto Dazar'alor/0 51.29,88.57 < 7 |only if walking and ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		Continue following the path |goto 50.98,85.68 < 7 |only if walking and ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		Run down the stairs |goto 49.96,85.95 < 10 |only if walking and ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		Run down the stairs |goto 50.37,91.00 < 7 |only if walking and ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		Follow the path |goto 50.54,93.08 < 7 |only if walking and ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		Continue following the path |goto 50.02,96.59 < 7 |only if walking and ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		talk Ransa Greyfeather##135447 |only if ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
+		turnin Horde War Effort##50606 |goto Zuldazar/0 58.07,62.65 |only if ZGV.questsbyid[50606] and ZGV.questsbyid[50606].complete
 		|next "Talanji's_Expedition_WQ"
 	step
 	label "Talanji's_Expedition_WQ"
+		Follow the path |goto Nazmir/0 39.25,78.72 < 7 |only if walking and ZGV.questsbyid[50602] and ZGV.questsbyid[50602].complete
 		talk Provisioner Lija##135459 |only if ZGV.questsbyid[50602] and ZGV.questsbyid[50602].complete
 		turnin Talanji's Expedition##50602 |goto Nazmir/0 39.07,79.52 |only if ZGV.questsbyid[50602] and ZGV.questsbyid[50602].complete
 		|next "Zandalari_Empire_WQ"
@@ -8329,8 +8350,16 @@ ZygorGuidesViewer:RegisterInclude("BFA_World_Quest_Emissaries",[[
 		|next "Voldunai_WQ"
 	step
 	label "Voldunai_WQ"
+		Follow the path |goto Vol'dun/0 56.84,49.94 < 5 |only if walking and ZGV.questsbyid[50603] and ZGV.questsbyid[50603].complete
 		talk Hoarder Jena##135804 |only if ZGV.questsbyid[50603] and ZGV.questsbyid[50603].complete
 		turnin Voldunai##50603 |goto Vol'dun/0 56.69,49.74 |only if ZGV.questsbyid[50603] and ZGV.questsbyid[50603].complete
+		|next "Champions_of_Azeroth_WQ"
+	step
+	label "Champions_of_Azeroth_WQ"
+		Run up the stairs |goto Dazar'alor/1 48.63,61.26 < 7 |walk |only if ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
+		Run down the stairs |goto 54.15,70.81 < 5 |walk |only if ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
+		talk Magni Bronzebeard##130216 |only if ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
+		turnin Champions of Azeroth##50562 |goto Silithus/0 42.22,44.27 |only if ZGV.questsbyid[50562] and ZGV.questsbyid[50562].complete
 		|next "Choose_World_Quest"
 ]])
 

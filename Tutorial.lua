@@ -511,7 +511,7 @@ function Tutorial:SavePositions()
 	loc.steps = ZygorGuidesViewerFrame_Border_Guides_NextButton
 	loc.steps2 = ZygorGuidesViewerFrame_Border_Guides_PrevButton
 	loc.steps3 = ZygorGuidesViewerFrame_Border_Guides_StepNum
-	loc.guides = ZygorGuidesViewerFrame_Border_Guides_GuideButton
+	loc.guides = ZGV.Tabs.AddButton
 	loc.cleanup = ZygorGuidesViewerFrame_Border_Guides_QuestCleanupButton
 	loc.mode = ZygorGuidesViewerFrame_Border_Guides_MiniButton
 	loc.progress = ZygorGuidesViewer_ProgressBar

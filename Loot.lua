@@ -113,28 +113,53 @@ function Loot:UpdateSkin()
 	ZGV.F.AssignButtonTexture(self.GreyFrame.Close,ZGV.CurrentSkinStyle:SkinData("TitleButtons"),6,32)
 end
 
-function Loot:SellGreyItems() --Auto Sell Grey Items
-	local bag, slot
+local function loot_sellgreyitems_thread() --Auto Sell Grey Items
+	while true do
+		local grays = 0
+		for bag=0, NUM_BAG_SLOTS do
+			for slot=1, GetContainerNumSlots(bag) do
+				local item=GetContainerItemID(bag,slot)
+				if item  then
+					local _, itemCount, _, quality, _, _, itemLink, _, noValue = GetContainerItemInfo(bag,slot)
+					if quality==0 and not noValue then
+						grays = grays + 1
+					end
 
-	local totalprice=0
-	for bag=0, NUM_BAG_SLOTS do
-		for slot=1, GetContainerNumSlots(bag) do
-			local item=GetContainerItemID(bag,slot)
-			if item  then
-				local name, link, quality=ZGV:GetItemInfo(item)
-				local price=select(11,ZGV:GetItemInfo(item))
-				if quality==0 and price > 0 then
-					local count=select(2,GetContainerItemInfo(bag,slot))
-					ZGV:Print(L['loot_sellgreys_sold']:format(link,count,GetMoneyString(price*count)))
-					UseContainerItem(bag,slot) -- Will use an item and since vendor is open, will sell the item.
-					totalprice=totalprice+price*count
+					local price=select(11,ZGV:GetItemInfo(item))
+					if quality==0 and price > 0 then
+						table.insert(Loot.SellingGreyStatus,L['loot_sellgreys_sold']:format(itemLink,itemCount,GetMoneyString(price*itemCount)))
+						Loot.SellingGreyTotal = Loot.SellingGreyTotal + price*itemCount
+						UseContainerItem(bag,slot) -- Will use an item and since vendor is open, will sell the item.
+						coroutine.yield()
+					end
 				end
 			end
 		end
+		if grays==0 then break end
 	end
-	if totalprice>0 then
-		ZGV:Print(L['loot_sellgreys_total']:format(GetMoneyString(totalprice)))
+	
+	if Loot.SellingGreyTotal>0 then
+		for i,v in pairs(Loot.SellingGreyStatus) do
+			ZGV:Print(v,false,true)
+		end
+		ZGV:Print(L['loot_sellgreys_total']:format(GetMoneyString(Loot.SellingGreyTotal)),false,true)
 	end
+end
+
+Loot.SellingGreyStatus = {}
+function Loot:SellGreyItems() --Auto Sell Grey Items
+	table.wipe(Loot.SellingGreyStatus)
+	Loot.Loot = ""
+	Loot.SellingGreyPrice = 0
+	Loot.SellingGreyTotal=0
+	Loot.SellingGreyThread = coroutine.create(loot_sellgreyitems_thread)
+	Loot.SellingGreyTimer = ZGV:ScheduleRepeatingTimer(function()
+		local ok,ret = coroutine.resume(Loot.SellingGreyThread)
+		if coroutine.status(Loot.SellingGreyThread)=="dead" then 
+			ZGV:CancelTimer(Loot.SellingGreyTimer) 
+		end
+	end,
+	0.1)
 end
 
 function Loot:SellUnusableItems()
@@ -287,7 +312,7 @@ function Loot:SetUpGreySellButton()
 	.__END
 end
 
-local function OnEvent(self,event)
+local function OnEvent(self,event,arg1,arg2)
 	if event=="BAG_UPDATE_DELAYED" then
 		if ZGV.db.profile.showgreyvalue and ZGV.db.profile.enable_vendor_tools and Loot.GreyFrame then
 			Loot:GetGreyBagValue()

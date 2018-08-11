@@ -10,6 +10,7 @@ ZGV.PopupHandler = PopupHandler
 ZGV.Poup = ZGV.PopupHandler
 PopupHandler.Queue = {}
 PopupHandler.IsPopupVisible = false
+PopupHandler.popups = {}
 
 local table,string,tonumber,tostring,ipairs,pairs,setmetatable = table,string,tonumber,tostring,ipairs,pairs,setmetatable
 
@@ -59,6 +60,8 @@ function PopupHandler:NewPopup(name,ptype,skin)
 	end
 
 	popup.type = ptype
+
+	PopupHandler.popups[name]=popup
 
 	return popup
 end
@@ -271,20 +274,36 @@ function PopupHandler:CreatePopup(name,skin)
 	popup.holder = CreateFrame("Frame")
 	popup.holder.hideOnEscape = true
 
-	popup.logo = CHAIN(popup:CreateTexture()) :SetPoint("TOP",0,-10) :SetSize(135,31) :SetTexture(SkinData("TitleLogo")) .__END
+	popup.logo = CHAIN(popup:CreateTexture()) :SetPoint("TOP",0,-10) :SetSize(unpack(SkinData("TitleLogoSize"))) :SetTexture(SkinData("TitleLogo")) .__END
+	popup.background = CHAIN(popup:CreateTexture(nil,"BACKGROUND")) 
+		:SetPoint("TOP",popup.logo,"BOTTOM",0,0)
+		:SetPoint("LEFT",0,0)
+		:SetPoint("RIGHT",0,0)
+		:SetPoint("BOTTOM",0,0)
+		:SetColorTexture(unpack(SkinData("SecBackdropColor")))
+	.__END
+
+	popup.beta=CHAIN(popup:CreateFontString(nil,"ARTWORK"))
+		:SetPoint("LEFT",popup.logo,"RIGHT",-3,3)
+		:SetFont(FONT,ZGV.db.profile.fontsecsize) --text is set later --TODO make font size change dynamically
+		:SetText("BETA")
+		:Hide()
+	.__END
 
 	--Text can be at the longest 350 before wrapping, if it is shorter then width gets adjusted later
 
 	popup.text=CHAIN(popup:CreateFontString(nil,"ARTWORK"))
-		:SetPoint("TOP",popup.logo,"BOTTOM",0,0)
-		:SetWidth(MAXWIDTH)
+		:SetPoint("TOP",popup.background,"TOP",0,-5)
+		:SetPoint("LEFT",popup.background,"LEFT",5,0)
+		:SetPoint("RIGHT",popup.background,"RIGHT",-5,0)
 		:SetFont(FONT,ZGV.db.profile.fontsecsize) --text is set later --TODO make font size change dynamically
 		:SetText("This is a Zygor Popup with no text...")
 	.__END
 
 	popup.text2=CHAIN(popup:CreateFontString(nil,"ARTWORK")) --Not needed in most popups, but is used in SIS
 		:SetPoint("TOP",popup.text,"BOTTOM")
-		:SetWidth(MAXWIDTH)
+		:SetPoint("LEFT",popup.background,"LEFT",5,0)
+		:SetPoint("RIGHT",popup.background,"RIGHT",-5,0)
 		:SetFont(FONTBOLD,ZGV.db.profile.fontsize+2) --text is set later
 	.__END
 

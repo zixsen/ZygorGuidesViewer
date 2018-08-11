@@ -15,6 +15,8 @@ local MAINFRAME_HEIGHT=579
 local MAINFRAME_HEADER_HEIGHT=40
 local MAINFRAME_FOOTER_HEIGHT=24
 
+local HEADER_FONT_SIZE = 16
+
 GuideMenu.BUTTONS_NORMAL_COLOR = {0.7,0.7,0.7,1}
 GuideMenu.BUTTONS_HIGHLIGHT_COLOR = {1,1,1,1}
 
@@ -22,26 +24,26 @@ local ICON_SIZE=15
 
 local SCROLLTABLE_DATA = {
 	ROW_COUNT = 20,
-	LIST_WIDTH = 379,
-	LIST_HEIGHT = 480,
-	POSX = 0,
+	LIST_WIDTH = 380,
+	LIST_HEIGHT = 478,
+	POSX = 1,
 	POSY = -34,
-	STRATA = "HIGH",
+	STRATA = "DIALOG",
 	BORDER = {0,0,0,0},
-	BACKGROUND = {ZGV.F.HTMLColor("#22222200")},
+	BACKGROUND = {0,0,0,0},
 	ROWBACKGROUND = false,
 	ROW_HEADER = 1,
 	HIDESCROLLBAR = true
 }
 local SCROLLTABLE_COLUMNS = {
 	{ title="", width=ICON_SIZE, headerwidth=15, titlej="LEFT", textj="LEFT", name="icon", type="icon",
-		texture=ZGV.DIR.."\\Skins\\Default\\Stealth\\guideicons-small", 
+		texture=function() return SkinData("GuideIcons") end,
 		textureoffset=ICON_FOLDER,
 		texturecolor={1,1,1,1},
 	},
 	{ title="", width=313, titlej="LEFT", textj="LEFT", name="title", padding=5 },
 	{ title="", width=14, titlej="RIGHT", textj="RIGHT", name="loadbutton", type="button", iconheight=14, iconwidth=14,padding=0,
-		texture=SkinData("TitleButtons"), 
+		texture=function() return SkinData("TitleButtons") end,
 		textureoffset={10/32,0,11/32,0,10/32,1/4,11/32,1/4},
 		--highlighttextureoffset={10/32,2/4,11/32,2/4,10/32,3/4,11/32,3/4},
 		tooltip="Load guide",
@@ -103,8 +105,10 @@ function GuideMenu:Open(path,iscurrent,...)
 	-- Highlight proper element in top menu
 	for key,v in pairs(MainFrame.Header.Tabs) do
 		if path==key or (iscurrent and key=="Current") then
+			v:SetFont(FONTBOLD,HEADER_FONT_SIZE)
 			v:SetTextColor(1,1,1,1)
 		else
+			v:SetFont(FONT,HEADER_FONT_SIZE)
 			v:SetTextColor(0.7,0.7,0.7,1)
 		end
 	end
@@ -158,14 +162,61 @@ local function UpdateHandler(self, event)
 	GuideMenu:Update()
 end
 
+function GuideMenu:ApplySkin()
+	local MF = GuideMenu.MainFrame
+	if not MF then return end
+
+	MF:SetBackdropColor(unpack(SkinData("MainBackdropColor")))
+	MF:SetBackdropBorderColor(unpack(SkinData("MainBackdropBorderColor")))
+
+	MF:SetWidth(MAINFRAME_WIDTH+SkinData("GuideMenuMargin")*2)
+	MF.Header:SetBackdropColor(unpack(SkinData("GuideMenuHeaderFooterBackground")))
+	MF.Header:SetBackdropBorderColor(unpack(SkinData("GuideMenuHeaderFooterBorder")))
+
+
+	for i,v in pairs(MF.Header.Tabs) do
+		v:SetBackdropColor(0,0,0,0)
+		v:SetBackdropBorderColor(0,0,0,0)
+		v:SetNormalBackdropColor(0,0,0,0)
+		v:SetHighlightBackdropColor(0,0,0,0)
+	end
+
+	MF.MenuColumn:SetPoint("TOPLEFT",MF.Header,"BOTTOMLEFT",SkinData("GuideMenuMargin"),0)
+	MF.MenuColumn:SetBackdropColor(unpack(SkinData("GuideMenuMenuBackground")))
+
+	MF.RightColumn:SetPoint("TOPRIGHT",MF.Header,"BOTTOMRIGHT",-SkinData("GuideMenuMargin"),0)
+	MF.RightColumn:SetPoint("BOTTOMRIGHT",MF.Footer,"TOPRIGHT",-SkinData("GuideMenuMargin"),0)
+
+ 	MF.MenuGuides.SearchEdit:SetBackdropBorderColor(unpack(SkinData("GuideMenuSearchEdit")))
+
+	MF.CenterColumn:SetBackdropColor(unpack(SkinData("GuideMenuContentBackground")))
+	MF.WideColumn:SetBackdropColor(unpack(SkinData("GuideMenuContentBackground")))
+	MF.RightColumn:SetBackdropColor(unpack(SkinData("GuideMenuDetailsBackground")))
+
+	MF.MenuColumn:SetBackdropBorderColor(unpack(SkinData("GuideMenuSectionBorder")))
+	MF.CenterColumn:SetBackdropBorderColor(unpack(SkinData("GuideMenuSectionBorder")))
+	MF.WideColumn:SetBackdropBorderColor(unpack(SkinData("GuideMenuSectionBorder")))
+	MF.RightColumn:SetBackdropBorderColor(unpack(SkinData("GuideMenuSectionBorder")))
+
+	MF.Footer:SetBackdropColor(unpack(SkinData("GuideMenuHeaderFooterBackground")))
+	MF.Footer:SetBackdropBorderColor(unpack(SkinData("GuideMenuHeaderFooterBorder")))
+
+	MF.FooterVersion:SetPoint("BOTTOMLEFT",SkinData("GuideMenuFooterElementsOffset"),7)
+	MF.FooterSettingsButton:SetPoint("BOTTOMRIGHT",-SkinData("GuideMenuFooterElementsOffset"),5)
+
+	MF.RightColumn.GuideProgress:SetTexture(SkinData("ProgressBarTextureFile"))
+	MF.RightColumn.GuideProgress:SetDecor(SkinData("ProgressBarDecorUse"))
+end
+
 function GuideMenu:CreateFrames()
 	-- Main Container
 	local MF = CHAIN(ui:Create("Frame", UIParent, "ZygorGuidesViewer_GuideMenuNew"))
 		:SetSize(MAINFRAME_WIDTH,MAINFRAME_HEIGHT)
 		:SetPoint("CENTER",UIParent)
-		:SetFrameStrata("HIGH")
+		:SetFrameStrata("DIALOG")
 		:CanDrag(true)
 		:SetScript("OnUpdate",UpdateHandler)
+		:SetScript("OnHide",function() GuideMenu.UseTab=nil end) -- reset tab behaviour to 'add new tab'
 		:Hide()
 	.__END
 	GuideMenu.MainFrame= MF
@@ -176,7 +227,6 @@ function GuideMenu:CreateFrames()
 		:SetPoint("TOPLEFT",1,-1)
 		:SetPoint("TOPRIGHT",-1,1)
 		:SetHeight(MAINFRAME_HEADER_HEIGHT)
-		:SetFrameStrata("HIGH")
 		:SetBackdropBorderColor(0,0,0,0)
 		.__END
 
@@ -191,65 +241,45 @@ function GuideMenu:CreateFrames()
 		local Home = CHAIN(ui:Create("Button",MF.Header))
 			:SetSize(70,24)
 			:SetPoint("TOPLEFT",MF.Header,"TOPLEFT", 3, -8)
-			:SetFont(FONT,18)
+			:SetFont(FONT,HEADER_FONT_SIZE)
 			:SetText("Home")
 			:SetScript("OnClick", function() GuideMenu:Open("Home") end)
-			:SetBackdropColor(0,0,0,0)
-			:SetBackdropBorderColor(0,0,0,0)
-			:SetNormalBackdropColor(0,0,0,0)
-			:SetHighlightBackdropColor(0,0,0,0)
 		.__END
 		MF.Header.Tabs.Home=Home
 
 		local Current = CHAIN(ui:Create("Button",MF.Header))
 			:SetSize(80,24)
 			:SetPoint("LEFT",Home,"RIGHT", 30, 0)
-			:SetFont(FONT,18)
+			:SetFont(FONT,HEADER_FONT_SIZE)
 			:SetText("Current")
 			:SetScript("OnClick", function() GuideMenu:Open("Current") end)
-			:SetBackdropColor(0,0,0,0)
-			:SetBackdropBorderColor(0,0,0,0)
-			:SetNormalBackdropColor(0,0,0,0)
-			:SetHighlightBackdropColor(0,0,0,0)
 		.__END
 		MF.Header.Tabs.Current=Current
 
 		local Recent = CHAIN(ui:Create("Button",MF.Header))
 			:SetSize(80,24)
 			:SetPoint("LEFT",Current,"RIGHT", 30, 0)
-			:SetFont(FONT,18)
+			:SetFont(FONT,HEADER_FONT_SIZE)
 			:SetText("Recent")
 			:SetScript("OnClick", function() GuideMenu:Open("Recent") end)
-			:SetBackdropColor(0,0,0,0)
-			:SetBackdropBorderColor(0,0,0,0)
-			:SetNormalBackdropColor(0,0,0,0)
-			:SetHighlightBackdropColor(0,0,0,0)
 		.__END
 		MF.Header.Tabs.Recent=Recent
 
 		local Suggested = CHAIN(ui:Create("Button",MF.Header))
 			:SetSize(80,24)
 			:SetPoint("LEFT",Recent,"RIGHT", 30, 0)
-			:SetFont(FONT,18)
+			:SetFont(FONT,HEADER_FONT_SIZE)
 			:SetText("Suggested")
 			:SetScript("OnClick", function() GuideMenu:Open("Suggested") end)
-			:SetBackdropColor(0,0,0,0)
-			:SetBackdropBorderColor(0,0,0,0)
-			:SetNormalBackdropColor(0,0,0,0)
-			:SetHighlightBackdropColor(0,0,0,0)
 		.__END
 		MF.Header.Tabs.Suggested=Suggested
 
 		local Options = CHAIN(ui:Create("Button",MF.Header))
 			:SetSize(80,24)
 			:SetPoint("LEFT",Suggested,"RIGHT", 30, 0)
-			:SetFont(FONT,18)
+			:SetFont(FONT,HEADER_FONT_SIZE)
 			:SetText("Options")
 			:SetScript("OnClick", function() GuideMenu:Open("Options") end)
-			:SetBackdropColor(0,0,0,0)
-			:SetBackdropBorderColor(0,0,0,0)
-			:SetNormalBackdropColor(0,0,0,0)
-			:SetHighlightBackdropColor(0,0,0,0)
 		.__END
  		MF.Header.Tabs.Options=Options
 
@@ -260,13 +290,10 @@ function GuideMenu:CreateFrames()
 		:SetPoint("TOPLEFT",MF,"BOTTOMLEFT",1,MAINFRAME_FOOTER_HEIGHT+1)
 		:SetPoint("TOPRIGHT",MF,"BOTTOMRIGHT",-1,MAINFRAME_FOOTER_HEIGHT+1)
 		:SetHeight(MAINFRAME_FOOTER_HEIGHT)
-		:SetFrameStrata("HIGH")
 		:SetFrameLevel(MF:GetFrameLevel()+1)
 		:SetToplevel(enable)
-		:SetBackdropBorderColor(0,0,0,0)
 		.__END
 		MF.FooterVersion = CHAIN(MF.Footer:CreateFontString())
-			:SetPoint("BOTTOMLEFT",5,5)
 			:SetFont(FONTBOLD,12)
 			:SetText("VER:")
 		.__END
@@ -278,7 +305,6 @@ function GuideMenu:CreateFrames()
 		.__END
 		
 		MF.FooterSettingsButton = CHAIN(CreateFrame("Button",nil,MF.Footer))
-			:SetPoint("BOTTOMRIGHT",-5,5)
 			:SetSize(15,15)
 			:SetScript("OnClick",function() GuideMenu:Open("Options") end)
 		.__END
@@ -288,8 +314,6 @@ function GuideMenu:CreateFrames()
 		:SetPoint("TOPLEFT",MF.Header,"BOTTOMLEFT")
 		:SetPoint("BOTTOMLEFT",MF.Footer,"TOPLEFT")
 		:SetWidth(222)
-		:SetFrameStrata("HIGH")
-		:SetBackdropColor(ZGV.F.HTMLColor("#2b2b2bff"))
 		:SetBackdropBorderColor(0,0,0,0)
 		.__END
 
@@ -300,7 +324,6 @@ function GuideMenu:CreateFrames()
 			MF.MenuGuides.SearchEdit = CHAIN(ui:Create("EditBox",MF.MenuGuides))
 				:SetPoint("TOPLEFT",MF.MenuGuides,"TOPLEFT",16,-10)
 				:SetWidth(181)
-				:SetBackdropBorderColor(ZGV.F.HTMLColor("#7d7d7dff"))
 				:SetScript("OnEnterPressed",function() MF.MenuGuides.SearchEdit:ClearFocus() GuideMenu:Open("Search") end)
 				:HookScript("OnEscapePressed",function() MF.MenuGuides.SearchEdit:SetText("") GuideMenu:Open("Home") end)
 				:SetScript("OnTextChanged",function(edit,user) if user then GuideMenu:Open("Search") end end)
@@ -333,19 +356,18 @@ function GuideMenu:CreateFrames()
 
 
 	MF.CenterColumn = CHAIN(ui:Create("Frame", MF))
-		:SetPoint("TOPLEFT",MF.MenuColumn,"TOPRIGHT",1,0)
-		:SetPoint("BOTTOMLEFT",MF.MenuColumn,"BOTTOMRIGHT",1,0)
-		:SetWidth(379)
-		:SetFrameStrata("HIGH")
-		:SetBackdropColor(ZGV.F.HTMLColor("#222222ff"))
+		:SetPoint("TOPLEFT",MF.MenuColumn,"TOPRIGHT",-1,0)
+		:SetPoint("BOTTOMLEFT",MF.MenuColumn,"BOTTOMRIGHT",-1,0)
+		:SetWidth(382)
 		:SetBackdropBorderColor(0,0,0,0)
 		.__END
 
 		MF.CenterColumn.SectionInfo = CHAIN(CreateFrame("Button",nil))
-			:SetSize(379,22)
-			:SetFrameStrata("HIGH")
+			:SetHeight(22)
 			:SetParent(MF.CenterColumn)
-			:SetPoint("TOPLEFT")
+			:SetPoint("TOP")
+			:SetPoint("LEFT")
+			:SetPoint("RIGHT")
 			.__END
 			local SectionInfo=MF.CenterColumn.SectionInfo
 			SectionInfo.Texture = CHAIN(SectionInfo:CreateTexture(nil,"LOW")) 
@@ -422,11 +444,9 @@ function GuideMenu:CreateFrames()
 		end
 
 	MF.WideColumn = CHAIN(ui:Create("Frame", MF))
-		:SetPoint("TOPLEFT",MF.MenuColumn,"TOPRIGHT",1,0)
-		:SetPoint("BOTTOMLEFT",MF.MenuColumn,"BOTTOMRIGHT",1,0)
-		:SetWidth(600)
-		:SetFrameStrata("HIGH")
-		:SetBackdropColor(ZGV.F.HTMLColor("#222222ff"))
+		:SetPoint("TOPLEFT",MF.MenuColumn,"TOPRIGHT",-1,0)
+		:SetPoint("BOTTOMLEFT",MF.MenuColumn,"BOTTOMRIGHT",-1,0)
+		:SetWidth(602)
 		:SetBackdropBorderColor(0,0,0,0)
 		:Hide()
 		.__END
@@ -457,7 +477,7 @@ function GuideMenu:CreateFrames()
 
 		MF.WideColumnHome = CHAIN(ui:Create("ScrollChild",MF.WideColumn,"Home_Scroller",MF.WideColumnHomeInner))
 			:SetPoint("TOPLEFT",MF.WideColumn.Decor,"BOTTOMLEFT")
-			:SetPoint("BOTTOMRIGHT",-15,1)
+			:SetPoint("BOTTOMRIGHT",-16,1)
 			:Hide()
 			.__END
 		MF.WideColumnHome:SetHideWhenUseless(true)
@@ -478,31 +498,35 @@ function GuideMenu:CreateFrames()
 	MF.RightColumn = CHAIN(ui:Create("Frame", MF))
 		:SetPoint("TOPRIGHT",MF.Header,"BOTTOMRIGHT")
 		:SetPoint("BOTTOMRIGHT",MF.Footer,"TOPRIGHT")
-		:SetWidth(220)
-		:SetFrameStrata("HIGH")
-		:SetBackdropColor(ZGV.F.HTMLColor("#2b2b2bff"))
+		:SetWidth(221)
 		:SetBackdropBorderColor(0,0,0,0)
 		.__END
 
 
 		MF.RightColumn.GuideImage = CHAIN(MF.RightColumn:CreateTexture(nil,"LOW")) 
-			:SetSize(220,139) 
-			:SetPoint("TOPLEFT") 
+			:SetHeight(139) 
+			:SetPoint("TOP",0,-1) 
+			:SetPoint("LEFT",1,0) 
+			:SetPoint("RIGHT",-1,0) 
 			:SetTexture(ZGV.DIR.."\\Skins\\menu_noguide")
 			:SetTexCoord(0,220/256,0,139/256)
 		.__END
 
 		MF.RightColumn.GuideMascot = CHAIN(MF.RightColumn:CreateTexture(nil,"LOW")) 
-			:SetSize(220,289) 
-			:SetPoint("BOTTOMLEFT") 
+			:SetHeight(289) 
+			:SetPoint("BOTTOM",0,1) 
+			:SetPoint("LEFT",1,0) 
+			:SetPoint("RIGHT",-1,0) 
 			:SetTexture(ZGV.DIR.."\\Skins\\menu_mascot")
 			:SetTexCoord(0,220/256,0,289/512)
 		.__END
 
 		MF.RightColumn.GuideModel = CHAIN(CreateFrame("PlayerModel",nil,MF.RightColumn,"ZygorGuidesViewerPlayerModel"))
-			:SetPoint("TOPLEFT")
+			:SetHeight(139) 
+			:SetPoint("TOP") 
+			:SetPoint("LEFT",0,0) 
+			:SetPoint("RIGHT",-1,0) 
 			:SetAutoRotation(0.4)
-			:SetSize(220,139)
 		.__END
 
 		MF.RightColumn.GuideTitle = CHAIN(MF.RightColumn:CreateFontString())
@@ -531,33 +555,14 @@ function GuideMenu:CreateFrames()
 			:SetJustifyH("left")
 			:Hide()
 		.__END
-		MF.RightColumn.GuideProgressValue = CHAIN(MF.RightColumn:CreateFontString())
-			:SetPoint("TOPRIGHT",MF.RightColumn.GuideDesc,"BOTTOMRIGHT",0,-10)
-			:SetFont(FONT,12)
-			:SetText("100%")
-			:SetWidth(210)
-			:SetJustifyH("right")
-			:Hide()
-		.__END
-
-		MF.RightColumn.GuideProgressBar = CHAIN(CreateFrame("Frame",nil,MF.RightColumn))
-			:SetBackdrop(SkinData("ProgressBarBackdrop"))
-			:SetBackdropColor(unpack(SkinData("ProgressBarBackdropColor")))
-			:SetBackdropBorderColor(unpack(SkinData("ProgressBarBackdropBorderColor")))
+		MF.RightColumn.GuideProgress = CHAIN(ui:Create("ProgressBar",MF.RightColumn))
 			:SetSize(210,7)
-			:SetHeight(SkinData("ProgressBarHeight"))
-			:SetFrameStrata("HIGH")
 			:SetFrameLevel(MF.RightColumn:GetFrameLevel()+3)
 			:SetPoint("TOPLEFT",MF.RightColumn.GuideProgressLabel,"BOTTOMLEFT",0,-12)
+			:SetDecor(SkinData("ProgressBarDecorUse"))
+			:SetAnim(false)
 			:Hide()
 		.__END
-		
-		MF.RightColumn.GuideProgressBar.tex = CHAIN(MF.RightColumn.GuideProgressBar:CreateTexture())
-			:SetHeight(SkinData("ProgressBarHeight")-2)
-			:SetPoint("TOPLEFT",MF.RightColumn.GuideProgressBar,"TOPLEFT",1,-1)
-			:SetColorTexture(unpack(SkinData("ProgressBarTexture")))
-			:SetVertexColor(unpack(ZGV.CurrentSkinStyle:SkinData("ProgressBarColor") or {0,1,0,1}))
-		.__END 
 end
 
 local function MenuButton_SetHighlight(button,tf,force)
@@ -588,7 +593,6 @@ function GuideMenu:MakeMenuButton(name,caption,texture,x,w,y,h)
 	local parent = GuideMenu.MainFrame.MenuGuides
 	local but = CHAIN(CreateFrame("Button"))
 		:SetSize(200,18)
-		:SetFrameStrata("HIGH")
 		:SetFrameLevel(4)
 		:SetParent(parent)
 	.__END
@@ -656,16 +660,19 @@ local firstpages = {['1_home']="Home",['2_current']="Current",['3_recent']="Rece
 function GuideMenu:Show(path,...)
 	if not GuideMenu.MainFrame then
 		GuideMenu:CreateFrames()
+		GuideMenu:ApplySkin()
 	end
 	ZGV.LOADGUIDES_INTENSITY=100
 	ZGV:AddMessageHandler("ZGV_GUIDES_PARSED",function() GuideMenu:Update() end)
 
 
 	GuideMenu.GuideListOffset=0
-	GuideMenu.MainFrame:Show()
+	GuideMenu.MainFrame:DoFadeIn()
 
-	if ZGV.db.profile.gmlasthomeversion~=GuideMenu.HomeVersion then path="Home" end
-	ZGV.db.profile.gmlasthomeversion = GuideMenu.HomeVersion
+	if path~="Options" then
+		if ZGV.db.profile.gmlasthomeversion~=GuideMenu.HomeVersion then path="Home" end
+		ZGV.db.profile.gmlasthomeversion = GuideMenu.HomeVersion
+	end
 
 	if not path then
 		if ZGV.db.profile.gmfirstpage=="5_last" then
@@ -679,7 +686,7 @@ function GuideMenu:Show(path,...)
 end
 
 function GuideMenu:Hide()
-	GuideMenu.MainFrame:Hide()
+	GuideMenu.MainFrame:DoFadeOut()
 	for i,v in pairs(ZGV.registeredguides) do
 		if v~=ZGV.CurrentGuide and v.fully_parsed and not v.poi then
 			v:Unload()
@@ -753,7 +760,9 @@ function GuideMenu:CreateHome()
 					GuideMenu:Update()
 				end)
 			else
-				object:SetScript("OnClick", function() ZGV:SetGuide(e.guide) end)
+				object:SetScript("OnClick", function() 
+					GuideMenu:ActivateGuide(ZGV:GetGuideByTitle(e.guide))
+				end)
 			end
 		elseif e.folder then
 			object:SetScript("OnClick", function() GuideMenu:Open(e.folder) end)
@@ -839,7 +848,7 @@ function GuideMenu:ShowOptions(opt)
 	for i,but in pairs(self.MainFrame.MenuOptions.buttons) do  if but.optiongroupblizname==opt or but.optiongroupname==opt then OptionButton_OnClick(but) return end end
 end
 
-local option_icons = { "main","menu","display","navi","poi","notification","gear","itemscore","gold","enhancements","profile","about" }
+local option_icons = { "main","menu","display","navi","poi","notification","gear","itemscore","gold","enhancements","profile","about","share" }
 local option_icons_rev = {}
 for k,v in ipairs(option_icons) do option_icons_rev[v]=k end
 

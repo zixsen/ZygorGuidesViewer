@@ -7,4 +7,5 @@
 	<!--Styles -->
 	<Script file="Stealth\Style.lua"/>
 	<Script file="Midnight\Style.lua"/>
+	<Script file="Glass\Style.lua"/>
 </Ui>

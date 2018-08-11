@@ -37,9 +37,10 @@ local DEFAULTHEIGHT = 100
 --]]
 
 function Frame:New(parent,name)
+	local r,g,b,a = unpack(SkinData("MainBackdropColor"))
 	local frame = CHAIN(CreateFrame("Frame", name, parent))
 		:SetBackdrop(SkinData("MainBackdrop"))
-		:SetBackdropColor(unpack(SkinData("MainBackdropColor")))
+		:SetBackdropColor(r,g,b,a)
 		:SetBackdropBorderColor(unpack(SkinData("MainBackdropBorderColor")))
 		:SetSize(DEFAULTWIDTH,DEFAULTHEIGHT)
 		:SetClampedToScreen(true)
@@ -163,12 +164,18 @@ function Frame:ResetTimeStamp()
 	self:UpdateTimeStamp()
 end
 
-
 function Frame:DoFadeIn(duration)
+	if self:IsVisible() then return end
+
+	duration = duration or self.duration or 0.1
 	self:Show()
+	UIFrameFadeIn(self,duration,0,1)
 end
 
 function Frame:DoFadeOut(duration)
-	self:Hide()
-end
+	if not self:IsVisible() then return end
 
+	duration = duration or self.duration or 0.1
+	UIFrameFadeOut(self,duration,1,0)
+	self.fadeInfo.finishedFunc = function() self:Hide() end
+end

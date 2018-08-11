@@ -6,8 +6,6 @@ local L = ZGV.L
 
 local UIFrameFadeOut,UIFrameFadeIn=ZGV.UIFrameFade.UIFrameFadeOut,ZGV.UIFrameFade.UIFrameFadeIn  -- prevent taint
 
-local hide_timer_main = 0
-local hide_timer_proff = 0
 
 local doborderrgb = function(self)
 	local progress = 1.0 - self:GetProgress()
@@ -77,212 +75,25 @@ end
 
 local LastUsedStep=0
 local FrameSetUp = false
-function ZygorGuidesViewer_ProgressBar_SetUp()
-	local progress = ZGV.db.profile.progress
-	local colors = ZGV.db.profile.progresscolor
 
-	local progressbar=ZGV.Frame.Border.ProgressBar
-	local progresstex=ZGV.Frame.Border.ProgressBar.tex
 
-	if progress then
-		progressbar:Show()
-		progresstex:SetVertexColor(colors.r,colors.g,colors.b,colors.alpha)
-	else
-		progressbar:Hide()
-	end
-
-	ZGV:ResizeFrame()
-end
-
-function ZygorGuidesViewer_ProgressBar_Update()
-	if not ZGV.db.char.maint_enableprogressbar then return end
-	if not ZGV.CurrentGuide or not ZGV.CurrentGuide.CurrentStepNum or not ZGV.db.profile.progress then return end
-	local percent,num = ZGV.CurrentGuide:GetCompletion(ZGV.db.profile.levelprogbar)
-
-	local progressbar=ZGV.Frame.Border.ProgressBar
-	local progresstex=ZGV.Frame.Border.ProgressBar.tex
-
-	if ZGV.CurrentGuide.dungeon then
-		percent=ZGV.CurrentGuide.CurrentStepNum/#ZGV.CurrentGuide.steps
-	end
-
-	local stepsReqMet=0
-	local stepsCompleted=0
-	if percent and not num and ZGV.CurrentGuide.endlevel then
-		if ZGV.db.profile.levelprogbar == "steps" then
-			for i=1, #ZGV.CurrentGuide.steps do
-				local step=ZGV.CurrentGuide.steps[i]
-				local complete = step:IsComplete()
-				local valid = step:AreRequirementsMet()
-				if valid then
-					if complete then
-						stepsCompleted=stepsCompleted+1
-					else
-						--if ZGV.CurrentGuide.steps[i-1] and ZGV.CurrentGuide.steps[i+1] and (ZGV.CurrentGuide.steps[i-1]:IsComplete() and ZGV.CurrentGuide.steps[i+1]:IsComplete()) then
-						--	stepsCompleted=stepsCompleted+1
-						--end
-					end
-					stepsReqMet=stepsReqMet+1
-				end
-			end
-			if stepsCompleted then
-				percent=stepsCompleted/stepsReqMet
-				percent=(ceil(percent*100))/100
-			end
-		end
-	end
-
-	progressbar.percent = percent
-	
-	if ZGV.db.profile.levelprogbar == "inventory" then
-		progressbar.percent = ZGV.IM:GetBarPercentage()
-	end
-
-	ZygorGuidesViewer_ProgressBar_Refresh()
-end
-
-function ZygorGuidesViewer_ProgressBar_Refresh()
-	--print("Called from "..debugstack())
-	local progressbar=ZGV.Frame.Border.ProgressBar
-	local progresstex=ZGV.Frame.Border.ProgressBar.tex
-
-	if ZGV.db.profile.levelprogbar == "level" or ZGV.db.profile.levelprogbar == "quests" then
-		progresstex:SetVertexColor(unpack(ZGV.CurrentSkinStyle:SkinData("ProgressBarColor2") or {0.53,0.81,0.98,1}))
-	elseif ZGV.db.profile.levelprogbar == "steps" then
-		progresstex:SetVertexColor(unpack(ZGV.CurrentSkinStyle:SkinData("ProgressBarColor") or {0,1,0,1}))
-	elseif ZGV.db.profile.levelprogbar == "inventory" then
-		progresstex:SetVertexColor(unpack(ZGV.IM:GetBarColor()))
-	end
-
-	local percent = progressbar.percent or 0
-	local TotalSize=progressbar:GetWidth()--ZygorGuidesViewerFrame_Step1:GetWidth()
-
-	if type(percent)~="number" then percent=0 end
-	--progressbar:SetWidth(TotalSize)
-
-	if(percent*TotalSize)<20 then
-		progresstex:SetWidth((percent/2)*TotalSize+.5)
-	else
-		progresstex:SetWidth(percent*TotalSize-ZGV.CurrentSkinStyle.ProgressBarInset*2)
+function ZGV.GenericDragStartHandler(button)
+	if not ZygorGuidesViewer.db.profile["windowlocked"] then 
+		if button=='LeftButton' then 
+			ZygorGuidesViewerFrameMaster:StartMoving() 
+			ZygorGuidesViewer.framemoving=true 
+		else 
+			ZygorGuidesViewer:SetOption("Display","resizeup") 
+		end 
 	end
 end
 
-function ZygorGuidesViewer_ProgressBar_OnEnter()
-	if not ZGV.CurrentGuide then return end
-	local percent,num = ZGV.CurrentGuide:GetCompletion(ZGV.db.profile.levelprogbar)
-	local _,compText=ZGV.CurrentGuide:GetCompletionText(ZGV.db.profile.levelprogbar)
-
-
-	local progressbar=ZGV.Frame.Border.ProgressBar
-	local progresstex=ZGV.Frame.Border.ProgressBar.tex
-	local progresstext=ZGV.Frame.Border.ProgressBar.text
-
-	if ZGV.db.profile["Inventory Manager"] and
-	   ZGV.db.profile["Inventory Manager"].lastParentName == "Zygor Guide" and
-	   ZGV.db.profile["Inventory Manager"].isSnapped then
-	   	-- If Inventory Manager is attached, move the tooltip below it.
-		GameTooltip:SetOwner(ZGV.IM.InventoryManagerFrame, "ANCHOR_BOTTOM")
-	else
-		GameTooltip:SetOwner(ZGV.Frame, "ANCHOR_BOTTOM")
-	end
-
-	GameTooltip:ClearAllPoints()
-	GameTooltip:ClearLines()
-	GameTooltip:SetText(compText)
-
-	if ZGV.CurrentGuide.dungeon then
-		percent=ZGV.CurrentGuide.CurrentStepNum/#ZGV.CurrentGuide.steps
-		GameTooltip:SetText(L['frame_guide_step']:format(ZGV.CurrentGuide.CurrentStepNum,#ZGV.CurrentGuide.steps))
-	end
-
-	local stepsReqMet=0
-	local stepsCompleted=0
-	if percent and not num and ZGV.CurrentGuide.endlevel then
-		if ZGV.db.profile.levelprogbar=="steps" then
-			for i=1, #ZGV.CurrentGuide.steps do
-				local complete = ZGV.CurrentGuide.steps[i]:IsComplete()
-				local valid = ZGV.CurrentGuide.steps[i]:AreRequirementsMet()
-				if valid then
-					stepsReqMet=stepsReqMet+1
-
-					if complete	-- Is this step complete? 
-					or (ZGV.CurrentGuide.steps[i-1] and ZGV.CurrentGuide.steps[i+1] and (ZGV.CurrentGuide.steps[i-1]:IsComplete() and ZGV.CurrentGuide.steps[i+1]:IsComplete())) then	-- If this step isn't complete but steps on both sides are then consider this one complete.
-						stepsCompleted=stepsCompleted+1
-					end
-
-				end
-			end
-			if stepsCompleted then
-				percent=stepsCompleted/stepsReqMet
-				percent=(ceil(percent*100))/100
-			end
-			GameTooltip:SetText(L['frame_guide_stepscompleted']:format(stepsCompleted,stepsReqMet))
-			GameTooltip:AddLine(L['frame_guide_switch_inventory'])
- 		elseif ZGV.db.profile.levelprogbar == "level" then
- 			GameTooltip:SetText(compText)
-			GameTooltip:AddLine(L['frame_guide_switch_step'])
-		elseif ZGV.db.profile.levelprogbar == "inventory" then
-			GameTooltip:SetText(ZGV.IM:GetBarText())
-			GameTooltip:AddLine(L['frame_guide_switch_level'])
-		end
-	end
-
-	if type(percent)~="number" then percent=0 end
-
-	if ZGV.CurrentGuide.type=="LEVELING" and ZGV.CurrentGuide.endlevel and ZGV.db.profile.levelprogbar=="level" then
-		if percent==1 then
-			progresstext:SetText(L['frame_guide_maxlevel'])
- 		else
-			progresstext:SetText(L['frame_guide_progress']:format(floor(percent*100)))
- 		end
- 	elseif ZGV.db.profile.levelprogbar=="inventory" then
- 		progresstext:SetText(ZGV.IM:GetBarText())
- 	else
- 		if percent==1 then
-			progresstext:SetText(L['frame_guide_complete'])
- 		else
-			progresstext:SetText(L['frame_guide_progress']:format(floor(percent*100)))
-		end
-	end
-
-	GameTooltip:Show()
+function ZGV.GenericDragStopHandler()
+	ZygorGuidesViewerFrameMaster:StopMovingOrSizing() 
+	ZygorGuidesViewer:AlignFrame() 
+	ZGV.framemoving=nil
 end
 
-function ZygorGuidesViewer_ProgressBar_OnExit()
-	ZGV.Frame.Border.ProgressBar.text:Hide()
-	GameTooltip:Hide()
-end
-
-function ZygorGuidesViewer_ProgressBar_OnClick()
-	-- quests > level if set > steps > inventory
-	if ZGV.CurrentGuide.endlevel then
-		if ZGV.db.profile.levelprogbar == "level" then
-			ZGV.db.profile.levelprogbar = "steps"
-		elseif ZGV.db.profile.levelprogbar == "steps" then
-			ZGV.db.profile.levelprogbar = "quests"
-		elseif ZGV.db.profile.levelprogbar == "quests" then
-			ZGV.db.profile.levelprogbar = "inventory"
-		elseif ZGV.db.profile.levelprogbar == "inventory" then
-			ZGV.db.profile.levelprogbar = "level"
-		else
-			ZGV.db.profile.levelprogbar = "quests"
-		end
-		ZygorGuidesViewer_ProgressBar_OnEnter()
-		ZygorGuidesViewer_ProgressBar_Update()
-	else
-		if ZGV.db.profile.levelprogbar == "quests" then
-			ZGV.db.profile.levelprogbar = "steps"
-		elseif ZGV.db.profile.levelprogbar == "steps" then
-			ZGV.db.profile.levelprogbar = "inventory"
-		elseif ZGV.db.profile.levelprogbar == "inventory" then
-			ZGV.db.profile.levelprogbar = "quests"
-		else
-			ZGV.db.profile.levelprogbar = "quests"
-		end
-		ZygorGuidesViewer_ProgressBar_OnEnter()
-		ZygorGuidesViewer_ProgressBar_Update()
-	end
-end
 
 local function Step_OnLeave(self)
 	if not self or GameTooltip:GetOwner()==self then
@@ -591,7 +402,6 @@ end
 
 local ZGVF
 local Border
-local GuideButton
 local TitleBar
 
 function ZGV:AddActionButtons(frame,line)
@@ -635,14 +445,36 @@ function ZGV:AddActionButtons(frame,line)
 	cd:Hide()
 end
 
+local function CreateProgressBar(frame)
+	local ProgressBar = ZGV.UI:Create("ProgressBar",frame)
+
+	function ProgressBar:Update()
+		local current_guide = ZGV.CurrentGuide
+
+		if not current_guide or not current_guide.CurrentStepNum or not ZGV.db.profile.progress then 
+			ProgressBar:SetPercent(0)
+			return 
+		end
+
+		-- progress
+		local percent,num,total = current_guide:GetCompletion("steps")
+		local tooltiptext = L['frame_guide_stepscompleted']:format(num,total)
+		local maintext = (percent==1) and L['frame_guide_complete'] or L['frame_guide_progress']:format(floor(percent*100))
+
+		ProgressBar:SetPercent(percent*100)
+		ProgressBar:SetText(maintext)
+		ProgressBar:SetTooltip(tooltiptext)
+	end
+
+	ZGV.ProgressBar = ProgressBar
+	return ProgressBar
+end
+
 function ZygorGuidesViewerFrame_OnLoad(self)
 	ZGVF = self
 	Border = ZGVF.Border
 	TitleBar = Border.TitleBar
-	GuideButton = Border.Guides.GuideButton
 	
-	local findVendorAdjust = 0  -- Moved the Vendor button . . . ~~ Jeremiah, March 25 2014
-
 	self:EnableMouseWheel(1)
 
 	for i=1,20 do
@@ -651,20 +483,15 @@ function ZygorGuidesViewerFrame_OnLoad(self)
 
 	-- Settings Button
 	ZygorGuidesViewerFrame_SettingsButton:ClearAllPoints()
-	ZygorGuidesViewerFrame_SettingsButton:SetPoint("CENTER", ZygorGuidesViewerFrame_Scroll ,"BOTTOMRIGHT",-5,3)
-
-	Border.ProgressBar=ZygorGuidesViewer_ProgressBar -- Would never write the progress bar in xml again
-	Border.ProgressBar.tex=ZygorGuidesViewer_ProgressBar_Texture
-	Border.ProgressBar.text=ZygorGuidesViewer_ProgressBar_TextString
-
-	Border.ProgressBar:ClearAllPoints()
-	Border.ProgressBar:SetParent("ZygorGuidesViewerFrame")
-	--Border.ProgressBar:SetPoint("CENTER", ZygorGuidesViewerFrame_Scroll , "BOTTOM", 0,ZGV.CurrentSkinStyle:SkinData("GuideButtonSize"))
+	ZygorGuidesViewerFrame_SettingsButton:SetPoint("TOPLEFT", TitleBar ,"TOPLEFT",30,-7)
+	ZygorGuidesViewerFrame_SettingsButton:SetFrameLevel(5)
 
 	-- Progress Bar
-	Border.ProgressBar:SetPoint("TOPLEFT", ZygorGuidesViewerFrame_Scroll ,"BOTTOMLEFT",findVendorAdjust,ZGV.CurrentSkinStyle:SkinData("GuideButtonSize")/2 - 3)
-	Border.ProgressBar:SetPoint("RIGHT", ZygorGuidesViewerFrame_SettingsButton , "LEFT", -2,0)
-	Border.ProgressBar:SetFrameLevel(ZygorGuidesViewerFrame:GetFrameLevel()+5)
+	local ProgressBar = CreateProgressBar(ZGVF)
+	ProgressBar:SetPoint("TOPLEFT", ZygorGuidesViewerFrame_Scroll,"BOTTOMLEFT",0,25)
+	ProgressBar:SetPoint("TOPRIGHT", ZygorGuidesViewerFrame_ScrollChild , "BOTTOMRIGHT",0,25)
+	ProgressBar:SetFrameLevel(ZygorGuidesViewerFrame:GetFrameLevel()+5)
+	ProgressBar:SetTextOnMouse(true)
 
 	-- Search Button
 	ZygorGuidesViewerFrame_SearchButton:ClearAllPoints()
@@ -727,9 +554,6 @@ function ZygorGuidesViewerFrame_OnLoad(self)
 
 	ZygorGuidesViewerFrame_Border_Guides_PrevButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	ZygorGuidesViewerFrame_Border_Guides_NextButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-
-	ZygorGuidesViewerFrame_Border_Guides_GuideBack_SectionTitle:SetFont(ZGV.Font,11)
-	--ZygorGuidesViewerFrame_Border_SectionTitle:SetJustifyV("MIDDLE")
 
 	--ZGVF.SmoothSetHeight = ZGVF_SetHeight
 
@@ -816,53 +640,8 @@ function ZygorGuidesViewerFrame_OnUpdate(self,elapsed)
 
 	local locked = ZGV.db.profile.windowlocked
 
-	-- auto-hide border
-	if profile.hideborder and ZGV.CurrentGuide then
-		-- never hide while the window is being moved
-		if ZGV.framemoving then
-			self.leftCount=0
-		end
-
-		--if ZGV.db.profile.windowlocked then
-			xPos,yPos = GetCursorPosition()
-			if xPos~=self.oldxPos or yPos~=self.oldyPos then self.mouseCount=0 end
-			self.oldxPos,self.oldyPos = xPos,yPos
-		--end
-
-		--if (  (locked and MouseIsOver(TitleBar,10,-10,-30,30))
-		--   or (--[[not locked and]] MouseIsOver(ZGVF,0,0,-20,0))
-		if MouseIsOver(ZGVF,10,-10,-10,10) and ZGV.borderfadedout
-		   and not profile.nevershowborder  -- with this being hardcoded, we will never have access to mouseover
-		   then
-			self.mouseCount = self.mouseCount+elapsed
-			self.leftCount=0
-			if self.mouseCount>ZGV.db.profile.bordershowdelay then
-				UIFrameFadeIn(Border,fadespeed,0.0,1.0)
-				ZGV.borderfadedout=nil
-			end
-			GuideButton.delay=-2
-		end
-
-		--if not MouseIsOver(self,10,-10,-30,30) then
-		if not MouseIsOver(self,0,0,0,0) then
-			self.leftCount = self.leftCount+elapsed*2
-			self.mouseCount=0
-			--print("Mouseout", self.leftCount, ZGV.db.profile.borderhidedelay, ZGV.borderfadedout)
-			if self.leftCount>ZGV.db.profile.borderhidedelay and Border:GetAlpha()>0.05 and not ZGV.borderfadedout then
-				UIFrameFadeOut(Border,fadespeed,1.0,0.0)
-				ZGV.borderfadedout=true
-			end
-		end
-
-		if Border:GetAlpha()<0.05 then
-			Border:Hide()
-		else
-			Border:Show()
-		end
-	else
-		Border:Show()
-		Border:SetAlpha(1)
-	end
+	Border:Show()
+	Border:SetAlpha(1)
 
 	--[[
 	local gt=GetTime()-(ZygorGuidesViewerFrame_ThinFlash.starttime or 0)
@@ -909,37 +688,6 @@ function ZygorGuidesViewerFrame_OnUpdate(self,elapsed)
 	end
 
 
-	--[[
-	-- title button slide in
-	local but = ZygorGuidesViewerFrame_Border_Guides_GuideButton
-	if Border:IsShown() and (MouseIsOver(TitleBar,0,0,50,-50) or not ZGV.CurrentGuide) and not ZGV.loading then
-		if locked then
-			xPos,yPos = GetCursorPosition()
-			if (not but.oldxPos or not but.oldyPos or xPos~=but.oldxPos or yPos~=but.oldyPos) and but.delay>0 then but.delay=0 end
-			but.oldxPos,but.oldyPos = xPos,yPos
-		end
-
-		but.delay=(but.delay or 0)+elapsed * (locked and 2 or 4)
-		if but.delay>1.5 or but.pos>0.01 then
-			but.pos = but.pos + elapsed*4
-			if but.pos>1 then but.pos=1 end
-			local a = 3.14159+0.34159+(math.sin(but.pos*1.5708))*2.8
-			but:Show()
-			but:dorot(a)
-		end
-	end
-	if but:IsShown() and not MouseIsOver(ZygorGuidesViewerFrame_Border_TitleBar,0,0,50,-50) and ZGV.CurrentGuide and not DropDownList1:IsShown() and not DropDownList2:IsShown() then
-		if but.pos<0.01 then
-			but:Hide()
-			if but.delay>0 then but.delay=0 end
-		else
-			but.pos = but.pos - elapsed*4
-			if but.pos<0 then but.pos=0 end
-			local a = 3.14159+0.34159+(math.sin(but.pos*1.5708))*2.8
-			but:dorot(a)
-		end
-	end
-	--]]
 
 	--[[
 	if not ZGV.briefstepexpansion then ZGV.briefstepexpansion=0.01 end
@@ -965,13 +713,11 @@ function ZygorGuidesViewerFrame_OnUpdate(self,elapsed)
 
 	-- title button flash
 	if (not ZGV.CurrentGuide and not ZGV.loading) or ZGV.suggesting then
-		GuideButton.flashing = true
-		if not GuideButton.blink:IsPlaying() then GuideButton.blink:Play() end
-		GuideButton:LockHighlight()
+		ZGV.Tabs.AddButton.flashing = true
+		ZGV.Tabs.AddButton:LockHighlight()
 	else
-		GuideButton.flashing = nil
-		GuideButton.blink:Stop()
-		GuideButton:UnlockHighlight()
+		ZGV.Tabs.AddButton.flashing = nil
+		ZGV.Tabs.AddButton:UnlockHighlight()
 	end
 
 	if ZGV.frameNeedsUpdating then
@@ -1069,7 +815,7 @@ function ZygorGuidesViewerFrame_OnSize(self)
 
 	ZGV:UpdateFrame(true)
 	ZGV:ResizeFrame()
-	ZygorGuidesViewer_ProgressBar_SetUp()
+	--ZGV.ProgressBar:SetUp()
 
 	self.oldWidth=self:GetWidth()
 	if ZGV.db.profile.showcountsteps==0 then
@@ -1087,11 +833,19 @@ end
 
 function ZygorGuidesViewerFrame_OnMouseWheel(self,delta)
 	if IsControlKeyDown() then
-		if delta>0 then delta=0.2 else delta=-0.2 end
+		if delta>0 then delta=0.25 else delta=-0.25 end
 		ZGV.db.profile.framescale = ZGV.db.profile.framescale + delta
-		if ZGV.db.profile.framescale<0.8 then ZGV.db.profile.framescale=0.8 end
-		if ZGV.db.profile.framescale>1.6 then ZGV.db.profile.framescale=1.6 end
+		if ZGV.db.profile.framescale<0.75 then ZGV.db.profile.framescale=0.75 end
+		if ZGV.db.profile.framescale>1.75 then ZGV.db.profile.framescale=1.75 end
 		self:SetScale(ZGV.db.profile.framescale)
+
+		if ZGV.db.profile.debug_newicons then
+			if self:GetScale()>1.0 then
+				ZygorGuidesViewerFrame_LockButton:GetNormalTexture():SetTexCoord(0.5,0.5+(28/32)/2,0,(28/32))
+			else
+				ZygorGuidesViewerFrame_LockButton:GetNormalTexture():SetTexCoord(0,0.25,0,0.5)
+			end
+		end
 	end
 end
 
@@ -1127,6 +881,7 @@ function ZygorGuidesViewerFrame_SettingsButton_OnEnter(self)
 end
 
 -------------------
+
 
 -------------------
 
@@ -1216,6 +971,26 @@ end
 
 --------------------
 
+function ZygorGuidesViewerFrame_Guides_GuideShareButton_OnClick(self,button)
+	if ZGV.Sync:IsMaster() or ZGV.Sync:IsSlave() then 
+		ZGV:SetOption("Share","share_masterslave 0")
+		ZGV.Sync:UpdateButtonColor()
+	else
+		ZGV.Sync:ActivateAsMasterWithConfirmation()
+	end
+	ZGV:RefreshOptions()
+end
+
+function ZygorGuidesViewerFrame_Guides_GuideShareButton_OnEnter(self)
+	GameTooltip:SetOwner(ZGV.Frame, "ANCHOR_TOP")
+	GameTooltip:SetText(L['opt_share_enabled'])
+	GameTooltip:AddLine(L['opt_share_enabled_desc'],0,1,0)
+	GameTooltip:Show()
+end
+--]]
+
+--------------------
+
 function ZygorGuidesViewerFrame_ResizerLeft_OnMouseDown(self,button)
 	if not ZygorGuidesViewer.db.profile.windowlocked then
 		ZygorGuidesViewerFrame.sizedleft=ZygorGuidesViewerFrame:GetLeft()
@@ -1286,51 +1061,6 @@ function ZygorGuidesViewerFrame_Guides_MiniButton_OnEnter(self,button)
 	GameTooltip:SetText(L[ZGV.db.profile.showinlinetravel and 'frame_showinlinetravel_on' or 'frame_showinlinetravel_off'])
 	GameTooltip:AddLine(L[ZGV.db.profile.showinlinetravel and 'frame_showinlinetravel_gooff' or 'frame_showinlinetravel_goon'],0,1,0)
 	--GameTooltip:AddLine(L['frame_minright'],0,1,0)
-	GameTooltip:Show()
-end
-
----------------------
-
-function ZygorGuidesViewerFrame_Guides_GuideButton_OnClick(self,button)
-	--if not ZGV.guidesloaded then return false end
-	local path
-	if (ZGV.Menu and ZGV.Menu.Frame and ZGV.Menu.Frame:IsVisible() and ((button=="RightButton")==(ZGV.Menu.path=="SUGGESTED"))) then
-		ZGV.GuideMenu:Hide()
-	else
-		if button=="RightButton" and self.suggestedguide then
-			ZGV:SetGuide(self.suggestedguide)
-		else
-			if button=="RightButton" then
-				ZGV.GuideMenu:Show("Suggested")
-		else
-				ZGV.GuideMenu:Show()
-			end
-		end
-		--[[
-		ZygorGuidesViewerFrame_Border_SectionDropDownButton:GetScript("OnClick")(ZygorGuidesViewerFrame_Border_SectionDropDownButton,arg1)
-		--]]
-	end
-end
-
-function ZGV:UpdateGuideMenuButton()
-	--ZygorGuidesViewerFrame.Border.Guides.GuideButton:SetEnabled(ZGV.guidesloaded)
-	if ZygorGuidesViewerFrame.Border.Guides.GuideButton:IsMouseOver() then ZygorGuidesViewerFrame_Guides_GuideButton_OnEnter() end
-end
-
-function ZygorGuidesViewerFrame_Guides_GuideButton_OnEnter(self)
-	GameTooltip:SetOwner(ZGV.Frame, "ANCHOR_TOP")
-	GameTooltip:SetText(L['frame_selectguide'])
-	GameTooltip:AddLine(L['frame_selectguide_left'],0,1,0)
-	--[[ -- This is long outdated, as of 2015-08-19 anyway. Suggested guides are long grouped and can't just be counted like that.
-	local sug = ZGV:FindSuggestedGuides()
-	self.suggestedguide = nil
-	if #sug>1 then
-		GameTooltip:AddLine(L['frame_selectguide_right2']:format(#sug),0,1,0)
-	elseif #sug==1 then
-		GameTooltip:AddLine(L['frame_selectguide_right1']:format(sug[1].title_short),0,1,0)
-		self.suggestedguide = sug[1]
-	end
-	--]]
 	GameTooltip:Show()
 end
 

@@ -79,5 +79,5 @@ data.portkeys = { -- smile if you're a muggle
 	--- LEGION ---
 	--------------
 	{item=140192, destination="Dalaran L/10 60.92,44.72", cooldown=1200, cost=20, mode="dhearth", cond=function() local m=ZGV.CurrentMapID return m~=625 and m~=626 and m~=627 and m~=628 and m~=629 and m~=695 and m~=717 and m~=718 and m~=715 and m~=734 and m~=735 and m~=672 and m~=673 and m~=674 and m~=675 and m~=719 and m~=720 and m~=721 and m~=702 and m~=747 and m~=739 and m~=725 and m~=726 and m~=709 and m~=24 end}, -- Dalaran Hearthstone
-	{item=141605, destination="_TAXIWHISTLE", cooldown=60, cost=12, mode="whistle", cond=function() local m=ZGV.CurrentMapID return m==630 or m==631 or m==632 or m==633 or m==651 or m==652 or m==653 or m==654 or m==655 or m==656 or m==657 or m==658 or m==659 or m==660 or m==634 or m==635 or m==636 or m==637 or m==638 or m==639 or m==640 or m==696 or m==680 or m==681 or m==682 or m==683 or m==684 or m==685 or m==686 or m==687 or m==688 or m==689 or m==690 or m==691 or m==692 or m==693 or m==750 or m==739 or m==641 or m==642 or m==643 or m==644 or m==646 or m==647 or (IsQuestFlaggedCompleted(38995) and m==695) end }, -- Flight Master's Whistle
+	{item=141605, destination="_TAXIWHISTLE", cooldown=60, cost=12, mode="whistle", cond=function() return LibRover.TaxiWhistlePredictor:IsOnValidMap() end }, -- Flight Master's Whistle
 }

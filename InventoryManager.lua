@@ -1408,7 +1408,7 @@ function IM:GetBarText()
 end
 
 function IM:UpdateBar()
-	ZygorGuidesViewer_ProgressBar_Update()
+	ZGV.ProgressBar:Update()
 	if not InventoryMeterBarFrame then return end -- Can't update until the frame exists.
 	local numItems, numSlots = IM:countItemsInBags()
 

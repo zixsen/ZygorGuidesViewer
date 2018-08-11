@@ -911,27 +911,19 @@ function AutoEquip:CreatePopup()
 	local SkinData = ui.SkinData
 
 	F:SetWidth(300) -- Make it bigger!
-	F.logo:Hide() --No logo
-	F.text:SetPoint(F.logo:GetPoint(1)) --Move the text to the top
-
-	-- Creates the second box inside the first with a different coloring.
-	F.frame=CHAIN(ui:Create("SecFrame",F))
-		:SetPoint("TOP",F.text,"BOTTOM",0,-5)
-		:SetPoint("BOTTOMRIGHT",F,"BOTTOMRIGHT",-1,1)
-		:SetPoint("BOTTOMLEFT",F,"BOTTOMLEFT",1,1)
-		:CanDrag("parent")
-	.__END
+	--F.logo:Hide() --No logo
+	--F.text:SetPoint(F.logo:GetPoint(1)) --Move the text to the top
 
 	-- Hyperlinks are only possible in editbox. So here you go.
 	-- Max width is set so that if the item is super long it gets cut off. CursorPosition to 0 so that start of the name is displayed
 	-- Name of the item being replaced goes in here if applicable.
-	F.itemname_old=CHAIN(ui:Create("HyperEditBox",F.frame))
-		:SetPoint("TOP",0,-5)
+	F.itemname_old=CHAIN(ui:Create("HyperEditBox",F))
+		:SetPoint("TOP",F.text,"BOTTOM",0,-5)
 		:SetMaxWidth(F:GetWidth()-15)
 	.__END
 
 	-- String to display "with" on it's own line.
-	F.text_mid=CHAIN(F.frame:CreateFontString(nil,"ARTWORK"))
+	F.text_mid=CHAIN(F:CreateFontString(nil,"ARTWORK"))
 		:SetHeight(12)
 		:SetPoint("TOP",F.itemname_old,"BOTTOM",0,-3)
 		:SetFont(FONT,ZGV.db.profile.fontsecsize)
@@ -941,21 +933,21 @@ function AutoEquip:CreatePopup()
 
 	-- Texture to display the icon
 	-- TODO when you over over the icon make the hyperlink tooltip show up.
-	F.tex = CHAIN(F.frame:CreateTexture())
+	F.tex = CHAIN(F:CreateTexture())
 		:SetPoint("TOP",F.text_mid,"BOTTOM",0,-3)
 		:SetSize(35,35)
 	.__END
 
 	-- Only displays the new item.
-	F.itemname_new=CHAIN(ui:Create("HyperEditBox",F.frame))
+	F.itemname_new=CHAIN(ui:Create("HyperEditBox",F))
 		:SetPoint("TOP",F.tex,"BOTTOM",0,-3)
 		:SetMaxWidth(F:GetWidth()-15)
 	.__END
 
 	-- FontString to display all of the stat differences
-	F.stattext=CHAIN(F.frame:CreateFontString(nil,"ARTWORK"))
+	F.stattext=CHAIN(F:CreateFontString(nil,"ARTWORK"))
 		:SetPoint("TOP",F.itemname_new,"BOTTOM",0,-3)
-		:SetWidth(F.frame:GetWidth()-15)
+		:SetWidth(F:GetWidth()-15)
 		:SetJustifyH("CENTER")
 		:SetFont(FONT,ZGV.db.profile.fontsecsize)
 	.__END
@@ -991,7 +983,7 @@ function AutoEquip:CreatePopup()
 	end
 
 	F.AdjustSize = function(self) -- Need to change this because it is different for this kind of Popup
-		local offsets = 10 + 10 + 5 + 15 --Logo and top + text and buttons + buttons and bottom + more room
+		local offsets = 45 + 10 + 5 + 15 --Logo and top + text and buttons + buttons and bottom + more room
 
 		local ItemsAlwaysThere = self.tex:GetHeight() + self.text:GetStringHeight() + self.stattext:GetStringHeight() + self.itemname_new:GetHeight() + self.acceptbutton:GetHeight()
 		local ItemsSometimes = ((self.itemname_old:IsVisible() and self.itemname_old:GetHeight()) or 0) + ((self.text_mid:IsVisible() and self.text_mid:GetHeight()) or 0)
@@ -1047,13 +1039,13 @@ function AutoEquip:CreatePopup()
 	CHAIN(F.acceptbutton)
 		--:SetScript("OnEnter",function(self) CHAIN(GameTooltip):SetOwner(F,"ANCHOR_BOTTOM") :SetText(L['itemscore_ae_accept_tip']:format(ZygorItemPopup.item.link)) :Show() end)
 		--:SetScript("OnLeave",function(self) GameTooltip:Hide() end)
-		:SetParent(F.frame)
+		:SetParent(F)
 
 	CHAIN(F.declinebutton)
 		--Popup.olditem is not always there. EG no item in that slot.
 		:HookScript("OnEnter",function(self) CHAIN(GameTooltip):SetOwner(F,"ANCHOR_BOTTOM") :SetText(L['itemscore_ae_report_tip']) :Show() end)
 		:HookScript("OnLeave",function(self) GameTooltip:Hide() end)
-		:SetParent(F.frame)
+		:SetParent(F)
 end
 
 --[[
@@ -1153,7 +1145,7 @@ function AutoEquip:ShowPopup(item)
 		F.itemname_old:Hide() F.text_mid:Hide()
 
 		F.tex:ClearAllPoints()
-		F.tex:SetPoint("TOP",F.frame,"TOP",0,-5)
+		F.tex:SetPoint("TOP",F.text,"BOTTOM",0,-5)
 
 		F.itemname_new:ClearAllPoints()
 		F.itemname_new:SetPoint("TOP",F.tex,"BOTTOM",0,-3)
