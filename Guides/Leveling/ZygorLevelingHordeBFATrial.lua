@@ -295,32 +295,11 @@ startlevel=110.0,
 endlevel=110.0,
 },[[
 step
-accept Summons to Orgrimmar##49977 |goto Orgrimmar/1 51.20,78.92
-|tip You will automatically accept this quest when you enter Orgrimmar.
-step
-Enter the building |goto 49.93,75.71 < 5 |walk
-talk Nathanos Blightcaller##132254
-|tip Inside the building.
-turnin Summons to Orgrimmar##49977 |goto 49.80,75.35
-accept A Recent Discovery##50341 |goto 49.80,75.35
-step
-talk Nathanos Blightcaller##132254
-|tip Inside the building.
-Tell him _"Tell me what happened at the feast."_
-Watch the dialogue
-Speak with Nathanos Blightcaller |q 50341/1 |goto 49.80,75.35
-step
-talk Nathanos Blightcaller##132254
-|tip Inside the building.
-turnin A Recent Discovery##50341 |goto 49.80,75.35
-accept Witness to the Wound##49982 |goto 49.80,75.35
-step
 talk Grol Warblade##132147
-turnin Witness to the Wound##49982 |goto Silithus/0 65.92,54.73
 accept Lazy Prospectors!##50053 |goto Silithus/0 65.92,54.73
 step
 talk Gizmax Greasebolt##132045
-accept No Spies Allowed##50052 |goto 66.23,55.69
+accept No Spies Allowed##50052 |goto Silithus/0 66.23,55.69
 stickystart "Kill_SI7_Operatives"
 step
 clicknpc Lazy Prospector##133019+

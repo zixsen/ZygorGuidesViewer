@@ -143,7 +143,7 @@ function ZGV:QuestAutoAccept_InDetail()
 
 				 -- It might be an instant quest! Bastardize it now.
 				if not ZGV.db.char.DEBUG_PRETEND_QUESTAUTO then
-					GetQuestReward(max(QuestInfoFrame.itemChoice,1))
+					if QuestInfoFrame.itemChoice then GetQuestReward(max(QuestInfoFrame.itemChoice,1)) else self:Debug("&qauto no itemChoice") end
 				else
 					print("QAA_ID (instant?): WOULD PICK REWARD ",QuestInfoFrame.itemChoice)
 				end
@@ -171,7 +171,7 @@ function ZGV:QuestAutoAccept_InDetail()
 		end
 		 -- It might be an instant quest! Bastardize it now.
 		if not ZGV.db.char.DEBUG_PRETEND_QUESTAUTO then
-			GetQuestReward(max(QuestInfoFrame.itemChoice,1))
+			if QuestInfoFrame.itemChoice then GetQuestReward(max(QuestInfoFrame.itemChoice,1)) else self:Debug("&qauto no itemChoice") end
 		else
 			print("QAA_ID (all): WOULD PICK REWARD ",QuestInfoFrame.itemChoice)
 		end
@@ -393,10 +393,12 @@ function ZGV:QUEST_GREETING()
 		self.tmp_no_autoquest=nil
 		return
 	end
-	if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	--if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	if self.db.profile.autoacceptturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
 		self:QuestAutoTurnin_InGreeting()
 	end
-	if self.db.profile.autoaccept then
+	--if self.db.profile.autoaccept then
+	if self.db.profile.autoacceptturnin then
 		self:QuestAutoAccept_InGreeting()
 	end
 end
@@ -407,10 +409,12 @@ function ZGV:GOSSIP_SHOW()
 		self.tmp_no_autoquest=nil
 		return
 	end
-	if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	--if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	if self.db.profile.autoacceptturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
 		self:QuestAutoTurnin_InGossip()
 	end
-	if self.db.profile.autoaccept then
+	--if self.db.profile.autoaccept then
+	if self.db.profile.autoacceptturnin then
 		self:QuestAutoAccept_InGossip()
 	end
 end
@@ -423,7 +427,8 @@ function ZGV:QUEST_DETAIL()
 		self.tmp_no_autoquest=nil
 		return
 	end
-	if self.db.profile.autoaccept then
+	--if self.db.profile.autoaccept then
+	if self.db.profile.autoacceptturnin then
 		self:QuestAutoAccept_InDetail()
 	end
 end
@@ -434,7 +439,8 @@ function ZGV:QUEST_PROGRESS()
 		self.tmp_no_autoquest=nil
 		return
 	end
-	if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	--if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	if self.db.profile.autoacceptturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
 		self:QuestAutoComplete_InProgress()
 	end
 end
@@ -482,7 +488,8 @@ function ZGV:QUEST_COMPLETE()
 		QuestInfoFrame.itemChoice = itemindex or 1
 	end
 
-	if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	--if self.db.profile.autoturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
+	if self.db.profile.autoacceptturnin or (GetNumQuestChoices() > 1 and self.db.profile.autoselectitem) then
 		self:QuestAutoTurnin_InComplete(itemindex)
 	end
 end

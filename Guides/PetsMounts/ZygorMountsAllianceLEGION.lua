@@ -5184,7 +5184,7 @@ author="support@zygorguides.com",
 startlevel=110.0,
 keywords={"arcanist","manasaber","flying","mount"},
 mounts={230987},
-model={74032},
+model={81468},
 description="This guide will help you acquire the Arcanist's Manasaber.",
 },[[
 step

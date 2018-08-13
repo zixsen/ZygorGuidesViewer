@@ -115,9 +115,11 @@ end
 
 local function loot_sellgreyitems_thread() --Auto Sell Grey Items
 	while true do
+		if not MerchantFrame:IsVisible() then ZGV:Print("Selling of grey items interrupted. Results may not be accurate.") break end
 		local grays = 0
 		for bag=0, NUM_BAG_SLOTS do
 			for slot=1, GetContainerNumSlots(bag) do
+				if not MerchantFrame:IsVisible() then break end
 				local item=GetContainerItemID(bag,slot)
 				if item  then
 					local _, itemCount, _, quality, _, _, itemLink, _, noValue = GetContainerItemInfo(bag,slot)
@@ -127,8 +129,6 @@ local function loot_sellgreyitems_thread() --Auto Sell Grey Items
 
 					local price=select(11,ZGV:GetItemInfo(item))
 					if quality==0 and price > 0 then
-						table.insert(Loot.SellingGreyStatus,L['loot_sellgreys_sold']:format(itemLink,itemCount,GetMoneyString(price*itemCount)))
-						Loot.SellingGreyTotal = Loot.SellingGreyTotal + price*itemCount
 						UseContainerItem(bag,slot) -- Will use an item and since vendor is open, will sell the item.
 						coroutine.yield()
 					end
@@ -138,6 +138,8 @@ local function loot_sellgreyitems_thread() --Auto Sell Grey Items
 		if grays==0 then break end
 	end
 	
+	-- report and exit
+	if not MerchantFrame:IsVisible() then ZGV:Print("Selling of grey items interrupted. Results may not be accurate.") end
 	if Loot.SellingGreyTotal>0 then
 		for i,v in pairs(Loot.SellingGreyStatus) do
 			ZGV:Print(v,false,true)
@@ -149,9 +151,26 @@ end
 Loot.SellingGreyStatus = {}
 function Loot:SellGreyItems() --Auto Sell Grey Items
 	table.wipe(Loot.SellingGreyStatus)
-	Loot.Loot = ""
-	Loot.SellingGreyPrice = 0
 	Loot.SellingGreyTotal=0
+
+	-- gather info
+	for bag=0, NUM_BAG_SLOTS do
+		for slot=1, GetContainerNumSlots(bag) do
+			local item=GetContainerItemID(bag,slot)
+			if item  then
+				local _, itemCount, _, quality, _, _, itemLink, _, noValue = GetContainerItemInfo(bag,slot)
+				if quality==0 and not noValue then
+					local price=select(11,ZGV:GetItemInfo(item))
+					if quality==0 and price > 0 then
+						table.insert(Loot.SellingGreyStatus,L['loot_sellgreys_sold']:format(itemLink,itemCount,GetMoneyString(price*itemCount)))
+						Loot.SellingGreyTotal = Loot.SellingGreyTotal + price*itemCount
+					end
+				end
+			end
+		end
+	end
+
+	-- work
 	Loot.SellingGreyThread = coroutine.create(loot_sellgreyitems_thread)
 	Loot.SellingGreyTimer = ZGV:ScheduleRepeatingTimer(function()
 		local ok,ret = coroutine.resume(Loot.SellingGreyThread)

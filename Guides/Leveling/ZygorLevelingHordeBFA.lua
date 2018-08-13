@@ -295,32 +295,11 @@ startlevel=110.0,
 endlevel=110.0,
 },[[
 step
-accept Summons to Orgrimmar##49977 |goto Orgrimmar/1 51.20,78.92
-|tip You will automatically accept this quest when you enter Orgrimmar.
-step
-Enter the building |goto 49.93,75.71 < 5 |walk
-talk Nathanos Blightcaller##132254
-|tip Inside the building.
-turnin Summons to Orgrimmar##49977 |goto 49.80,75.35
-accept A Recent Discovery##50341 |goto 49.80,75.35
-step
-talk Nathanos Blightcaller##132254
-|tip Inside the building.
-Tell him _"Tell me what happened at the feast."_
-Watch the dialogue
-Speak with Nathanos Blightcaller |q 50341/1 |goto 49.80,75.35
-step
-talk Nathanos Blightcaller##132254
-|tip Inside the building.
-turnin A Recent Discovery##50341 |goto 49.80,75.35
-accept Witness to the Wound##49982 |goto 49.80,75.35
-step
 talk Grol Warblade##132147
-turnin Witness to the Wound##49982 |goto Silithus/0 65.92,54.73
 accept Lazy Prospectors!##50053 |goto Silithus/0 65.92,54.73
 step
 talk Gizmax Greasebolt##132045
-accept No Spies Allowed##50052 |goto 66.23,55.69
+accept No Spies Allowed##50052 |goto Silithus/0 66.23,55.69
 stickystart "Kill_SI7_Operatives"
 step
 clicknpc Lazy Prospector##133019+
@@ -1669,7 +1648,8 @@ Follow the path |goto Dazar'alor/0 51.83,39.26 < 5 |only if walking
 Run down the stairs |goto Dazar'alor/0 52.36,38.95 < 5 |only if walking
 Follow the path |goto Dazar'alor/0 52.53,38.02 < 5 |only if walking
 Run down the stairs |goto Dazar'alor/0 53.10,37.58 < 5 |only if walking
-Run down the stairs |goto Dazar'alor/0 54.48,37.22 < 5 |only if walking
+Run down the stairs |goto Dazar'alor/0 54.48,37.22 < 5 |only if walking |c |q 47445
+step
 Follow the path |goto Dazar'alor/0 54.56,36.03 < 5 |only if walking
 Run down the stairs |goto Dazar'alor/0 54.55,32.14 < 5 |only if walking
 Follow the path |goto Dazar'alor/0 55.43,30.84 < 5 |only if walking
@@ -11518,7 +11498,7 @@ Follow the path up |goto 78.04,24.49 < 7 |only if walking
 talk Dark Ranger Allanah##134853
 fpath Shrine of the Storm |goto 77.90,24.06
 step
-Reach Friendly Reptuation with The Honorbound |condition rep('The Honorbound') >= Friendly
+Reach Friendly Reputation with The Honorbound |condition rep('The Honorbound') >= Friendly
 |tip Use the "BFA World Quests Guide" to complete "The Honorbound" world quests.
 |tip Complete the weekly Island Expeditions quest "Azerite for the Horde".
 |tip Complete Warfronts to gain reputation.
@@ -11586,28 +11566,12 @@ Return to Zuldazar |goto Dazar'alor/0 51.93,94.20 < 7 |noway |c |q 53212
 step
 talk Throk##138949
 turnin Back to Zuldazar##53212 |goto 52.92,94.52
-accept Warfront: The Battle for Stromgarde##53416 |goto 52.92,94.52
 step
-clicknpc War Table##131752
-View the War Table in Zuldazar |q 53416/1 |goto 52.93,94.48
-step
-clicknpc War Table##131752
-|tip Click the "Join Queue" button to queue for a warfront.
-|tip If the Horde currently controls Ar'gorok, you will have to wait until the Alliance gains control.
-Click Here After Entering the Warfront |confirm |goto 52.93,94.48 |q 53416
-step
-Defeat the Alliance at the Battle for Stromgarde |q 53416/2
-|tip Move around with other players and kill enemies.
-|tip Collect Iron and Wood to help build buildings and recruit troops to help you fight.
-step
-talk Throk##138949
-turnin Warfront: The Battle for Stromgarde##53416 |goto Dazar'alor/0 52.92,94.52
-step
-Reach #4500# Reptuation into Friendly with The Honorbound |condition repval('The Honorbound','Friendly')>=4500
+Reach #4500# Reputation into Friendly with The Honorbound |condition repval('The Honorbound','Friendly')>=4500
 |tip Use the "BFA World Quests Guide" to complete "The Honorbound" world quests.
 |tip Complete the weekly Island Expeditions quest "Azerite for the Horde".
 step
-accept Operation: Grave Digger##53065 |goto 72.02,51.85
+accept Operation: Grave Digger##53065
 |tip You will automatically accept this quest.
 step
 talk Nathanos Blightcaller##135691
@@ -11762,7 +11726,7 @@ Leave the building |goto 61.11,48.90 < 3 |walk
 talk Nathanos Blightcaller##140105
 turnin What Remains of Marshal M. Valentine##51789 |goto 61.18,48.74
 step
-Reach #3000# Reptuation into Honored with The Honorbound |condition repval('The Honorbound','Honored')>=3000
+Reach #3000# Reputation into Honored with The Honorbound |condition repval('The Honorbound','Honored')>=3000
 |tip Use the "BFA World Quests Guide" to complete "The Honorbound" world quests.
 |tip Complete the weekly Island Expeditions quest "Azerite for the Horde".
 step

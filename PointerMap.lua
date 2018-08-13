@@ -74,7 +74,7 @@ function PointerMap:ShowPreview()
 
 	if not GetCVarBool("miniWorldMap") then 
 		ZGV.db.char.restoreFullMap = true
-		WorldMap_ToggleSizeDown()
+		WorldMapFrame:Minimize()
 	end
 
 	if GetCVar("questLogOpen") then QuestMapFrame_Hide() end
@@ -126,12 +126,12 @@ function PointerMap:RestoreMapSettings(manual)
 
 	if ZGV.db.char.restoreFullMap then 
 		ZGV.db.char.restoreFullMap = false
-		SetCVar("miniWorldMap",0,true)
+		WorldMapFrame:Maximize()
 	else
 		WorldMapFrame.ScrollContainer.Child:SetPoint("TOPLEFT",0,0)
+		if GetCVar("questLogOpen") then QuestMapFrame_Show() end
 	end
 
-	if GetCVar("questLogOpen") then QuestMapFrame_Show() end
 
 	for _,element in pairs(map_display_elements) do 
 		element:Show()

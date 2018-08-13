@@ -29869,5 +29869,7 @@ ZygorGuidesViewer_L("NPCs", "enUS", function() return {
 [141136]="Flynn Fairwind|",
 [129670]="Lyssa Treewarden|",
 [129724]="Woodchewing Beaver|",
+[139289]="Tentulos the Drifter|",
+[138863]="Sister Martha|",
 
 } end)

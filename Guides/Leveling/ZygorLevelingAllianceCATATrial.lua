@@ -9400,7 +9400,7 @@ label "Time_Travel_On"
 talk Zidormi##141489
 Ask her _"Can you show me what the world was like before the burning of Teldrassil?"_
 Gain the Time Travelling buff |havebuff Time Travelling##609811 |goto Darkshore/0 48.07,25.67
-|only if ZGV.InPhase("Old Darnassus")
+|only if not ZGV.InPhase("Old Darnassus")
 ]])
 ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Classic (1-60)\\Kalimdor 1-60\\Kalimdor (20-25)",{
 author="support@zygorguides.com",

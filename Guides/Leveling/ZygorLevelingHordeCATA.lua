@@ -17071,8 +17071,8 @@ Persuad Durak |q 13842/1 |goto Ashenvale 72.2,57.7
 step
 kill Durak##44416 |q 13842/2 |goto Ashenvale 72.2,57.7
 step
-talk Vol'jin##86832
-turnin Dread Head Redemption##13842 |goto Orgrimmar 48.2,70.6
+talk Eitrigg##3144
+turnin Dread Head Redemption##13842 |goto Orgrimmar/1 49.21,72.27
 ]])
 ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Classic (10-60)\\Kalimdor\\Stonetalon Mountains (20-60)",{
 author="support@zygorguides.com",

@@ -388,26 +388,9 @@ startlevel=110.0,
 endlevel=110.0,
 },[[
 step
-accept Summons to Stormwind##50371 |goto Stormwind City/0 63.33,72.17
-|tip You will automatically accept this quest when you enter Stormwind City.
-step
-talk Master Mathias Shaw##132255
-turnin Summons to Stormwind##50371 |goto 38.97,62.84
-accept Gifts of the Fallen##49976 |goto 38.97,62.84
-step
-talk Master Mathias Shaw##132255
-Tell him _"Tell me what happened at Lion's Rest."_
-Watch the dialogue
-Speak with Mathias Shaw |q 49976/1 |goto 38.97,62.84
-step
-talk Master Mathias Shaw##132255
-turnin Gifts of the Fallen##49976 |goto 38.97,62.84
-accept Witness to the Wound##49981 |goto 38.97,62.84
-step
 Enter the building |goto Silithus/0 69.34,18.08 < 3 |walk
 talk Nolan Speed##131963
 |tip Inside the building.
-turnin Witness to the Wound##49981 |goto Silithus/0 69.42,17.64
 accept Free Samples##50047 |goto Silithus/0 69.42,17.64
 step
 talk Kelsey Steelspark##130030

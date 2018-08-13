@@ -4264,6 +4264,31 @@ step
 Click the "Exit" Button on Your Action Bar |outvehicle
 |next "Tortollan_Seekers_WQ"
 step
+label quest-51906
+Follow the path |goto Drustvar/0 37.58,51.80 < 7 |only if walking
+Continue following the path |goto 36.72,51.16 < 7 |only if walking
+Continue up the path |goto 36.41,51.72 < 7 |only if walking
+Continue up the path |goto 36.03,52.47 < 7 |only if walking
+Jump down here |goto 35.38,53.49 < 7 |only if walking
+Follow the path up |goto 35.31,54.04 < 7 |only if walking
+Continue down the path |goto 35.65,54.45 < 7 |only if walking
+Jump down here |goto 35.48,54.97 < 7 |only if walking
+Follow the path |goto 35.38,55.61 < 7 |only if walking
+Jump down here |goto 35.05,56.24 < 7 |only if walking
+Follow the path down |goto 34.82,56.76 < 7 |only if walking
+Jump down here |goto 34.39,59.15 < 7 |only if walking
+Jump down here |goto 34.31,59.46 < 7 |only if walking
+Jump down here |goto 33.68,59.42 < 7 |only if walking
+Jump down here |goto 33.27,58.22 < 7 |only if walking
+accept Sister Martha##51906 |goto Drustvar/0 33.16,57.57
+|tip You will accept this quest automatically.
+step
+Enter the building |goto 33.08,57.32 < 5 |walk
+kill Sister Martha##138863
+|tip Inside the building.
+Slay Sister Martha |q 51906/1 |goto 32.99,57.13
+|next "Tortollan_Seekers_WQ"
+step
 label quest-49994
 Follow the road up |goto Tiragarde Sound/0 67.41,23.64 < 7 |only if walking
 Continue following the road |goto 68.30,22.37 < 10 |only if walking
@@ -4749,6 +4774,15 @@ kill Sister Celicia##136177 |q 52010/1 |goto 63.67,87.80
 step
 label "Kill_Tidesage_Archivist"
 kill 6 Tidesage Archivist##136158 |q 52010/4 |goto 74.69,76.24
+|next "Tortollan_Seekers_WQ"
+step
+label quest-51894
+accept Tentulos the Drifter##51894 |goto Tiragarde Sound/0 55.32,51.53
+|tip You will accept this quest automatically.
+step
+kill Tentulos the Drifter##139289
+|tip Underwater.
+Slay Tentulos the Drifter |q 51894/1 |goto 55.32,51.53
 |next "Tortollan_Seekers_WQ"
 step
 label quest-51655

@@ -388,26 +388,9 @@ startlevel=110.0,
 endlevel=110.0,
 },[[
 step
-accept Summons to Stormwind##50371 |goto Stormwind City/0 63.33,72.17
-|tip You will automatically accept this quest when you enter Stormwind City.
-step
-talk Master Mathias Shaw##132255
-turnin Summons to Stormwind##50371 |goto 38.97,62.84
-accept Gifts of the Fallen##49976 |goto 38.97,62.84
-step
-talk Master Mathias Shaw##132255
-Tell him _"Tell me what happened at Lion's Rest."_
-Watch the dialogue
-Speak with Mathias Shaw |q 49976/1 |goto 38.97,62.84
-step
-talk Master Mathias Shaw##132255
-turnin Gifts of the Fallen##49976 |goto 38.97,62.84
-accept Witness to the Wound##49981 |goto 38.97,62.84
-step
 Enter the building |goto Silithus/0 69.34,18.08 < 3 |walk
 talk Nolan Speed##131963
 |tip Inside the building.
-turnin Witness to the Wound##49981 |goto Silithus/0 69.42,17.64
 accept Free Samples##50047 |goto Silithus/0 69.42,17.64
 step
 talk Kelsey Steelspark##130030
@@ -12103,10 +12086,9 @@ Follow the path |goto 67.50,17.89 < 5 |only if walking
 talk Huntmaster Vol'ka##123019
 turnin WANTED: Ten'gor and Nol'ixwan##51091 |goto 67.50,17.63
 step
-Reach Friendly Reptuation with the 7th Legion |condition rep('7th Legion') >= Friendly
-|tip Use the "BFA World Quests Guide" to complete "7th Legion" world quests.
+Reach Friendly Reputation with the 7th Legion |condition rep('7th Legion') >= Friendly
+|tip Use the "World Quests" guides to complete "7th Legion" world quests.
 |tip Complete the weekly Island Expeditions quest "Azerite for the Alliance".
-|tip Complete Warfronts to gain reputation.
 |tip Complete Missions at your mission table that reward reputation with the 7th Legion.
 step
 accept The Warfront Looms##53175
@@ -12168,24 +12150,8 @@ step
 Follow the path |goto 66.27,25.65 < 5 |only if walking
 talk Ralston Karn##142721
 turnin Back to Boralus##53198 |goto 65.88,26.03
-accept Warfront: The Battle for Stromgarde##53414 |goto 65.88,26.03
 step
-clicknpc War Table##131752
-View the War Table in Boralus |q 53414/1 |goto 65.91,26.02
-step
-clicknpc War Table##131752
-|tip Click the "Join Queue" button to queue for a warfront.
-|tip If the Alliance currently controls Ar'gorok, you will have to wait until the Horde gains control.
-Click Here After Entering the Warfront |confirm |goto 65.91,26.00 |q 53414
-step
-Defeat the Horde at the Battle for Stromgarde |q 53414/2
-|tip Move around with other players and kill enemies.
-|tip Collect Iron and Wood to help build buildings and recruit troops to help you fight.
-step
-talk Ralston Karn##142721
-turnin Warfront: The Battle for Stromgarde##53414 |goto Boralus/0 65.86,26.04
-step
-Reach #4500# Reptuation into Friendly with the 7th Legion |condition repval('7th Legion','Friendly')>=4500
+Reach #4500# Reputation into Friendly with the 7th Legion |condition repval('7th Legion','Friendly')>=4500
 |tip Use the "BFA World Quests Guide" to complete "7th Legion" world quests.
 |tip Complete the weekly Island Expeditions quest "Azerite for the Alliance".
 step
@@ -12193,8 +12159,8 @@ accept Operation: Blood Arrow##53069
 |tip You will automatically accept this quest.
 step
 talk Halford Wyrmbane##135612
-turnin Operation: Blood Arrow##53069 |goto 69.27,27.01
-accept Crippling the Horde##52147 |goto 69.27,27.01
+turnin Operation: Blood Arrow##53069 |goto Boralus/0 69.27,27.01
+accept Crippling the Horde##52147 |goto Boralus/0 69.27,27.01
 step
 Run up the stairs |goto 69.08,26.44 < 3 |only if walking
 Follow the path |goto 68.85,26.42 < 3 |only if walking
@@ -12379,7 +12345,12 @@ step
 talk Shandris Feathermoon##140258
 turnin Target: Blood Prince Dreven##52219 |goto 61.97,41.25
 step
-|confirm
+Reach #3000# Reputation into Honored with the 7th Legion |condition repval('7th Legion','Honored')>=3000
+|tip Use the "World Quests" guides to complete "7th Legion" world quests.
+|tip Complete the weekly Island Expeditions quest "Azerite for the Alliance".
+step
+_Under Construction!_
+This guide will be updated to continue the War Campaign questline very soon.
 ]])
 ZygorGuidesViewer:RegisterGuide("Zygor's Leveling Guides\\Battle for Azeroth (110-120)\\Allied Races\\Void Elf Race Unlock",{
 author="support@zygorguides.com",

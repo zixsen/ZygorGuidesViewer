@@ -710,12 +710,8 @@ function GuideFuncs:SuggestDungeonGuide(dungeonguide)
 
 		self.DungPopup.OnAccept = function(self)
 			if ZGV.CurrentGuide.type~="DUNGEON" then -- to avoid guides overwriters when player chains dungeons without leaving them (lfg/lfr spam)
-				ZGV.db.profile.previousguide.title = ZGV.CurrentGuide.title
-				ZGV.db.profile.previousguide.title_short = ZGV.CurrentGuide.title_short
-				ZGV.db.profile.previousguide.type = ZGV.CurrentGuide.type
-				ZGV.db.profile.previousguide.step = ZGV.CurrentStepNum
+				ZGV.db.char.PreDungeonGuide = ZGV.CurrentGuide.title
 			end
-			
 			local tab = ZGV.Tabs:GetTabFromPool()
 			tab:SetAsCurrent()
 			ZGV:SetGuide(self.guide)
@@ -756,15 +752,13 @@ end
 function GuideFuncs:SuggestPreviousGuide(prevguide)
 	if not ( ZGV.db.profile.n_popup_guides and ZGV.db.profile.n_popup_dungeon and ZGV.Frame:IsVisible()) then return end
 
-	if not ZGV.db.profile.previousguide.title then return end
+	if not ZGV.db.char.PreDungeonGuide then return end
 
-	local tab = ZGV.Tabs:DoesTabExist(ZGV.db.profile.previousguide.title)
+	local tab = ZGV.Tabs:DoesTabExist(ZGV.db.char.PreDungeonGuide)
 	if tab then
 		ZGV:Debug("Returning to previous guide after dungeon")
-		tab:SetAsCurrent()
-	else
-		ZGV:Debug("Switching dungeon guide to previous one")
-		ZGV:SetGuide(ZGV.db.profile.previousguide.title,ZGV.db.profile.previousguide.type)
+		tab:ActivateGuide()
+		ZGV.db.char.PreDungeonGuide=nil
 	end
 
 	--[[	
@@ -827,6 +821,9 @@ function GuideFuncs:IsDungeon()
 		(not guide.dungeondifficulty or guide.dungeondifficulty==GetDungeonDifficultyID()) then
 			local tab = ZGV.Tabs:DoesTabExist(guide.title)
 			if tab then  --If they already have the guide loaded.
+				if ZGV.CurrentGuide.title~=guide.title then 
+					ZGV.db.char.PreDungeonGuide = ZGV.CurrentGuide.title
+				end				
 				tab:ActivateGuide()
 				return
 			end
