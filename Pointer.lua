@@ -196,10 +196,6 @@ function Pointer:Startup()
 		c:SetPanTarget(px,py)
 	end,0.1) end   -- keep map centered
 
-	if ZGV.db.profile.autotravel then
-		ZGV:ScheduleRepeatingTimer(function()  Pointer:DoAutoTravel() end, 0.01)
-	end
-
 	ZGV:ScheduleRepeatingTimer(function()  if Pointer:IsCorpseArrowNeeded() then Pointer:DoCorpseCheck() end  end,3.0)
 
 	--[[
@@ -780,7 +776,9 @@ function Pointer:ShowArrow(waypoint)
 	--local waypoint_f = waypoint.f
 	--if waypoint.type=="ant" then waypoint_f=nil end -- use no floor to make ants show up between floors and in dala/orgi
 	local ix,iy,inst = HBD:GetWorldCoordinatesFromZone(tonumber(waypoint.x), tonumber(waypoint.y), waypoint.m)
-	HBDPins:AddMinimapIconWorld(Pointer, waypoint.frame_minimap, tonumber(inst), tonumber(ix), tonumber(iy), waypoint.showonedge)
+	if ix and iy then
+		HBDPins:AddMinimapIconWorld(Pointer, waypoint.frame_minimap, tonumber(inst), tonumber(ix), tonumber(iy), waypoint.showonedge)
+	end
 	
 	self.ArrowFrame.waypoint = waypoint
 
@@ -1143,7 +1141,7 @@ end
 
 if DEBUG_ROGUE_DATA_IN_WAYPOINTS then
 	-- THESE ARE JUST FOR DEBUGGING. Real "valid waypoint fields" are in copy_fields.
-	local valids={passive=1,hidden=1,minisize=1,size=1,alpha=1,OnUpdate=1,OnEvent=1,truesize=1,truesize_px=1,hideminimap=1,angle=1,radius=1, pathnode=1, icon=1,ant_icon=1,curve_accuracy=1,actionicon=1, goal=1,
+	local valids={passive=1,hidden=1,minisize=1,size=1,alpha=1,OnUpdate=1,OnEvent=1,truesize=1,truesize_px=1,hideminimap=1,angle=1,radius=1, pathnode=1, icon=1,ant_icon=1,curve_accuracy=1,curve_dist=1,actionicon=1, goal=1,
 	player=1,  -- important for ant start
 	waypoint_zone=1, waypoint_realzone=1, waypoint_subzone=1, waypoint_minizone=1, waypoint_region=1, waypoint_indoors=1, -- these are set in a goal, to pinpoint the waypoint location
 	poiNum=1, nearRange=1,OnNear=1,OnFar=1,isNear=1,
@@ -4318,7 +4316,7 @@ end
 Pointer.spawn_curve_ants = spawn_curve_ants
 
 
-local function spawn_straight_ants(points,loop,phase)
+local function spawn_straight_ants_prev(points,loop,phase)
 	if #points<2 then return end
 	--print("curving!!")
 	local abs=abs
@@ -4392,6 +4390,81 @@ local function spawn_straight_ants(points,loop,phase)
 
 			--base_t=(base_t+curve_accuracy) % 1
 		end
+		break
+	end  if breakall then break end  end
+	return antpoints,antpoints_num
+end
+
+local function spawn_straight_ants(points,loop,phase)
+	if #points<2 then return end
+	--print("curving!!")
+	local abs=abs
+	local ceil=ceil
+
+	local antpoints_num = 0
+
+	local np=#points
+	local breakall
+
+	local leftover=phase*curve_spacing
+
+	for i=1,np do  while true do
+		local p0 = points[i-1]
+		local p1 = points[i]
+		local p2 = points[i+1]
+		local p3 = points[i+2]
+		if not p2 then  if loop then p2=points[1] else breakall=true break end  end
+		if not p3 and loop then p3=points[2] end
+
+		-- NEW CHECK. Points are supposedly on global maps. If points do NOT share a global map, NO ANTS BETWEEN THEM.
+		if not p1.gm or p1.gm~=p2.gm then break end --continue
+
+		local dist = p1.curve_dist
+		if not dist then
+			dist = Mdist(p1.gm,p1.gx,p1.gy,p2.gm,p2.gx,p2.gy)
+			if not dist or dist<1 then dist=2000*sqrt((p1.gx-p2.gx)*(p1.gx-p2.gx)+(p1.gy-p2.gy)*(p1.gy-p2.gy)) end  -- use costly global calculation when in need.
+			if dist<1 then dist=100 print("dist<1") end
+			p1.curve_dist=dist
+		else
+			dist=p1.curve_dist
+		end
+
+		--print("acc",curve_accuracy)
+		local d=leftover
+		while d<dist do
+			-- straight line
+			local t = d/dist
+
+			local x = p1.gx + t*(p2.gx-p1.gx)
+			local y = p1.gy + t*(p2.gy-p1.gy)
+
+			-- swirly ants!
+			--x = x + math.sin((5*t-phase)*6.28)*0.001
+			--y = y + math.cos((5*t-phase)*6.28)*0.00066
+
+			antpoints_num = antpoints_num+1
+			local ant = antpoints[antpoints_num]
+			if not ant then
+				ant = {}
+				antpoints[antpoints_num]=ant
+			end
+
+			ant.map,ant.x,ant.y=p1.gm,x,y
+			ant.sub=i+t
+			ant.icon = p2.ant_icon or def_ant_icon   -- ant_icon is contained in the DESTINATION waypoint of the pair.
+			ant.p0,ant.p1,ant.p2,ant.p3=p0,p1,p2,p3
+			ant.p1m,ant.p2m=p1.m,p2.m
+			ant.ant_dist=t
+			-- bobbly ants!
+			--ant.size=60+20*math.sin((5*t-phase)*6.28)
+
+			--base_t=t
+
+			--tinsert(antpoints,{map=0,floor=0,x=x,y=y,sub=i+t,icon=ZGV.Pointer.Icons.ant})
+			d=d+curve_spacing
+		end
+		leftover=d-dist
+
 		break
 	end  if breakall then break end  end
 	return antpoints,antpoints_num
@@ -4602,7 +4675,7 @@ function Pointer:AnimateAnts()
 					wp.gx,wp.gy,wp.gm = nil,nil,nil
 				end
 
-				move_point_to_global(wp,(map==947 or map==946) and map or mastermap)
+				move_point_to_global(wp,(map==947--[[Azeroth]] or map==946--[[Cosmic]]) and map or mastermap)
 
 				--ZGV.Pointer:SetWaypoint (wp.map,wp.x,wp.y,nil,nil)--data,arrow)
 				--ants=spawn(waypath)
@@ -4968,43 +5041,6 @@ end
 
 
 
-function Pointer:DoAutoTravel()
-	if ZGV.db.profile.autotravel then
-		if not Pointer.AutoTravelFrame then
-			Pointer.AutoTravelFrame = CHAIN(CreateFrame("FRAME","ZygorGuidesViewerPointer_AutoTravelFrame"))
-				:SetPoint("TOPLEFT",UIParent,"TOPLEFT")
-				:SetSize(1,1)
-				.__END
-			Pointer.AutoTravelFrame.t1 = CHAIN(Pointer.AutoTravelFrame:CreateTexture(nil,"OVERLAY"))
-				:SetPoint("TOPLEFT",Pointer.AutoTravelFrame,"TOPLEFT",0,0)
-				:SetColorTexture(1,1,1)
-				:SetSize(5,5)
-				.__END
-			Pointer.AutoTravelFrame.t2 = CHAIN(Pointer.AutoTravelFrame:CreateTexture(nil,"OVERLAY"))
-				:SetPoint("TOPLEFT",Pointer.AutoTravelFrame,"TOPLEFT",5,0)
-				:SetColorTexture(0,1,0)
-				:SetSize(5,5)
-				.__END
-			Pointer.AutoTravelFrame.t3 = CHAIN(Pointer.AutoTravelFrame:CreateTexture(nil,"OVERLAY"))
-				:SetPoint("TOPLEFT",Pointer.AutoTravelFrame,"TOPLEFT",10,0)
-				:SetColorTexture(1,0,1)
-				:SetSize(5,5)
-				.__END
-			print("creating autotravel frame")
-		end
-
-		local angle = Pointer.ArrowFrame.arrow.angle
-		if angle then
-			if angle>0.2 and angle<3.1415 then Pointer.AutoTravelFrame.t1:SetColorTexture(0,1,0) --green:left
-			elseif angle>=3.1415 and angle<6.083 then Pointer.AutoTravelFrame.t1:SetColorTexture(1,0,0) --red:right
-			else Pointer.AutoTravelFrame.t1:SetColorTexture(0,0,0) --black:none
-			end
-
-			-- TODO distance
-		end
-	end
-end
-
 function Pointer.QuestPOI_PointToMe(poiBut,args)
 	if not ZGV.db.profile.point_to_pois then return end
 	local _
@@ -5081,6 +5117,8 @@ function Pointer:CycleWaypoint(delta,nocycle,step)
 	until goal and goal.x and not goal.force_noway and goal:IsVisible()
 
 	ZGV:Debug("CycleWaypoint: cycling to goal [%d]: %s, way at [%.1f %.1f]",goal.num,goal:GetText(),goal.x*100,goal.y*100) 
+
+	--ZGV:ShowWaypoints()
 
 	-- if we have existing waypoints (we should!!)...
 	if self.waypoints then

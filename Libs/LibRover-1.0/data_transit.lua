@@ -303,7 +303,7 @@ data.basenodes.transit = {
 	"Stormwind City/0 75.34,16.43 -to- Twilight Highlands/0 79.48,77.79 <subtype:cityportal> {fac:A} {mode:PORTAL} {cond:PlayerCompletedQuest(27537) or UnitLevel('player')>=84}",
 
 	-- Stormwind - Elwynn Forest, Eastern Kingdoms -x- Boralus Harbor, Tiragarde Sound --
-	"Stormwind City/0 48.92,86.44 <subtype:cityportal> -to- Boralus/0 69.80,15.75 {fac:A} {mode:PORTAL} {title:Click the Portal to Boralus} {cond:ZGV.InPhase('bfa')}",
+	"Stormwind City/0 48.92,86.44 <subtype:cityportal> -to- Boralus/0 69.80,15.75 {fac:A} {mode:PORTAL} {title:Click the Portal to Boralus Inside the Building} {cond:ZGV.InPhase('bfa')}",
 
 	-- Highbank - Twilight Highlands, Eastern Kingdoms -to- Stormwind - Elwynn Forest, Eastern Kingdoms --
 	"Twilight Highlands/0 79.47,77.80 <subtype:cityportal> -to- Stormwind City/0 75.17,16.81 {fac:A} {mode:PORTAL} {cond:PlayerCompletedQuest(27537)}",

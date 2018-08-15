@@ -1552,7 +1552,7 @@ GOALTYPES['level'] = {
 	iscomplete = function(self)
 		local level = ZGV:GetPlayerPreciseLevel()
 		if level<self.level-1 then
-			return false,false
+			return false,true, norm_nums(0,100)
 		elseif level>=self.level then
 			return true,true
 		else

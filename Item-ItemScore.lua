@@ -72,8 +72,40 @@ local itemarmsubclasses = {
 	}
 
 local class_ids = {"WEAPON","ARMOR"}
-local weap_ids = {"AXE","TH_AXE","BOW","GUN","MACE","TH_MACE","TH_POLE","SWORD","TH_SWORD","TH_STAFF","FIST","MISCWEAP","DAGGER","THROWN","CROSSBOW","WAND","FISHPOLE","WARGLAIVE"}
-local arm_ids = {"MISCARM","CLOTH","LEATHER","MAIL","PLATE","COSMETIC","SHIELD",} --Relics are out.
+local weap_ids = {
+	[0] = "AXE",
+	[1] = "TH_AXE",
+	[2] = "BOW",
+	[3] = "GUN",
+	[4] = "MACE",
+	[5] = "TH_MACE",
+	[6] = "TH_POLE",
+	[7] = "SWORD",
+	[8] = "TH_SWORD",
+	[9] = "WARGLAIVE",
+	[10] = "TH_STAFF",
+	[11] = "DRUID_BEAR",
+	[12] = "DRUID_CAT",
+	[13] = "FIST",
+	[14] = "MISCWEAP",
+	[15] = "DAGGER",
+	[16] = "THROWN",
+	[17] = "SPEAR",
+	[18] = "CROSSBOW",
+	[19] = "WAND",
+	[20] = "FISHPOLE",
+	}
+
+
+local arm_ids = {
+	[1] = "CLOTH",
+	[2] = "LEATHER",
+	[3] = "MAIL",
+	[4] = "PLATE",
+	[5] = "COSMETIC",
+	[6] = "SHIELD",
+	-- "MISCARM" ?	
+	} --Relics are out.
 
 ItemScore.ItemClassData={itemclasses,itemweapsubclasses,itemarmsubclasses,class_ids,weap_ids,arm_ids}
 
@@ -369,13 +401,14 @@ function ItemScore:GetItemScore(itemlink, invslot, allowbad, verbose)
 		end
 	end
 
-	if item.info.quality==6 and item.info.ilevel>749 and ItemScore.playerlevel<=110 then
-		value = value * 1000
+	if item.info.quality==6 and (not ZGV.InPhase("bfa")) then
+		if verbose then do_verbose("Artefact pre-bfa: *100") end
+		value = value * 100
 	end
 
 
 	if verbose then  do_verbose("  = |cffccff88%d",value) end
-	return value,ItemScore.SC_OK,"no comment"
+	return math.floor(value),ItemScore.SC_OK,"no comment"
 end
 
 --[[
@@ -508,11 +541,11 @@ function ItemScore:CanEquipItem(item,allowbad,verbose)
 
 		-- Delocalize item class into a string that we set so we know what kind of item this is.
 		if class == "WEAPON" then
-			local cl = weap_ids[itemweapsubclasses[item.info.subclass] or 0]
+			local cl = weap_ids[item.info.subclassid or 0]
 			if not cl then return "REJECT", ItemScore.SC_BADITEM,("Unknown weapon subclass %s"):format(item.info.subclass) end
 			subclass = cl
 		elseif class == "ARMOR" then
-			local cl = arm_ids[itemarmsubclasses[item.info.subclass] or 0]
+			local cl = arm_ids[item.info.subclassid or 0]
 			if not cl then return "REJECT", ItemScore.SC_BADITEM,("Unknown armor subclass %s"):format(item.info.subclass) end
 			subclass = cl
 		else
@@ -714,7 +747,7 @@ do
 
 		-- Okay, it's definitely not cached, let's do the hard work.
 
-		local name,link,quality,ilevel, reqlevel, class, subclass, maxstack, equipslot, texture, vendorprice = ZGV:GetItemInfo(itemlink)
+		local name,link,quality,ilevel, reqlevel, class, subclass, maxstack, equipslot, texture, vendorprice, classid, subclassid = ZGV:GetItemInfo(itemlink)
 		if not name then return nil,"no iteminfo (yet?)" end
 
 		-- Loads stats into item.stats
@@ -727,7 +760,7 @@ do
 
 		-- WE HAVE THE ITEM DATA AND THE TOOLTIP! Let's store it.
 		local item = {
-			info={itemid=itemid,name=name,itemlink=itemlink,prettylink=link,quality=quality,ilevel=ilevel,reqlevel=reqlevel,class=class,subclass=subclass,equipslot=equipslot,vendorprice=vendorprice},
+			info={itemid=itemid,name=name,itemlink=itemlink,prettylink=link,quality=quality,ilevel=ilevel,reqlevel=reqlevel,class=class:upper(),subclass=subclass,equipslot=equipslot,vendorprice=vendorprice,classid=classid,subclassid=subclassid},
 			stats = stats,
 			--tooltip={}, -- filled below
 		}

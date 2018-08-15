@@ -29871,5 +29871,6 @@ ZygorGuidesViewer_L("NPCs", "enUS", function() return {
 [129724]="Woodchewing Beaver|",
 [139289]="Tentulos the Drifter|",
 [138863]="Sister Martha|",
+[128368]="Captured Vulpera|",
 
 } end)

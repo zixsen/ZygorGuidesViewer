@@ -102,7 +102,7 @@ Unlock World Quests |condition completedq(52450)
 |tip Battle for Azeroth Leveling guides.
 |tip War Campaign guide.
 step
-Reach Exalted Reputation with the Storm's Wake |condition rep('Storm's Wake')==Exalted
+Reach Exalted Reputation with the Storm's Wake |condition rep('Storm\'s Wake')==Exalted
 |tip Use the Battle for Azeroth "World Quests" guides to complete "Storm's Wake" world quests.
 |tip Complete Missions at your mission table that reward reputation with the Storm's Wake.
 step

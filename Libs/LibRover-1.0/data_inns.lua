@@ -658,6 +658,10 @@ data.basenodes.inns = {
 	},
 
 	["Nazmir"] = {
+		----------
+		-- HORDE--
+		----------
+
 		-- Zul'jan Ruins (Zul'jan)
 			{name="Zul'jan Ruins",faction="H",npc="Crazy Vaza",npcid=121840,f=0,x=38.63,y=78.66},
 
@@ -666,6 +670,13 @@ data.basenodes.inns = {
 
 		-- Gloom Hollow
 			{name="Gloom Hollow",faction="H",npc="Korkush",npcid=131988,f=0,x=67.76,y=41.85},
+
+		--------------
+		-- ALLIANCE --
+		--------------
+
+		-- Fort Victory
+			{name="Fort Victory",faction="A",npc="Priestess Islara",npcid=135082,f=0,x=61.95,y=40.79},
 	},
 
 	["Vol'dun"] = {
@@ -761,7 +772,7 @@ data.basenodes.inns = {
 			{name="Northwood Home",faction="A",npc="Owen Northwood",npcid=136480,f=0,x=37.43,y=48.56},
 
 		-- The Swine's Larder (Fallhaven)
-			{name="The Swine's Larder",faction="A",npc="Dinah Wellard",npcid=129992,f=0,x=55.45,y=34.31},
+			{name="The Swine's Larder",faction="A",npc="Dinah Wellard",npcid=129992,f=0,x=55.50,y=34.26},
 	},
 
 }

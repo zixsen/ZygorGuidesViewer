@@ -26,7 +26,7 @@ You reached Exalted reputation with the "Champions of Azeroth" faction.
 ]])
 ZygorGuidesViewer:RegisterGuide("Zygor's Reputations Guides\\Battle for Azeroth\\Talanji's Expedition",{
 author="support@zygorguides.com",
-keywords={"Talanji's","Expedition"},
+keywords={"Talanji's", "Expedition"},
 description="This guide will walk you through becoming exalted with the \"Talanji's Expedition\" faction.",
 condition_suggested=function() return level>=110 and level<=120 end,
 achieveid={12948},
@@ -38,7 +38,7 @@ Unlock World Quests |condition completedq(51916)
 |tip Battle for Azeroth Leveling guides.
 |tip War Campaign guide.
 step
-Reach Exalted Reputation with the Talanji's Expedition |condition rep('Talanji's Expedition')==Exalted
+Reach Exalted Reputation with the Talanji's Expedition |condition rep('Talanji\'s Expedition')==Exalted
 |tip Use the Battle for Azeroth "World Quests" guides to complete "Talanji's Expedition" world quests.
 |tip Complete Missions at your mission table that reward reputation with the Talanji's Expedition.
 step

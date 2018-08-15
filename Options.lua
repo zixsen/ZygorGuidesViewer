@@ -1026,13 +1026,13 @@ function ZGV:Options_DefineOptionTables()
 		})
 		AddOption('antspacing',{  -- now "Enable ant trails"!
 			type = 'toggle',
-			get = function() return ZGV.db.profile.antspacing==100 end,
-			set = function(i,v) 
-				local vol=v and 100 or 0
+			get = function() return ZGV.db.profile.antspacing==40 end,
+			set = function(i,v)
+				local vol=v and 40 or 0
 				Setter_Simple(i,vol)  self.Pointer:SetAntSpacing(vol) 
 				--self:ShowWaypoints() 
 			end,
-			_default = 100
+			_default = 40
 		})
 
 

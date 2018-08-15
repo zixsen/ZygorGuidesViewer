@@ -211,13 +211,13 @@ function Sync:Unpack(packet,data)
 end
 
 function Sync:HandleReceivedPacket(packet)
-	
+	if packet.type~="nonexistent_future_packet"	and not self:IsEnabled() then return end -- ignore everything else when not in Sync mood
 	if packet.type==PACKETTYPE_GUIDESTATUS then
 		self:Debug("Player %s is on guide %s step %d which is %s",
 			packet.sender,packet.guide,packet.stepnum,packet.is_complete and "complete" or "incomplete")
 		self.PartyStatus[packet.sender]=packet
 		self:OnPartyStatusChanged()
-	
+
 	elseif packet.type==PACKETTYPE_STEPDATA then
 		self:Debug("Player %s sends step %d data (%d goals needed)", packet.sender,packet.stepnum,packet.linecount)
 		packet.lines={}
@@ -426,7 +426,7 @@ local statustext2 = { [0]="[ ]", [1]="[X]", [2]="[?]" }
 	℅ℓ№™Ω℮⅛⅜⅝⅞∂∆∏∑−√∞∫≈≠≤≥
 ]]
 function Sync:GetStepGoalPartyStatusText(stepnum,goalnum)
-	if not self.PartyStatus then return end
+	if not (self:IsMaster() or self:IsSlave()) or not self.PartyStatus then return end
 	local s=""
 	local on_step=0
 	local any_incomplete=false
@@ -441,7 +441,7 @@ function Sync:GetStepGoalPartyStatusText(stepnum,goalnum)
 		if not status then break end --continue
 
 		local step
-		if status.stepnum==stepnum then
+		if status.stepnum==stepnum and status.guide==ZGV.CurrentGuide.title then
 			step=status
 		elseif status.stickies then
 			for i,st in ipairs(status.stickies) do
@@ -621,6 +621,7 @@ function Sync:Activate()
 	self:ResetPartyStatus()
 	self:RequestPartyStatus()
 	if self:IsSlave() then self:RequestStepContents() end
+	ZGV.Sync:UpdateButtonColor()
 end
 
 function Sync:UpdateButtonColor()

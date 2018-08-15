@@ -4,7 +4,7 @@ addon.LibRoverData = addon.LibRoverData or {}
 local data=addon.LibRoverData
 
 data.version={
-	nodes_version = 183,  -- Increase this when working on the nodes. Bake the connections using the Debug menu when you're done.
+	nodes_version = 184,  -- Increase this when working on the nodes. Bake the connections using the Debug menu when you're done.
 }
 
 -- These are kept strictly unique. Make up bogus names if you need to.
@@ -60,6 +60,7 @@ data.MapIDsByName = {
 ["Siege of Boralus"] = {[0]=1162},
 
 --Island Expeditions
+["Uncharted Island"] = {[0]=1022},
 ["Un'gol Ruins"] = {[0]=981},
 
 
@@ -503,7 +504,6 @@ data.MapIDsByName = {
 ["The Rotting Mire"] = {[0]=1033},
 ["The Underrot"] = {[0]=1041,[1]=1042},
 ["Tropical Isle 8.0"] = {[0]=939},
-["Uncharted Island"] = {[0]=1022},
 ["Verdant Wilds"] = {[0]=1034},
 ["Waycrest Dimension"] = {[0]=1029},
 ["Whispering Reef"] = {[0]=1037},
